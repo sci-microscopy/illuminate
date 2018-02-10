@@ -29,7 +29,8 @@
 #define LED_ARRAY_H
 
 // Change interface based on flag in main file
-#include "ledinterface_cross.h"
+//#include "ledinterface_cross.h"
+#include "ledinterface_quasidome.h"
 
 
 #include "ledsequence.h"

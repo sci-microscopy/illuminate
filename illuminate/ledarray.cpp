@@ -1,28 +1,28 @@
 /*
-Copyright (c) 2018, Zachary Phillips (UC Berkeley)
-All rights reserved.
+  Copyright (c) 2018, Zachary Phillips (UC Berkeley)
+  All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+      Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
+      Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of the <organization> nor the
+      Neither the name of the <organization> nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "ledarray.h"
@@ -65,14 +65,22 @@ void LedArray::printCurrentLedValues()
     Serial.print(F("#"));
     Serial.printf(F("%04d"), led_number);
     Serial.print(F(":"));
-    if (led_array_interface->bit_depth == 16)
-      Serial.printf(F("%05lu\n"), led_array_interface->led_values[led_number]);
-    else if (led_array_interface->bit_depth == 8)
-      Serial.printf(F("%03u\n"), led_array_interface->led_values[led_number]);
-    else if (led_array_interface->bit_depth == 1)
-      Serial.printf(F("%01u\n"), led_array_interface->led_values[led_number]);
+    for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
+    {
+      if (led_array_interface->bit_depth == 16)
+        Serial.printf(F("%05lu"), led_array_interface->getLedValue(led_number, color_channel_index));
+      else if (led_array_interface->bit_depth == 8)
+        Serial.printf(F("%03u"), led_array_interface->getLedValue(led_number, color_channel_index));
+      else if (led_array_interface->bit_depth == 1)
+        Serial.printf(F("%01u"), led_array_interface->getLedValue(led_number, color_channel_index));
+
+      if (color_channel_index < (led_array_interface->color_channel_count - 1))
+        Serial.print(',');
+      else
+        Serial.print('\n');
+    }
+    Serial.println(F("led_values end"));
   }
-  Serial.println(F("led_values end"));
 }
 
 void LedArray::showVersion()
@@ -729,7 +737,7 @@ void LedArray::triggerInputTest(uint16_t channel)
   waitForTriggerState(channel, !led_array_interface->trigger_input_state[channel]);
   Serial.print("Passed trigger input test for channel "); Serial.println(channel);
   led_array_interface->setAllLeds(0);
-  led_array_interface->setLed(1, 255);
+  led_array_interface->setLed(1, (uint8_t)255);
   led_array_interface->update();
 }
 
@@ -1290,10 +1298,11 @@ void LedArray::demo()
     drawBrightfield();
     delay(2000);
 
-    for ( int16_t led_index = led_array_interface->led_count; led_index > 0; led_index--)
+    for ( int16_t led_index = led_array_interface->led_count; led_index > 0; led_index
+      --)
     {
       led_array_interface->setAllLeds(0);
-      led_array_interface->setLed(led_index, 127);
+      led_array_interface->setLed(led_index, (uint8_t)127);
     }
     led_array_interface->update();
     delay(1);

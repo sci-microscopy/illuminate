@@ -70,7 +70,6 @@ class LedArrayInterface {
     int * getTriggerOutputPins();
     int * getTriggerInputPins();
     
-
     // Device and Software Descriptors
     const char * device_name = "cross-array";
     const int serial_number = SN;

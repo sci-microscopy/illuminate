@@ -37,17 +37,14 @@ int LedArrayInterface::trigger_input_pin_list[TRIGGER_INPUT_COUNT];
 volatile bool LedArrayInterface::trigger_input_state[TRIGGER_INPUT_COUNT];
 volatile bool LedArrayInterface::debug = true;
 
-void LedArrayInterface::setAllLedsFast(bool value)
-{
-  for (uint16_t led_index = 0; led_index < 4; led_index++)
-  {
-    // Get channel number
-    int16_t channel_number = (int16_t)pgm_read_word(&(ledMap[led_index][1]));
 
-    // Update
-    digitalWriteFast(pin_numbers[channel_number], value);
-  }
+void notImplemented(const char * command_name)
+{
+  Serial.print(F("Command "));
+  Serial.print(command_name);
+  Serial.println(F(" is not implemented for this device."));
 }
+
 
 void LedArrayInterface::setLedFast(uint16_t led_number, bool value)
 {

@@ -30,7 +30,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SERIAL_BAUD_RATE 115200
 
 // Include various files depending on which LED array is used
-#include "ledinterface_cross.h"
+//#include "ledinterface_cross.h"
+#include "ledinterface_quasidome.h"
+
 
 #include "commandrouting.h"
 #include "ledarray.h"
