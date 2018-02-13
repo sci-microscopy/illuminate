@@ -28,12 +28,9 @@
 #ifndef LED_ARRAY_H
 #define LED_ARRAY_H
 
-// Change interface based on flag in main file
-//#include "ledinterface_cross.h"
-#include "ledinterface_quasidome.h"
-
-
+#include "quasidome.h"
 #include "ledsequence.h"
+
 #include <Arduino.h>
 
 // Trigger Mode constants
@@ -56,7 +53,7 @@
 class LedArray {
   public:
     void showVersion();
-    void notImplemented(const char * command_name);
+    void notFinished(const char * command_name);
     void printAbout();
     void printSystemParams();
     void resetArray();
@@ -108,7 +105,7 @@ class LedArray {
     void toggleDebug(uint16_t argc, char ** argv);
     void toggleAutoClear(uint16_t argc, char ** argv);
     void drawSpiralPattern(uint16_t delay_ms);
-    void setInterface(LedArrayInterface* interface);
+    void setInterface(LedArrayInterface * interface);
     void printLedPositions();
     void printCurrentLedValues();
     void printDeviceName();
@@ -141,7 +138,7 @@ class LedArray {
     const float version = 0.2;
 
     // LED array control object
-    LedArrayInterface *  led_array_interface;
+    LedArrayInterface * led_array_interface;
 
     // LED sequence object for storage and retreival
     LedSequence led_sequence;
@@ -155,13 +152,13 @@ class LedArray {
 
     // Trigger Input (feedback) Settings
     float trigger_feedback_timeout_ms = 1000;
-    uint16_t trigger_pulse_width_list_us[TRIGGER_OUTPUT_COUNT] = {500, 100}; // Pulse width of trigger pulse
-    uint16_t trigger_start_delay_list_ms[TRIGGER_OUTPUT_COUNT] = {0, 0};       // Amount to wait after trigger pulse for sequence acquisitions
-    int trigger_input_mode_list[TRIGGER_INPUT_COUNT] = {TRIG_MODE_NONE, TRIG_MODE_NONE};
-    int trigger_output_mode_list[TRIGGER_OUTPUT_COUNT] = {TRIG_MODE_NONE, TRIG_MODE_NONE};
+    uint16_t * trigger_pulse_width_list_us;
+    uint16_t * trigger_start_delay_list_ms;
+    int * trigger_input_mode_list;
+    int * trigger_output_mode_list;
 
     // Default illumination
-    uint8_t led_value = 127;
+    uint16_t * led_value;
 
     // Sequence stepping index
     uint16_t sequence_number_displayed = 0;

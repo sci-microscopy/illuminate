@@ -30,15 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SERIAL_BAUD_RATE 115200
 
 // Include various files depending on which LED array is used
-//#include "ledinterface_cross.h"
-#include "ledinterface_quasidome.h"
-
-
+#include "quasidome.h"
 #include "commandrouting.h"
 #include "ledarray.h"
 
 // Initialize objects`
-LedArrayInterface cross_array_interface;
+LedArrayInterface led_array_interface;
 LedArray led_array;
 CommandRouter cmd;
 
@@ -48,7 +45,7 @@ void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
 
   // Initialize LED Array
-  led_array.setInterface(&cross_array_interface);
+  led_array.setInterface(&led_array_interface);
   led_array.setup();
 
   // Initialize command router

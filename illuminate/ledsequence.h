@@ -25,6 +25,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef LED_SEQUENCE_H
+#define LED_SEQUENCE_H
+
+#include <Arduino.h>
+
 // Define LED Sequence Object
 struct LedSequence
 {
@@ -176,4 +181,6 @@ struct LedSequence
     }
   }
 };
+
+#endif
 
