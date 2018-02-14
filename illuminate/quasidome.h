@@ -23,7 +23,7 @@
    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+*/
 
 #ifndef LED_ARRAY_INTERFACE_H
 #define LED_ARRAY_INTERFACE_H
@@ -46,76 +46,76 @@
 #define SN 1
 
 class LedArrayInterface {
-public:
-void deviceSetup();
+  public:
+    void deviceSetup();
 
-// Note that passing a -1 for led_number or color_channel_index sets all LEDs or all color channels respectively
-void setLed(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)
-void setLed(int16_t led_number, int16_t color_channel_index, uint8_t value);      // LED brightness (8-bit)
-void setLed(int16_t led_number, int16_t color_channel_index, bool value);         // LED brightness (boolean)
+    // Note that passing a -1 for led_number or color_channel_index sets all LEDs or all color channels respectively
+    void setLed(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)
+    void setLed(int16_t led_number, int16_t color_channel_index, uint8_t value);      // LED brightness (8-bit)
+    void setLed(int16_t led_number, int16_t color_channel_index, bool value);         // LED brightness (boolean)
 
 
 
-// Fast LED update
-void setLedFast(uint16_t led_number, int color_channel_index, bool value);
+    // Fast LED update
+    void setLedFast(uint16_t led_number, int color_channel_index, bool value);
 
-// Get LED Value
-uint16_t getLedValue(uint16_t led_number, int color_channel_index);
+    // Get LED Value
+    uint16_t getLedValue(uint16_t led_number, int color_channel_index);
 
-// Clear array
-void clear();
+    // Clear array
+    void clear();
 
-// Get and set trigger state
-int sendTriggerPulse(int trigger_index, uint16_t delay_us, bool inverse_polarity);
-int setTriggerState(int trigger_index, bool state);
-int getInputTriggerState(int input_trigger_index);
-static void triggerInputChange_0();
-static void triggerInputChange_1();
-void getTriggerPins(int * * pin_numbers);
-int * getTriggerOutputPins();
-int * getTriggerInputPins();
+    // Get and set trigger state
+    int sendTriggerPulse(int trigger_index, uint16_t delay_us, bool inverse_polarity);
+    int setTriggerState(int trigger_index, bool state);
+    int getInputTriggerState(int input_trigger_index);
+    static void triggerInputChange_0();
+    static void triggerInputChange_1();
+    void getTriggerPins(int * * pin_numbers);
+    int * getTriggerOutputPins();
+    int * getTriggerInputPins();
 
-// Update array
-void update();
+    // Update array
+    void update();
 
-// Debug
-bool getDebug();
-void setDebug(bool state);
+    // Debug
+    bool getDebug();
+    void setDebug(bool state);
 
-// Set channel
-void setChannel(int16_t channel_number, int16_t color_channel_number, uint16_t value);
-void setChannelFast(uint16_t channel_number, int color_channel_index, bool value);
+    // Set channel
+    void setChannel(int16_t channel_number, int16_t color_channel_number, uint16_t value);
+    void setChannelFast(uint16_t channel_number, int color_channel_index, bool value);
 
-// Not implemented
-void notImplemented(const char * command_name);
+    // Not implemented
+    void notImplemented(const char * command_name);
 
-// Device and Software Descriptors
-const char * device_name = "quasi-dome";
-const int serial_number = SN;
-const char * device_hardware_revision = "1.0";
-const float max_na = 0.98;
-const int16_t led_count = 581;
-const uint16_t center_led = 0;
-const int trigger_output_count = 2;
-const int trigger_input_count = 2;
-const int color_channel_count = 3;
-const char * color_channel_names[3] = {"r", "g", "b"};
-const float color_channel_center_wavelengths[3] = {0.625, 0.53, 0.48};
-const int bit_depth = 16;
-const bool supports_fast_sequence = false;
+    // Device and Software Descriptors
+    const char * device_name = "quasi-dome";
+    const int serial_number = SN;
+    const char * device_hardware_revision = "1.0";
+    const float max_na = 0.98;
+    const int16_t led_count = 581;
+    const uint16_t center_led = 0;
+    const int trigger_output_count = 2;
+    const int trigger_input_count = 2;
+    const int color_channel_count = 3;
+    const char * color_channel_names[3] = {"r", "g", "b"};
+    const float color_channel_center_wavelengths[3] = {0.625, 0.53, 0.48};
+    const int bit_depth = 16;
+    const bool supports_fast_sequence = false;
 
-// Triggering Variables
-static int trigger_output_pin_list[TRIGGER_OUTPUT_COUNT];
-static int trigger_input_pin_list[TRIGGER_INPUT_COUNT];
+    // Triggering Variables
+    int trigger_output_pin_list[TRIGGER_OUTPUT_COUNT];
+    int trigger_input_pin_list[TRIGGER_INPUT_COUNT];
 
-// Trigger state Variables
-static volatile bool trigger_input_state[TRIGGER_INPUT_COUNT];
-static volatile bool debug;
+    // Trigger state Variables
+    bool trigger_input_state[TRIGGER_INPUT_COUNT];
+    bool debug;
 
-/**** Device-specific variables ****/
+    /**** Device-specific variables ****/
 
-// TLC5955 object
-TLC5955 tlc;
+    // TLC5955 object
+    TLC5955 tlc;
 };
 
 // void LedArrayInterface::notImplemented(const char * command_name)
@@ -127,10 +127,10 @@ TLC5955 tlc;
 
 // FORMAT: LED number, channel, 100*x, 100*y, 100*z
 PROGMEM const int16_t ledMap[4][5] = {
-        {0, 1, -1, 1, 4000,},
-        {1, 0, 1, 1, 4000,},
-        {2, 2, 1, -1, 4000,},
-        {3, 3, -1, -1, 4000,}
+  {0, 1, -1, 1, 4000,},
+  {1, 0, 1, 1, 4000,},
+  {2, 2, 1, -1, 4000,},
+  {3, 3, -1, -1, 4000,}
 };
 
 #endif

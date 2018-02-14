@@ -1227,24 +1227,14 @@ void LedArray::toggleDebug(uint16_t argc, char ** argv)
   if (argc == 0)
   {
     debug = !(debug > 0);
-    LedArrayInterface::debug = !(LedArrayInterface::debug > 0);
+    debug = !( debug > 0);
   }
   else
   {
     debug = atoi(argv[0]);
-    LedArrayInterface::debug = atoi(argv[0]);
+    debug = atoi(argv[0]);
   }
   Serial.print("Debug level now: "); Serial.println(debug);
-}
-
-void LedArray::isr0()
-{
-  LedArrayInterface::triggerInputChange_0();
-}
-
-void LedArray::isr1()
-{
-  LedArrayInterface::triggerInputChange_1();
 }
 
 void LedArray::setInterface(LedArrayInterface * interface)
@@ -1260,19 +1250,6 @@ void LedArray::setup()
   // Attach interrupts
   pinMode(TRIGGER_INPUT_PIN_0, INPUT);
   pinMode(TRIGGER_INPUT_PIN_1, INPUT);
-  //  attachInterrupt(TRIGGER_INPUT_PIN_0, isr0, CHANGE);
-  //  attachInterrupt(TRIGGER_INPUT_PIN_1, isr1, CHANGE);
-
-  // Populate constants related to LED array design
-  color_channel_count = led_array_interface->color_channel_count;
-  LedArrayInterface::trigger_input_state[0] = false; // Todo this isn't ideal
-  LedArrayInterface::trigger_input_state[1] = false; // Todo this isn't ideal
-
-  LedArrayInterface::trigger_output_pin_list[0] = TRIGGER_OUTPUT_PIN_0;
-  LedArrayInterface::trigger_output_pin_list[1] = TRIGGER_OUTPUT_PIN_1;
-  LedArrayInterface::trigger_input_pin_list[0] = TRIGGER_INPUT_PIN_0;
-  LedArrayInterface::trigger_input_pin_list[1] = TRIGGER_INPUT_PIN_1;
-  LedArrayInterface::debug = true;
 
   // Reset sequence
   led_sequence.deallocate();
