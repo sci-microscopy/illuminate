@@ -380,7 +380,7 @@ void LedArray::drawSingleLed(int16_t led_number)
 
     if (debug)
     {
-      Serial.println(F("Drew Led # "));
+      Serial.print(F("Drew Led # "));
       Serial.println(led_number);
     }
   }
@@ -501,17 +501,16 @@ void LedArray::scanAllLeds(uint16_t argc, char ** argv)
 
 void LedArray::setColor(int16_t argc, char ** argv)
 {
-  // Check to see if we passed in a string
-
+  
   if (argc == 1)
   {
     for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-      led_value[color_channel_index] = (uint8_t) atoi(argv[0]);
+      led_value[color_channel_index] = strtoul(argv[0], NULL, 0);
   }
   else if (argc == led_array_interface->color_channel_count)
   {
     for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-      led_value[color_channel_index] = (uint8_t) atoi(argv[color_channel_index]);
+      led_value[color_channel_index] = strtoul(argv[0], NULL, 0);
   }
   else
     Serial.println(F("ERROR (LedArray::setColor): Invalid number of color values"));
