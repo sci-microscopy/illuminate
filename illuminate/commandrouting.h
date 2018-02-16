@@ -1,28 +1,28 @@
 /*
-Copyright (c) 2018, Zachary Phillips (UC Berkeley)
-All rights reserved.
+  Copyright (c) 2018, Zachary Phillips (UC Berkeley)
+  All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+      Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
+      Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of the <organization> nor the
+      Neither the name of the <organization> nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef COMMAND_ROUTING_H          // avoid repeated expansion
@@ -111,7 +111,7 @@ int CommandRouter::getArgumentBitDepth(char * command_header)
 int CommandRouter::getArgumentLedNumberPitch(char * command_header)
 {
   if ((strcmp(command_header, command_list[CMD_SET_SEQ_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_SEQ_IDX][1]) == 0))
-    return (led_array->color_channel_count + 1);
+    return (led_array->getColorChannelCount() + 1);
   else
     return (-1);
 }
@@ -125,7 +125,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_REBOOT_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_REBOOT_IDX][1]) == 0))
     led_array->resetArray();
   else if ((strcmp(command_header, command_list[CMD_SHOW_VERSION][0]) == 0) || (strcmp(command_header, command_list[CMD_SHOW_VERSION][1]) == 0))
-    led_array->showVersion();
+    led_array->printVersion();
 
   else if ((strcmp(command_header, command_list[CMD_AUTOCLEAR_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_AUTOCLEAR_IDX][1]) == 0))
     led_array->toggleAutoClear(argc, (char * *) argv);
@@ -146,23 +146,23 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_FILL_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_FILL_IDX][1]) == 0))
     led_array->fillArray();
   else if ((strcmp(command_header, command_list[CMD_BF_IDX][0]) == 0)  || (strcmp(command_header, command_list[CMD_BF_IDX][1]) == 0))
-    led_array->drawBrightfield();
+    led_array->drawBrightfield(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_DF_IDX][0]) == 0)  || (strcmp(command_header, command_list[CMD_DF_IDX][1]) == 0))
     led_array->drawDarkfield();
   else if ((strcmp(command_header, command_list[CMD_DPC_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DPC_IDX][1]) == 0))
-    led_array->drawDpc((char *)argv[0]);
+    led_array->drawDpc(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_CDPC_IDX][0]) == 0)  || (strcmp(command_header, command_list[CMD_CDPC_IDX][1]) == 0))
-    led_array->drawCdpcParser(argc, (char * *)argv);
+    led_array->drawCdpc(argc, (char * *)argv);
   else if ((strcmp(command_header, command_list[CMD_AN_IDX][0]) == 0)  || (strcmp(command_header, command_list[CMD_AN_IDX][1]) == 0))
-    led_array->drawAnnulusParser(argc, (char * *)argv);
+    led_array->drawAnnulus(argc, (char * *)argv);
   else if ((strcmp(command_header, command_list[CMD_HALF_ANNULUS][0]) == 0) || (strcmp(command_header, command_list[CMD_HALF_ANNULUS][1]) == 0))
-    led_array->drawHalfAnnulusParser(argc, (char * *)argv);
+    led_array->drawHalfAnnulus(argc, (char * *)argv);
   else if ((strcmp(command_header, command_list[CMD_DQ_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DQ_IDX][1]) == 0))
     led_array->drawQuadrant(atoi((char *) argv[0]));
   else if ((strcmp(command_header, command_list[CMD_CDF_IDX][0]) == 0)  || (strcmp(command_header, command_list[CMD_CDF_IDX][1]) == 0))
-    led_array->drawColorDarkfieldParser(argc, (char * *) argv);
+    led_array->drawColorDarkfield(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_NAV_DPC_IDX][0]) == 0)  || (strcmp(command_header, command_list[CMD_NAV_DPC_IDX][1]) == 0))
-    led_array->drawNavdpcParser(argc, (char * *) argv);
+    led_array->drawNavDpc();
 
   else if ((strcmp(command_header, command_list[CMD_SCF_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SCB_IDX][1]) == 0))
     led_array->scanAllLeds(argc, (char * *) argv);
@@ -212,14 +212,15 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_PIN_ORDER_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_PIN_ORDER_IDX][1]) == 0))
     led_array->setPinOrder(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS][1]) == 0))
-    led_array->printLedPositions();
+    led_array->printLedPositions(false);
+  else if ((strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS_NA][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS_NA][1]) == 0))
+    led_array->printLedPositions(true);
+
   else if ((strcmp(command_header, command_list[CMD_DELAY][0]) == 0) || (strcmp(command_header, command_list[CMD_DELAY][1]) == 0))
     delay(strtoul((char *) argv[0], NULL, 0));
 
   else if ((strcmp(command_header, command_list[CMD_DISCO_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DISCO_IDX][1]) == 0))
     led_array->drawDiscoPattern(strtoul((char *) argv[0], NULL, 0));
-  else if ((strcmp(command_header, command_list[CMD_PULSE_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_PULSE_IDX][1]) == 0))
-    led_array->drawPulsePattern(strtoul((char *) argv[0], NULL, 0));
   else if ((strcmp(command_header, command_list[CMD_SPIRAL_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SPIRAL_IDX][1]) == 0))
     led_array->drawSpiralPattern(strtoul((char *) argv[0], NULL, 0));
   else if ((strcmp(command_header, command_list[CMD_PRINT_PARAMS][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_PARAMS][1]) == 0))
@@ -266,34 +267,34 @@ void CommandRouter::processSerialStream()
               Serial.println(argument_total_count);
             }
 
-     
+
             // Character argument (standard)
             if (argument_bit_depth == -1)
+            {
+              argument_list[argument_count] = new char[argument_element_position + 1]; // Allow for null terminating byte
+              memcpy(argument_list[argument_count], current_argument, sizeof(char) * argument_element_position + 1); // Also copy null terminating byte
+            }
+            else
+            {
+              if ((argument_bit_depth > 0) && (argument_total_count == 1))
               {
-                argument_list[argument_count] = new char[argument_element_position + 1]; // Allow for null terminating byte
-                memcpy(argument_list[argument_count], current_argument, sizeof(char) * argument_element_position + 1); // Also copy null terminating byte
-              }
-              else
-              {
-                if ((argument_bit_depth > 0) && (argument_total_count == 1))
-                {
-                  if (argument_bit_depth == 1) // numerical argument (standard)
-                    argument_list_bool = new bool[1];
-                  else if (argument_bit_depth == 8)
-                    argument_list_uint8 = new uint8_t[1];
-                  else
-                    argument_list_uint16 = new uint16_t[1];
-
-                  argument_led_number_list = new int16_t[1];
-                  argument_led_number_list[0] = 0;
-                }
                 if (argument_bit_depth == 1) // numerical argument (standard)
-                  argument_list_bool[argument_count]  = atoi(current_argument) > 0;
+                  argument_list_bool = new bool[1];
                 else if (argument_bit_depth == 8)
-                  argument_list_uint8[argument_count]  = (uint8_t)atoi(current_argument);
+                  argument_list_uint8 = new uint8_t[1];
                 else
-                  argument_list_uint16[argument_count]  = strtoul(current_argument, NULL, 0);
+                  argument_list_uint16 = new uint16_t[1];
+
+                argument_led_number_list = new int16_t[1];
+                argument_led_number_list[0] = 0;
               }
+              if (argument_bit_depth == 1) // numerical argument (standard)
+                argument_list_bool[argument_count]  = atoi(current_argument) > 0;
+              else if (argument_bit_depth == 8)
+                argument_list_uint8[argument_count]  = (uint8_t)atoi(current_argument);
+              else
+                argument_list_uint16[argument_count]  = strtoul(current_argument, NULL, 0);
+            }
 
             if (debug > 0)
             {

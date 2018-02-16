@@ -16,7 +16,7 @@
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+  DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -52,74 +52,81 @@
 
 class LedArray {
   public:
-    void showVersion();
-    void notFinished(const char * command_name);
-    void printAbout();
-    void printSystemParams();
+    // Device setup and demo
     void resetArray();
-    void drawDiscoPattern(uint16_t nLed);
-    //    void printLedPositionsNa(uint16_t argc, char ** argv, char seperator);
     void setup();
     void demo();
-    void clearNaList();
-    void buildNaList(float boardDistance);
-    void fillArray();
-    void clearArray();
-    void setNa(int8_t new_na);
-    void printTriggerSettings();
-    void drawDarkfield();
-    void drawCdpcParser(int argc, char * *argv);
-    void drawHalfAnnulusParser(int argc, char * *argv);
-    void drawColorDarkfieldParser(int argc, char * * argv);
-    void drawNavdpcParser(int argc, char * * argv);
-    void drawAnnulusParser(int argc, char * * argv);
-    void drawChannel(uint16_t tmp);
-    void setPinOrder(int argc, char * *argv);
-    void drawPulsePattern(uint16_t tmp);
-    void triggerSetup(int argc, char ** argv);
-    void sendTriggerPulse(int trigger_index, bool show_output);
-    void setTriggerState(int trigger_index, bool state, bool show_output);
+
+    // Pattern commands
     void drawSingleLed(int16_t led_number);
     void drawLedList(uint16_t argc, char ** argv);
     void scanBrightfieldLeds(uint16_t argc, char ** argv);
     void scanAllLeds(uint16_t argc, char ** argv);
+    void drawDpc(uint16_t argc, char ** argv);
+    void drawBrightfield(uint16_t argc, char ** argv);;
+    void drawHalfAnnulus(int argc, char * *argv);
+    void drawColorDarkfield(int argc, char * * argv);
+    void drawAnnulus(int argc, char * * argv);
+    void drawDarkfield();
+    void drawCdpc(int argc, char * *argv);
+    void drawNavDpc();
+    void fillArray();
+    void clearArray();
+    void drawDiscoPattern(uint16_t nLed);
+
+    // Drawing primatives
+    void drawQuadrant(int8_t quadrant_number);
+    void drawHalfCircle(int8_t half_circle_type, float start_na, float end_na);
+
+    // Triggering
+    void printTriggerSettings();
+    void waitForTriggerState(int trigger_index, bool state);
+    void triggerInputTest(uint16_t channel);
+    void triggerSetup(int argc, char ** argv);
+    void sendTriggerPulse(int trigger_index, bool show_output);
+    void setTriggerState(int trigger_index, bool state, bool show_output);
+
+    // Setting system parameters
+    void setNa(int8_t new_na);
+    void setDistanceZ(float new_z);
     void setColor(int16_t argc, char ** argv);
-    void drawQuadrant(int8_t qNumber);
-    void drawHalfCircle(int8_t halfCircleType);
-    void drawDpc(char * optionalParam);
-    void drawBrightfield();
-    void setSequenceLength(uint16_t new_seq_length, bool quiet);
-    void setSequenceBitDepth(uint8_t bit_depth, bool quiet);
-    int getArgumentLedNumberPitch(char * command_header);
+    void clearNaList();
+    void buildNaList(float boardDistance);
+
+    void toggleDebug(uint16_t argc, char ** argv);
+    void toggleAutoClear(uint16_t argc, char ** argv);
+    void drawSpiralPattern(uint16_t delay_ms);
+
+    // Sequencing
+    int getSequenceBitDepth();
+    void runSequence(uint16_t argc, char ** argv);
+    void runSequenceFast(uint16_t argc, char ** argv);
+    void stepSequence(uint16_t argc, char ** argv);
     void setSequenceValue(uint16_t argc, void ** led_values, int16_t * led_numbers);
     void printSequence();
     void printSequenceLength();
     void resetSequence();
-    void waitForTriggerState(int trigger_index, bool state);
-    void triggerInputTest(uint16_t channel);
-    void runSequence(uint16_t argc, char ** argv);
-    void runSequenceFast(uint16_t argc, char ** argv);
-    void stepSequence(uint16_t argc, char ** argv);
-    void setDistanceZ(float new_z);
-    int getSequenceBitDepth();
-    void toggleDebug(uint16_t argc, char ** argv);
-    void toggleAutoClear(uint16_t argc, char ** argv);
-    void drawSpiralPattern(uint16_t delay_ms);
-    void setInterface(LedArrayInterface * interface);
-    void printLedPositions();
+    void setSequenceLength(uint16_t new_seq_length, bool quiet);
+    int getSequenceLength();
+    void setSequenceBitDepth(uint8_t bit_depth, bool quiet);
+
+    // Printing system state and information
+    void printLedPositions(bool print_na);
     void printCurrentLedValues();
-    void printDeviceName();
+    void printAbout();
+    void printSystemParams();
+    void printVersion();
 
-    int color_channel_count = 1;
-    char * device_name;
+    // Internal functions
+    int getArgumentLedNumberPitch(char * command_header);
+    void setInterface(LedArrayInterface * interface);
+    void notImplemented(const char * command_name);
+    void drawChannel(uint16_t tmp);
+    void setPinOrder(int argc, char * *argv);
+    void notFinished(const char * command_name);
+    int getColorChannelCount();
 
-    // LED Positions in NA coordinates
-    float * * led_position_list_na;
   private:
-
-    // Interrupt service routines
-    static void isr0();
-    static void isr1();
 
     /* DPC Commands */
     const char * DPC_RIGHT1 = "r";
@@ -133,6 +140,9 @@ class LedArray {
 
     const char * DPC_BOTTOM1 = "b";
     const char * DPC_BOTTOM2 = "bottom";
+
+    // LED Positions in NA coordinates
+    float * * led_position_list_na;
 
     // Controller version
     const float version = 0.2;
@@ -148,7 +158,9 @@ class LedArray {
     bool opt_flag = false;
     bool debug = 1;
     float objective_na = 0.25;
-    float led_array_interface_distance_z = 50.0;
+    float led_array_distance_z = 50.0;
+    int color_channel_count = 3;
+    char * device_name;
 
     // Trigger Input (feedback) Settings
     float trigger_feedback_timeout_ms = 1000;
@@ -158,7 +170,7 @@ class LedArray {
     int * trigger_output_mode_list;
 
     // Default illumination
-    uint16_t * led_value;
+    uint8_t * led_value;
 
     // Sequence stepping index
     uint16_t sequence_number_displayed = 0;

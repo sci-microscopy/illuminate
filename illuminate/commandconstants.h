@@ -1,28 +1,28 @@
 /*
-Copyright (c) 2018, Zachary Phillips (UC Berkeley)
-All rights reserved.
+  Copyright (c) 2018, Zachary Phillips (UC Berkeley)
+  All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+      Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
+      Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of the <organization> nor the
+      Neither the name of the <organization> nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef COMMAND_CONSTANTS_H
@@ -81,10 +81,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define CMD_PRINT_VALS_IDX 40
 #define CMD_PRINT_PARAMS 41
 #define CMD_PRINT_LED_POSITIONS 42
-#define CMD_PRINT_TERMINATOR 43
+#define CMD_PRINT_LED_POSITIONS_NA 43
+#define CMD_PRINT_TERMINATOR 44
 
-#define CMD_DISCO_IDX 44
-#define CMD_PULSE_IDX 45
+#define CMD_DISCO_IDX 45
 #define CMD_SPIRAL_IDX 46
 
 // Syntax is: {short command, long command, description, syntax}
@@ -147,12 +147,12 @@ const char* command_list[COMMAND_COUNT][4] = {
   // Quering System State
   {"pvals", "printVals", "Print led values for software interface", "pvals"},
   {"pp", "printParams", "Prints system parameters such as NA, LED Array z-distance, etc. in the format of a json file", "pp"},
-  {"pledpos", "printLedPositions", "Prints the positions of each LED in cartesian coordinates.", "pledpositions"},
+  {"pledpos", "printLedPositions", "Prints the positions of each LED in cartesian coordinates.", "pledpos"},
+  {"pledposna", "printLedPositionsNa", "Prints the positions of each LED in NA coordinates (NA_x, NA_y, NA_distance", "pledposna"},
   {"pterm", "printTerminator", "Prints the command terminator", "pterm"},
 
   // Stored Patterns
   {"dis", "disco", "Illuminate a random color pattern of LEDs", "disco,[Number of LEDs in pattern]"},
-  {"pulse", "pulseArray", "Pulses Array on and off with given min/max intensities", "pulse,[Period in ms]"},
   {"spiral", "spiralPattern", "Creates Spiral Pattern on LED Array", "spiral,[Period in ms]"}
 };
 

@@ -16,7 +16,7 @@
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-   DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+   DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -136,18 +136,20 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
     Serial.print(F("Drawing channel #"));
     Serial.print(channel_number);
     Serial.print(F(", color_channel #"));
-    Serial.println(color_channel_number);
+    Serial.print(color_channel_number);
+    Serial.print(F(" to value "));
+    Serial.println(value);
   }
-  
+
   if (channel_number >= 0)
   {
     if (color_channel_number < 0)
-      tlc.setLed(color_channel_number, value, value, value);
-    else if (channel_number == 0)
+      tlc.setLed(channel_number, value);
+    else if (color_channel_number == 0)
       tlc.setLed(channel_number, value, tlc.getChannelValue(channel_number, 1), tlc.getChannelValue(channel_number, 2));
-    else if (channel_number == 1)
+    else if (color_channel_number == 1)
       tlc.setLed(channel_number, tlc.getChannelValue(channel_number, 0), value, tlc.getChannelValue(channel_number, 2));
-    else if (channel_number == 2)
+    else if (color_channel_number == 2)
       tlc.setLed(channel_number, tlc.getChannelValue(channel_number, 0), tlc.getChannelValue(channel_number, 1), value);
   }
   else
@@ -165,7 +167,9 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
     Serial.print("U16 Setting led #");
     Serial.print(led_number);
     Serial.print(", color channel #");
-    Serial.println(color_channel_number);
+    Serial.print(color_channel_number);
+    Serial.print(" to value ");
+    Serial.println(value);
   }
   if (led_number < 0)
   {
@@ -214,15 +218,14 @@ void LedArrayInterface::deviceSetup()
   pinMode(LAT, OUTPUT);
 
   // Adjust PWM timer for maximum GSCLK frequency (5 MHz)
-  analogWriteFrequency(GSCLK, 5000000);
+  analogWriteFrequency(GSCLK, gsclk_frequency);
   analogWriteResolution(1);
   analogWrite(GSCLK, 1);
 
   // The library does not ininiate SPI for you, so as to prevent issues with other SPI libraries
   SPI.setMOSI(SPI_MOSI);
   SPI.begin();
-  SPI.setClockDivider(SPI_CLOCK_DIV128);
-
+  SPI.setClockDivider(SPI_CLOCK_DIV4);
 
   tlc.init(LAT, SPI_MOSI, SPI_CLK);
 
