@@ -16,7 +16,7 @@ modification, are permitted provided that the following conditions are met:
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
+DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
 DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -25,17 +25,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LED_SEQUENCE_H
-#define LED_SEQUENCE_H
-
-#include <Arduino.h>
-
 // Define LED Sequence Object
 struct LedSequence
 {
   uint16_t length = 0;                      // Length of values
   uint16_t * led_counts;           // Number of LEDs in each values
-  uint16_t * * led_list;           // LEDs used in each values
+  uint16_t * * led_list;           // LED numbers used in each entry
   uint8_t * * values;                     // Actual LED values (will be assigned to one of the other variables
   uint16_t number_of_patterns_assigned = 0; // Number of patterns which have been assigned
   uint16_t current_pattern_led_index = 0;   // Current led index within current pattern
@@ -181,6 +176,4 @@ struct LedSequence
     }
   }
 };
-
-#endif
 

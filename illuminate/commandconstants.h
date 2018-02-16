@@ -42,50 +42,49 @@
 #define CMD_SET_ARRAY_DIST 7
 
 #define CMD_LED_IDX 8
-#define CMD_LED_LIST_IDX 9
 
-#define CMD_CLEAR_IDX 10
-#define CMD_FILL_IDX 11
-#define CMD_BF_IDX 12
-#define CMD_DF_IDX 13
-#define CMD_DPC_IDX 14
-#define CMD_CDPC_IDX 15
-#define CMD_AN_IDX 16
-#define CMD_HALF_ANNULUS 17
-#define CMD_DQ_IDX 18
-#define CMD_CDF_IDX 19
-#define CMD_NAV_DPC_IDX 20
+#define CMD_CLEAR_IDX 9
+#define CMD_FILL_IDX 10
+#define CMD_BF_IDX 11
+#define CMD_DF_IDX 12
+#define CMD_DPC_IDX 13
+#define CMD_CDPC_IDX 14
+#define CMD_AN_IDX 15
+#define CMD_HALF_ANNULUS 16
+#define CMD_DQ_IDX 17
+#define CMD_CDF_IDX 18
+#define CMD_NAV_DPC_IDX 19
 
-#define CMD_SCF_IDX 21
-#define CMD_SCB_IDX 22
+#define CMD_SCF_IDX 20
+#define CMD_SCB_IDX 21
 
-#define CMD_LEN_SEQ_IDX 23
-#define CMD_SET_SEQ_IDX 24
-#define CMD_RUN_SEQ_IDX 25
-#define CMD_RUN_SEQ_FAST_IDX 26
-#define CMD_PRINT_SEQ_IDX 27
-#define CMD_PRINT_SEQ_LENGTH_IDX 28
-#define CMD_STEP_SEQ_IDX 29
-#define CMD_RESET_SEQ_IDX 30
-#define CMD_SET_SEQ_BIT_DEPTH 31
+#define CMD_LEN_SEQ_IDX 22
+#define CMD_SET_SEQ_IDX 23
+#define CMD_RUN_SEQ_IDX 24
+#define CMD_RUN_SEQ_FAST_IDX 25
+#define CMD_PRINT_SEQ_IDX 26
+#define CMD_PRINT_SEQ_LENGTH_IDX 27
+#define CMD_STEP_SEQ_IDX 28
+#define CMD_RESET_SEQ_IDX 29
+#define CMD_SET_SEQ_BIT_DEPTH 30
 
-#define CMD_TRIG_IDX 32
-#define CMD_TRIG_SETUP_IDX 33
-#define CMD_TRIG_PRINT_IDX 34
-#define CMD_TRIG_TEST_IDX 35
-#define CMD_CHANNEL_IDX 36
-#define CMD_TOGGLE_DEBUG_IDX 37
-#define CMD_PIN_ORDER_IDX 38
-#define CMD_DELAY 39
+#define CMD_TRIG_IDX 31
+#define CMD_TRIG_SETUP_IDX 32
+#define CMD_TRIG_PRINT_IDX 33
+#define CMD_TRIG_TEST_IDX 34
+#define CMD_CHANNEL_IDX 35
+#define CMD_TOGGLE_DEBUG_IDX 36
+#define CMD_PIN_ORDER_IDX 37
+#define CMD_DELAY 38
 
-#define CMD_PRINT_VALS_IDX 40
-#define CMD_PRINT_PARAMS 41
-#define CMD_PRINT_LED_POSITIONS 42
-#define CMD_PRINT_LED_POSITIONS_NA 43
-#define CMD_PRINT_TERMINATOR 44
+#define CMD_PRINT_VALS_IDX 39
+#define CMD_PRINT_PARAMS 40
+#define CMD_PRINT_LED_POSITIONS 41
+#define CMD_PRINT_LED_POSITIONS_NA 42
+#define CMD_PRINT_TERMINATOR 43
 
-#define CMD_DISCO_IDX 45
-#define CMD_SPIRAL_IDX 46
+#define CMD_DISCO_IDX 44
+#define CMD_DEMO_IDX 45
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -102,9 +101,8 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"sc", "setColor", "Set LED array color", "sc,[rgbVal] --or-- sc.[rVal].[gVal].[bVal]"},
   {"sad", "setArrayDistance", "Set LED array distance", "sad,[100*dist(mm) --or-- 1000*dist(cm)]"},
 
-  // Single LED Display
-  {"l", "led", "Turn on a single led by number.", "l.[led #]"},
-  {"ll", "ledList", "Turn on multiple LEDs in a list.", "ll.[led #].[led #], ..."},
+  // Single (or multiple) LED Display
+  {"l", "led", "Turn on a single LED (or multiple LEDs in a list)", "ll.[led #].[led #], ..."},
 
   // General Display
   {"x", "xx", "Clear the LED array.", "x"},
@@ -152,8 +150,8 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"pterm", "printTerminator", "Prints the command terminator", "pterm"},
 
   // Stored Patterns
-  {"dis", "disco", "Illuminate a random color pattern of LEDs", "disco,[Number of LEDs in pattern]"},
-  {"spiral", "spiralPattern", "Creates Spiral Pattern on LED Array", "spiral,[Period in ms]"}
+  {"disco", "party", "Illuminate a random color pattern of LEDs", "disco,[Number of LEDs in pattern]"},
+  {"demo", "runDemo", "Runs a demo routine to show what the array can do.", "demo"}
 };
 
 #endif

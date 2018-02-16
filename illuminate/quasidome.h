@@ -73,7 +73,7 @@ class LedArrayInterface {
 
     // Debug
     bool getDebug();
-    void setDebug(bool state);
+    void setDebug(int state);
 
     // Set channel
     void setChannel(int16_t channel_number, int16_t color_channel_number, uint16_t value);
@@ -110,6 +110,7 @@ class LedArrayInterface {
     /**** Device-specific variables ****/
     TLC5955 tlc; // TLC5955 object
     uint32_t gsclk_frequency = 5000000;
+    int update_write_count = 2;
 };
 
 // FORMAT: hole number, channel, 100*x, 100*y, 100*z

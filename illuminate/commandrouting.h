@@ -31,7 +31,7 @@
 #include <SPI.h>
 #include <mk20dx128.h>
 
-#define MAX_ARGUMENT_ELEMENT_LENGTH 6
+#define MAX_ARGUMENT_ELEMENT_LENGTH 10
 #define MAX_COMMAND_LENGTH 20
 #define MAX_ARGUMENT_COUNT_CHAR 600
 #define MAX_ARGUMENT_COUNT_BOOL 2000
@@ -52,6 +52,7 @@ class CommandRouter {
     void printHelp();
     void setLedArray(LedArray *  new_led_array);
     void printTerminator();
+    void setDebug(int16_t argc, char * * argv);
 
   private:
     // Standard element variables
@@ -99,6 +100,23 @@ void CommandRouter::setLedArray(LedArray* new_led_array)
   led_array = new_led_array;
 }
 
+void CommandRouter::setDebug(int16_t argc, char * * argv)
+{
+  if (argc == 1)
+  {
+    uint16_t debug_value = strtoul(argv[0], NULL, 0);
+    debug = (int) ((debug_value % 1000 - debug_value % 100) / 100.0);
+    led_array->setDebug(debug_value - debug * 100);
+
+    // User feedback
+    Serial.printf(F("(CommandRouter::setDebug): Set debug level to %d \n"), debug);
+  }
+  else
+    Serial.println(F("ERROR (CommandRouter::setDebug): Invalud argument count."));
+}
+
+
+
 int CommandRouter::getArgumentBitDepth(char * command_header)
 {
   if ((strcmp(command_header, command_list[CMD_SET_SEQ_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_SEQ_IDX][1]) == 0))
@@ -123,7 +141,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_ABOUT_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_ABOUT_IDX][1]) == 0))
     led_array->printAbout();
   else if ((strcmp(command_header, command_list[CMD_REBOOT_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_REBOOT_IDX][1]) == 0))
-    led_array->resetArray();
+    led_array->reset();
   else if ((strcmp(command_header, command_list[CMD_SHOW_VERSION][0]) == 0) || (strcmp(command_header, command_list[CMD_SHOW_VERSION][1]) == 0))
     led_array->printVersion();
 
@@ -137,9 +155,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->setDistanceZ(atof((char * )argv[0]));
 
   else if ((strcmp(command_header, command_list[CMD_LED_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_LED_IDX][1]) == 0))
-    led_array->drawSingleLed(strtoul((char *) argv[0], NULL, 0));
-  else if ((strcmp(command_header, command_list[CMD_LED_LIST_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_LED_LIST_IDX][1]) == 0))
-    led_array->drawLedList(argc, (char * *) argv);
+    led_array->drawLedList(argc, (char * *)argv);
 
   else if ((strcmp(command_header, command_list[CMD_CLEAR_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_CLEAR_IDX][1]) == 0))
     led_array->clearArray();
@@ -157,8 +173,6 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->drawAnnulus(argc, (char * *)argv);
   else if ((strcmp(command_header, command_list[CMD_HALF_ANNULUS][0]) == 0) || (strcmp(command_header, command_list[CMD_HALF_ANNULUS][1]) == 0))
     led_array->drawHalfAnnulus(argc, (char * *)argv);
-  else if ((strcmp(command_header, command_list[CMD_DQ_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DQ_IDX][1]) == 0))
-    led_array->drawQuadrant(atoi((char *) argv[0]));
   else if ((strcmp(command_header, command_list[CMD_CDF_IDX][0]) == 0)  || (strcmp(command_header, command_list[CMD_CDF_IDX][1]) == 0))
     led_array->drawColorDarkfield(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_NAV_DPC_IDX][0]) == 0)  || (strcmp(command_header, command_list[CMD_NAV_DPC_IDX][1]) == 0))
@@ -206,9 +220,9 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_PRINT_VALS_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_VALS_IDX][1]) == 0))
     led_array->printCurrentLedValues();
   else if ((strcmp(command_header, command_list[CMD_CHANNEL_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_CHANNEL_IDX][1]) == 0))
-    led_array->drawChannel(strtoul((char *) argv[0], NULL, 0));
+    led_array->drawChannel(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_TOGGLE_DEBUG_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_TOGGLE_DEBUG_IDX][1]) == 0))
-    led_array->toggleDebug(argc, (char * *) argv);
+    setDebug(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_PIN_ORDER_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_PIN_ORDER_IDX][1]) == 0))
     led_array->setPinOrder(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS][1]) == 0))
@@ -221,10 +235,10 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
 
   else if ((strcmp(command_header, command_list[CMD_DISCO_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DISCO_IDX][1]) == 0))
     led_array->drawDiscoPattern(strtoul((char *) argv[0], NULL, 0));
-  else if ((strcmp(command_header, command_list[CMD_SPIRAL_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SPIRAL_IDX][1]) == 0))
-    led_array->drawSpiralPattern(strtoul((char *) argv[0], NULL, 0));
   else if ((strcmp(command_header, command_list[CMD_PRINT_PARAMS][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_PARAMS][1]) == 0))
     led_array->printSystemParams();
+  else if ((strcmp(command_header, command_list[CMD_DEMO_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DEMO_IDX][1]) == 0))
+    led_array->demo();
   else
   {
     Serial.print(F("Command ["));

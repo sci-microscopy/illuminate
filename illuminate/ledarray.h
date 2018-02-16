@@ -53,14 +53,12 @@
 class LedArray {
   public:
     // Device setup and demo
-    void resetArray();
-    void setup();
-    void demo();
+    void reset();   // Reset the Array
+    void demo();    // Run a demo which tests the functions below
 
     // Pattern commands
-    void drawSingleLed(int16_t led_number);
-    void drawLedList(uint16_t argc, char ** argv);
-    void scanBrightfieldLeds(uint16_t argc, char ** argv);
+    void drawLedList(uint16_t argc, char ** argv);          // Draw a list of LEDs (or just 1)
+    void scanBrightfieldLeds(uint16_t argc, char ** argv);  // Scan brightfield LEDs
     void scanAllLeds(uint16_t argc, char ** argv);
     void drawDpc(uint16_t argc, char ** argv);
     void drawBrightfield(uint16_t argc, char ** argv);;
@@ -75,10 +73,13 @@ class LedArray {
     void drawDiscoPattern(uint16_t nLed);
 
     // Drawing primatives
-    void drawQuadrant(int8_t quadrant_number);
+    void drawQuadrant(int quadrant_number, float start_na, float end_na, bool include_center);
+    void drawCircle(float start_na, float end_na);
     void drawHalfCircle(int8_t half_circle_type, float start_na, float end_na);
+    void scanLedRange(uint16_t delay_ms, float start_na, float end_na, bool print_indicies);
 
     // Triggering
+    bool  getTriggerState(int trigger_index);
     void printTriggerSettings();
     void waitForTriggerState(int trigger_index, bool state);
     void triggerInputTest(uint16_t channel);
@@ -92,8 +93,6 @@ class LedArray {
     void setColor(int16_t argc, char ** argv);
     void clearNaList();
     void buildNaList(float boardDistance);
-
-    void toggleDebug(uint16_t argc, char ** argv);
     void toggleAutoClear(uint16_t argc, char ** argv);
     void drawSpiralPattern(uint16_t delay_ms);
 
@@ -118,10 +117,13 @@ class LedArray {
     void printVersion();
 
     // Internal functions
+    
+    void setDebug(uint16_t new_debug_level);
+    void setup();   // Setup command
     int getArgumentLedNumberPitch(char * command_header);
     void setInterface(LedArrayInterface * interface);
     void notImplemented(const char * command_name);
-    void drawChannel(uint16_t tmp);
+    void drawChannel(int argc, char * *argv);
     void setPinOrder(int argc, char * *argv);
     void notFinished(const char * command_name);
     int getColorChannelCount();
@@ -156,18 +158,19 @@ class LedArray {
     // LED Controller Parameters
     boolean auto_clear_flag = true;
     bool opt_flag = false;
-    bool debug = 1;
+    int debug = 1;
     float objective_na = 0.25;
     float led_array_distance_z = 50.0;
     int color_channel_count = 3;
     char * device_name;
+    int8_t default_brightness = 63;
 
     // Trigger Input (feedback) Settings
     float trigger_feedback_timeout_ms = 1000;
-    uint16_t * trigger_pulse_width_list_us;
-    uint16_t * trigger_start_delay_list_ms;
-    int * trigger_input_mode_list;
-    int * trigger_output_mode_list;
+    uint16_t trigger_pulse_width_list_us[TRIGGER_OUTPUT_COUNT] = {500, 100}; // Pulse width of trigger pulse
+    uint16_t trigger_start_delay_list_us[TRIGGER_OUTPUT_COUNT] = {0, 0};       // Amount to wait after trigger pulse for sequence acquisitions
+    int trigger_input_mode_list[TRIGGER_INPUT_COUNT] = {TRIG_MODE_NONE, TRIG_MODE_NONE};
+    int trigger_output_mode_list[TRIGGER_OUTPUT_COUNT] = {TRIG_MODE_NONE, TRIG_MODE_NONE};
 
     // Default illumination
     uint8_t * led_value;

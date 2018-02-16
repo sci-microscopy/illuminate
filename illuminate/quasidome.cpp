@@ -60,9 +60,10 @@ bool LedArrayInterface::getDebug()
   return (LedArrayInterface::debug);
 }
 
-void LedArrayInterface::setDebug(bool state)
+void LedArrayInterface::setDebug(int state)
 {
   debug = state;
+  Serial.printf(F("(LedArrayInterface::setDebug): Set debug level to %d \n"), debug);
 }
 
 int LedArrayInterface::setTriggerState(int trigger_index, bool state)
