@@ -28,7 +28,7 @@
 #ifndef LED_ARRAY_H
 #define LED_ARRAY_H
 
-#include "quasidome.h"
+#include "target.h"
 #include "ledsequence.h"
 
 #include <Arduino.h>
@@ -69,7 +69,7 @@ class LedArray {
     void drawCdpc(int argc, char * *argv);
     void drawNavDpc();
     void fillArray();
-    void clearArray();
+    void clear();
     void drawDiscoPattern(uint16_t nLed);
 
     // Drawing primatives
@@ -79,7 +79,7 @@ class LedArray {
     void scanLedRange(uint16_t delay_ms, float start_na, float end_na, bool print_indicies);
 
     // Triggering
-    bool  getTriggerState(int trigger_index);
+    bool getTriggerState(int trigger_index);
     void printTriggerSettings();
     void waitForTriggerState(int trigger_index, bool state);
     void triggerInputTest(uint16_t channel);

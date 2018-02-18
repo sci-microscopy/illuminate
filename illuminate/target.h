@@ -25,7 +25,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef USE_QUASI_DOME_ARRAY
+//#ifdef USE_TARGET_ARRAY
 
 #ifndef LED_ARRAY_INTERFACE_H
 #define LED_ARRAY_INTERFACE_H
@@ -35,7 +35,7 @@
 
 // Pin definitions (used internally)
 #define GSCLK 6 // 10 on Arduino Mega
-#define LAT 2   // 44 on Arduino Mega
+#define LAT 3   // 44 on Arduino Mega
 #define SPI_MOSI 11
 #define SPI_CLK 13
 #define TRIGGER_OUTPUT_PIN_0 23
@@ -85,17 +85,17 @@ class LedArrayInterface {
     void notImplemented(const char * command_name);
 
     // Device and Software Descriptors
-    const char * device_name = "quasi-dome";
+    const char * device_name = "sci-target";
     const int serial_number = SN;
     const char * device_hardware_revision = "1.0";
-    const float max_na = 0.98;
-    const int16_t led_count = 581;
+    const float max_na = 0.5;
+    const int16_t led_count = 257;
     const uint16_t center_led = 0;
-    static const int trigger_output_count = 2;
-    static const int trigger_input_count = 2;
-    const int color_channel_count = 3;
-    const char * color_channel_names[3] = {"r", "g", "b"};
-    const float color_channel_center_wavelengths[3] = {0.625, 0.53, 0.48};
+    static const int trigger_output_count = 1;
+    static const int trigger_input_count = 1;
+    const int color_channel_count = 1;
+    const char * color_channel_names[3] = {"g"};
+    const float color_channel_center_wavelengths[3] = {0.53};
     const int bit_depth = 16;
     const bool supports_fast_sequence = false;
 
@@ -701,5 +701,5 @@ PROGMEM const int16_t ledMap[581][8] = {
 };
 
 #endif
-#endif
+//#endif
 

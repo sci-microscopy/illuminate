@@ -25,8 +25,8 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifdef USE_QUASI_DOME_ARRAY
 #include "quasidome.h"
-
 
 void LedArrayInterface::notImplemented(const char * command_name)
 {
@@ -407,3 +407,4 @@ void LedArrayInterface::deviceSetup()
   tlc.setRgbPinOrderSingle(585, 0, 1, 2); // channel 79 has B/R swapped.
 }
 
+#endif

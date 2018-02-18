@@ -158,7 +158,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->drawLedList(argc, (char * *)argv);
 
   else if ((strcmp(command_header, command_list[CMD_CLEAR_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_CLEAR_IDX][1]) == 0))
-    led_array->clearArray();
+    led_array->clear();
   else if ((strcmp(command_header, command_list[CMD_FILL_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_FILL_IDX][1]) == 0))
     led_array->fillArray();
   else if ((strcmp(command_header, command_list[CMD_BF_IDX][0]) == 0)  || (strcmp(command_header, command_list[CMD_BF_IDX][1]) == 0))

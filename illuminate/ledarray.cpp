@@ -257,7 +257,7 @@ void LedArray::fillArray()
 }
 
 /* A function to clear the LED array */
-void LedArray::clearArray()
+void LedArray::clear()
 {
   led_array_interface->setLed(-1, -1, (uint8_t)0);
   led_array_interface->update();
@@ -510,7 +510,7 @@ void LedArray::drawAnnulus(int argc, char * * argv)
   }
 
   if (auto_clear_flag)
-    clearArray();
+    clear();
 
   // Draw circle
   drawCircle(start_na, end_na);
@@ -632,7 +632,7 @@ void LedArray::drawLedList(uint16_t argc, char ** argv)
 {
   uint16_t led_number;
   if (auto_clear_flag)
-    clearArray();
+    clear();
   for (uint16_t led_index = 0; led_index < argc; led_index++)
   {
     led_number = strtoul(argv[led_index], NULL, 0);
@@ -673,7 +673,7 @@ void LedArray::scanAllLeds(uint16_t argc, char ** argv)
   if ((delay_ms >= 0) && (delay_ms < DELAY_MAX))
   {
     // Clear array initially
-    clearArray();
+    clear();
     for (int trigger_index = 0; trigger_index < TRIGGER_OUTPUT_COUNT; trigger_index++)
     {
       if (trigger_output_mode_list[trigger_index] == TRIG_MODE_START)
@@ -973,7 +973,7 @@ void LedArray::drawBrightfield(uint16_t argc, char ** argv)
     Serial.println(F("Drawing brightfield pattern"));
 
   if (auto_clear_flag)
-    clearArray();
+    clear();
 
   // Draw circle
   drawCircle(0.0, objective_na);
