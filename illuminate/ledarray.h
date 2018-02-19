@@ -28,7 +28,7 @@
 #ifndef LED_ARRAY_H
 #define LED_ARRAY_H
 
-#include "target.h"
+#include "ledarrayinterface.h"
 #include "ledsequence.h"
 
 #include <Arduino.h>
@@ -156,7 +156,7 @@ class LedArray {
     LedSequence led_sequence;
 
     // LED Controller Parameters
-    boolean auto_clear_flag = true;
+    boolean auto_clear_flag = false;
     bool opt_flag = false;
     int debug = 1;
     float objective_na = 0.25;
@@ -167,10 +167,10 @@ class LedArray {
 
     // Trigger Input (feedback) Settings
     float trigger_feedback_timeout_ms = 1000;
-    uint16_t trigger_pulse_width_list_us[TRIGGER_OUTPUT_COUNT] = {500, 100}; // Pulse width of trigger pulse
-    uint16_t trigger_start_delay_list_us[TRIGGER_OUTPUT_COUNT] = {0, 0};       // Amount to wait after trigger pulse for sequence acquisitions
-    int trigger_input_mode_list[TRIGGER_INPUT_COUNT] = {TRIG_MODE_NONE, TRIG_MODE_NONE};
-    int trigger_output_mode_list[TRIGGER_OUTPUT_COUNT] = {TRIG_MODE_NONE, TRIG_MODE_NONE};
+    uint16_t trigger_pulse_width_list_us[];
+    uint16_t trigger_start_delay_list_us[];
+    int trigger_input_mode_list[];
+    int trigger_output_mode_list[];
 
     // Default illumination
     uint8_t * led_value;

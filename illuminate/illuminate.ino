@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_TARGET_ARRAY 1
 
 // Include various files depending on which LED array is used
-#include "target.h"
+#include "ledarrayinterface.h"
 #include "commandrouting.h"
 #include "ledarray.h"
 

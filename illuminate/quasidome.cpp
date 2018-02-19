@@ -24,9 +24,8 @@
    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-#ifdef USE_QUASI_DOME_ARRAY
-#include "quasidome.h"
+#ifdef AAA
+#include "ledarrayinterface.h"
 
 void LedArrayInterface::notImplemented(const char * command_name)
 {
@@ -229,6 +228,7 @@ void LedArrayInterface::deviceSetup()
   SPI.setClockDivider(SPI_CLOCK_DIV4);
 
   tlc.init(LAT, SPI_MOSI, SPI_CLK);
+    tlc.init(tlc_chip_count, true, LAT, SPI_MOSI, SPI_CLK);
 
   // We must set dot correction values, so set them all to the brightest adjustment
   tlc.setAllDcData(127);
@@ -406,5 +406,4 @@ void LedArrayInterface::deviceSetup()
   tlc.setRgbPinOrderSingle(500, 0, 1, 2); // channel 500 has B/R swapped.
   tlc.setRgbPinOrderSingle(585, 0, 1, 2); // channel 79 has B/R swapped.
 }
-
 #endif
