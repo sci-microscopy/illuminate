@@ -167,10 +167,10 @@ class LedArray {
 
     // Trigger Input (feedback) Settings
     float trigger_feedback_timeout_ms = 1000;
-    uint16_t trigger_pulse_width_list_us[];
-    uint16_t trigger_start_delay_list_us[];
-    int trigger_input_mode_list[];
-    int trigger_output_mode_list[];
+    uint16_t * trigger_pulse_width_list_us;
+    uint16_t * trigger_start_delay_list_us;
+    int * trigger_input_mode_list;
+    int * trigger_output_mode_list;
 
     // Default illumination
     uint8_t * led_value;

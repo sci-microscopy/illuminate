@@ -44,7 +44,7 @@ void LedArray::printLedPositions(bool print_na)
 
   for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
-    led_number = (int16_t)pgm_read_word(&(ledMap[led_index][0]));
+    led_number = (int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][0]));
 
     if (print_na)
     {
@@ -60,10 +60,10 @@ void LedArray::printLedPositions(bool print_na)
     }
     else
     {
-      x = float((int16_t)pgm_read_word(&(ledMap[led_index][2]))) / 100.0;
-      y = float((int16_t)pgm_read_word(&(ledMap[led_index][3]))) / 100.0;
-      z = float((int16_t)pgm_read_word(&(ledMap[led_index][4]))) / 100.0;
-      z = z - float((int16_t)pgm_read_word(&(ledMap[0][4]))) / 100.0 + led_array_distance_z;
+      x = float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][2]))) / 100.0;
+      y = float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][3]))) / 100.0;
+      z = float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][4]))) / 100.0;
+      z = z - float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[0][4]))) / 100.0 + led_array_distance_z;
 
       Serial.printf(F("        \"%d\" : ["), led_number);
       Serial.printf(F("%02.02f, "), x);
@@ -84,7 +84,7 @@ void LedArray::printCurrentLedValues()
   Serial.println(F("{\n    \"led_values\" : {"));
   for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
-    led_number = (int16_t)pgm_read_word(&(ledMap[led_index][0]));
+    led_number = (int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][0]));
 
     Serial.printf(F("        \"%d\" : ["), led_number);
     for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
@@ -218,10 +218,10 @@ void LedArray::buildNaList(float new_board_distance)
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
     led_position_list_na[led_index] = new float[3];
-    if ((int16_t)pgm_read_word(&(ledMap[led_index][1])) >= 0)
+    if ((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][1])) >= 0)
     {
-      x = float((int16_t)pgm_read_word(&(ledMap[led_index][2]))) / 100.0;
-      y = float((int16_t)pgm_read_word(&(ledMap[led_index][3]))) / 100.0;
+      x = float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][2]))) / 100.0;
+      y = float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][3]))) / 100.0;
       z = led_array_distance_z;
 
       yz = sqrt(y * y + z * z);
@@ -286,7 +286,7 @@ void LedArray::printTriggerSettings()
     Serial.print("Trigger input pin index ");
     Serial.print(trigger_index);
     Serial.print(F(" uses Pin #"));
-    Serial.println(led_array_interface->trigger_input_pin_list[trigger_index]);
+    Serial.println(LedArrayInterface::trigger_input_pin_list[trigger_index]);
   }
 
   // Output Pins
@@ -295,7 +295,7 @@ void LedArray::printTriggerSettings()
     Serial.print(F("Trigger output pin index "));
     Serial.print(trigger_index);
     Serial.print(F(" uses Pin #"));
-    Serial.print(led_array_interface->trigger_output_pin_list[trigger_index]);
+    Serial.print(LedArrayInterface::trigger_output_pin_list[trigger_index]);
     Serial.print(F(" with pulse width "));
     Serial.print(trigger_pulse_width_list_us[trigger_index]);
     Serial.print(F("us. Start delay is "));
@@ -626,9 +626,9 @@ void LedArray::triggerInputTest(uint16_t channel)
 {
   led_array_interface->setLed(-1, -1, (uint8_t)0);
   led_array_interface->update();
-  Serial.println(led_array_interface->trigger_input_state[channel]);
+  Serial.println(LedArrayInterface::trigger_input_state[channel]);
   Serial.print("Begin trigger input test for channel "); Serial.println(channel);
-  waitForTriggerState(channel, !led_array_interface->trigger_input_state[channel]);
+  waitForTriggerState(channel, !LedArrayInterface::trigger_input_state[channel]);
   Serial.print("Passed trigger input test for channel "); Serial.println(channel);
   led_array_interface->setLed(-1, -1, (uint8_t)0);
   led_array_interface->setLed(0, -1, (uint8_t)255);
@@ -1670,6 +1670,12 @@ void LedArray::setup()
   // Initialize led array
   led_array_interface->deviceSetup();
 
+  // Initialize trigger setting arrays
+  trigger_pulse_width_list_us = new uint16_t [led_array_interface->trigger_output_count];
+  trigger_start_delay_list_us = new uint16_t [led_array_interface->trigger_output_count];
+  trigger_input_mode_list = new int [led_array_interface->trigger_input_count];
+  trigger_output_mode_list = new int [led_array_interface->trigger_output_count];
+  
   // Set up trigger pins
   for (int trig_input_pin = 0; trig_input_pin < led_array_interface->trigger_input_count; trig_input_pin++)
     pinMode(led_array_interface->trigger_input_pin_list[trig_input_pin], INPUT);

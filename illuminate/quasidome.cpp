@@ -24,7 +24,8 @@
    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifdef AAA
+#include "illuminate.h"
+#ifdef USE_QUASI_DOME_ARRAY
 #include "ledarrayinterface.h"
 
 void LedArrayInterface::notImplemented(const char * command_name)
@@ -36,7 +37,7 @@ void LedArrayInterface::notImplemented(const char * command_name)
 
 uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_index)
 {
-  int16_t channel_number = (int16_t)pgm_read_word(&(ledMap[led_number][1]));
+  int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_number][1]));
   if (channel_number >= 0)
     return tlc.getChannelValue(channel_number, color_channel_index);
   else
@@ -175,13 +176,13 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
   {
     for (uint16_t led_index = 0; led_index < led_count; led_index++)
     {
-      int16_t channel_number = (int16_t)pgm_read_word(&(ledMap[led_index][1]));
+      int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
       setChannel(channel_number, color_channel_number, value);
     }
   }
   else
   {
-    int16_t channel_number = (int16_t)pgm_read_word(&(ledMap[led_number][1]));
+    int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_number][1]));
     setChannel(channel_number, color_channel_number, value);
   }
 }

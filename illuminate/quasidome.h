@@ -114,7 +114,7 @@ class LedArrayInterface {
 };
 
 // FORMAT: hole number, channel, 100*x, 100*y, 100*z
-PROGMEM const int16_t ledMap[581][8] = {
+PROGMEM const int16_t led_positions[581][8] = {
   {0, 68, 0, 0, 5000},
   {1, 65, -361, 0, 5000},
   {2, 56, 0, -361, 5000},
