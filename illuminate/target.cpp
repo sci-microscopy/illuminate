@@ -36,7 +36,7 @@
 #define SPI_MOSI 11
 #define SPI_CLK 13
 #define TRIGGER_OUTPUT_PIN_0 23
-#define TRIGGER_INPUT_PIN_0 20
+#define TRIGGER_INPUT_PIN_0 21
 #define TRIGGER_OUTPUT_COUNT 1
 #define TRIGGER_INPUT_COUNT 1
 
@@ -46,7 +46,7 @@
 const char * LedArrayInterface::device_name = "sci-target";
 const int LedArrayInterface::serial_number = SN;
 const char * LedArrayInterface::device_hardware_revision = "1.0";
-const float LedArrayInterface::max_na = 0.5;
+const float LedArrayInterface::max_na = 1.0;
 const int16_t LedArrayInterface::led_count = 257;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 1;
@@ -67,7 +67,7 @@ int LedArrayInterface::debug = 0;
 
 /**** Device-specific variables ****/
 TLC5955 tlc; // TLC5955 object
-uint32_t gsclk_frequency = 5000000;
+uint32_t gsclk_frequency = 1000000;
 int update_write_count = 2;
 
 // Initialize LED positions

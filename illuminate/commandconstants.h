@@ -29,7 +29,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 47
+#define COMMAND_COUNT 45
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -81,10 +81,9 @@
 #define CMD_PRINT_PARAMS 40
 #define CMD_PRINT_LED_POSITIONS 41
 #define CMD_PRINT_LED_POSITIONS_NA 42
-#define CMD_PRINT_TERMINATOR 43
 
-#define CMD_DISCO_IDX 44
-#define CMD_DEMO_IDX 45
+#define CMD_DISCO_IDX 43
+#define CMD_DEMO_IDX 44
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -147,7 +146,6 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"pp", "printParams", "Prints system parameters such as NA, LED Array z-distance, etc. in the format of a json file", "pp"},
   {"pledpos", "printLedPositions", "Prints the positions of each LED in cartesian coordinates.", "pledpos"},
   {"pledposna", "printLedPositionsNa", "Prints the positions of each LED in NA coordinates (NA_x, NA_y, NA_distance", "pledposna"},
-  {"pterm", "printTerminator", "Prints the command terminator", "pterm"},
 
   // Stored Patterns
   {"disco", "party", "Illuminate a random color pattern of LEDs", "disco,[Number of LEDs in pattern]"},

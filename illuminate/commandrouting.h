@@ -148,11 +148,11 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_AUTOCLEAR_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_AUTOCLEAR_IDX][1]) == 0))
     led_array->toggleAutoClear(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_NA_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_NA_IDX][1]) == 0))
-    led_array->setNa(atol((char *)argv[0]));
+    led_array->setNa(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_SET_COLOR_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_COLOR_IDX][1]) == 0))
     led_array->setColor(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_SET_ARRAY_DIST][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_ARRAY_DIST][1]) == 0))
-    led_array->setDistanceZ(atof((char * )argv[0]));
+    led_array->setDistanceZ(argc, (char * *) argv);
 
   else if ((strcmp(command_header, command_list[CMD_LED_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_LED_IDX][1]) == 0))
     led_array->drawLedList(argc, (char * *)argv);
@@ -373,6 +373,10 @@ void CommandRouter::processSerialStream()
           else if (argument_bit_depth == 16)
             route(command, argument_count, (void **) argument_list_uint16, argument_led_number_list);
 
+          // Clear serial buffer so we don't act on any serial input received during command processing.
+          while (Serial.available())
+            Serial.read();
+            
           if (argument_count > 0)
           {
             // Delete argument list elements

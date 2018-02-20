@@ -48,7 +48,7 @@
 #define MIN_SEQUENCE_DELAY_FAST 2 // Min deblur pattern delay for fast sequence in us (set by hardware)
 #define DELAY_MAX 2000        // Global maximum amount to wait inside loop
 #define INVALID_NA -2000.0    // Represents an invalid NA
-#define DEFAULT_NA 25         // 100 * default NA, int
+#define DEFAULT_NA 0.25         // 100 * default NA, int
 
 class LedArray {
   public:
@@ -88,8 +88,8 @@ class LedArray {
     void setTriggerState(int trigger_index, bool state, bool show_output);
 
     // Setting system parameters
-    void setNa(int8_t new_na);
-    void setDistanceZ(float new_z);
+    void setNa(int argc, char ** argv);
+    void setDistanceZ(int argc, char ** argv);
     void setColor(int16_t argc, char ** argv);
     void clearNaList();
     void buildNaList(float boardDistance);
@@ -156,9 +156,8 @@ class LedArray {
     LedSequence led_sequence;
 
     // LED Controller Parameters
-    boolean auto_clear_flag = false;
-    bool opt_flag = false;
-    int debug = 1;
+    boolean auto_clear_flag = true;
+    int debug = 0;
     float objective_na = 0.25;
     float led_array_distance_z = 50.0;
     int color_channel_count = 3;
