@@ -52,7 +52,6 @@ const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 1;
 const int LedArrayInterface::trigger_input_count = 1;
 const int LedArrayInterface::color_channel_count = 1;
-const float color_channel_center_wavelengths[] = {0.53};
 const char LedArrayInterface::color_channel_names[] = {'g'};
 const float LedArrayInterface::color_channel_center_wavelengths[] = {0.53};
 const int LedArrayInterface::bit_depth = 16;

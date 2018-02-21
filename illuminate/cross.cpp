@@ -283,7 +283,7 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_index, 
         int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
 
         if (channel_number >= 0)
-          led_values[led_number] = value;
+          led_values[led_index] = value;
         else
           Serial.println(F("ERROR (LedArrayInterface::setLed): Invalid led number."));
       }
