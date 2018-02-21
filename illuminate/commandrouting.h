@@ -234,7 +234,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     delay(strtoul((char *) argv[0], NULL, 0));
 
   else if ((strcmp(command_header, command_list[CMD_DISCO_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DISCO_IDX][1]) == 0))
-    led_array->drawDiscoPattern(strtoul((char *) argv[0], NULL, 0));
+    led_array->drawDiscoPattern();
   else if ((strcmp(command_header, command_list[CMD_PRINT_PARAMS][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_PARAMS][1]) == 0))
     led_array->printSystemParams();
   else if ((strcmp(command_header, command_list[CMD_DEMO_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DEMO_IDX][1]) == 0))

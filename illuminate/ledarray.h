@@ -70,7 +70,7 @@ class LedArray {
     void drawNavDpc();
     void fillArray();
     void clear();
-    void drawDiscoPattern(uint16_t nLed);
+    void drawDiscoPattern();
 
     // Drawing primatives
     void drawQuadrant(int quadrant_number, float start_na, float end_na, bool include_center);

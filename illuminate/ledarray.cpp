@@ -155,7 +155,7 @@ void LedArray::printSystemParams()
     Serial.print('\"');
     Serial.print(LedArrayInterface::color_channel_names[channel_index]);
     Serial.print('\"');
-    Serial.printf(" : %.3f", LedArrayInterface::color_channel_center_wavelengths);
+    Serial.printf(" : %.3f", LedArrayInterface::color_channel_center_wavelengths[channel_index]);
   }
   Serial.print(F("},\n    \"led_array_interface->trigger_input_count\" : "));
   Serial.print(led_array_interface->trigger_input_count);
@@ -179,22 +179,28 @@ void LedArray::reset()
 }
 
 /* A function to draw a random "disco" pattern. For parties, mostly. */
-void LedArray::drawDiscoPattern(uint16_t nLed)
+void LedArray::drawDiscoPattern()
 {
-  if (nLed <= 0)
-    nLed = 10;
+  // Determine number of LEDs to illuminate at once
+  int led_on_count = (int)round(led_array_interface->led_count / 4.0);
+
+  // Clear the array
+  led_array_interface->clear();
+
+  // Party time
   while (Serial.available() == 0)
   {
-    led_array_interface->setLed(-1, -1, false);
-    for (uint16_t led_index = 0; led_index < nLed; led_index++)
+    for (uint16_t led_index = 0; led_index < led_on_count; led_index++)
     {
-      led_index = random(1, led_array_interface->led_count);
+      led_index = random(0, led_array_interface->led_count);
       for (int color_channel_index = 0; color_channel_index <  led_array_interface->color_channel_count; color_channel_index++)
         led_array_interface->setLed(led_index, color_channel_index, (uint8_t)random(0, 255));
     }
     led_array_interface->update();
-    delay(1);
+    delay(10);
   }
+
+  // Clear the array
   led_array_interface->clear();
 }
 
@@ -260,8 +266,7 @@ void LedArray::fillArray()
 /* A function to clear the LED array */
 void LedArray::clear()
 {
-  led_array_interface->setLed(-1, -1, (uint8_t)0);
-  led_array_interface->update();
+  led_array_interface->clear();
 }
 
 /* A function to set the numerical aperture of the system*/
@@ -1178,7 +1183,7 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
   }
 
   // Clear LED Array
-  led_array_interface->setLed(-1, -1, false);
+  led_array_interface->clear();
   led_array_interface->update();
 
   // Initialize variables
@@ -1220,7 +1225,7 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
       elapsedMicros elapsed_us_inner;
 
       // Set all LEDs to zero
-      led_array_interface->setLed(-1, -1, false);
+      led_array_interface->clear();
 
       // Define pattern
       for (uint16_t led_idx = 0; led_idx < led_sequence.led_counts[pattern_index]; led_idx++)
@@ -1277,13 +1282,6 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
 
 void LedArray::runSequenceFast(uint16_t argc, char ** argv)
 {
-  // Check if this LED array supports fast sequencing
-  if (!led_array_interface->supports_fast_sequence)
-  {
-    Serial.println(F("ERROR (LedArray::runSequenceFast): This array does not support fast sequencing!"));
-    return;
-  }
-
   if (debug)
     Serial.println(F("Starting fast Sequence"));
 
@@ -1358,7 +1356,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
   }
 
   // Clear LED Array
-  led_array_interface->setLedFast(-1, -1, 0);
+  led_array_interface->clear();
 
   // Initialize variables
   uint16_t led_number;
@@ -1482,15 +1480,18 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
       elapsedMicros elapsed_us_display;
 
       // Set all LEDs to zero
-      led_array_interface->setLedFast(-1, -1, 0);
+      led_array_interface->setLedFast(-1, -1, false);
 
       // Define pattern
       for (uint16_t led_idx = 0; led_idx < led_sequence.led_counts[pattern_index]; led_idx++)
       {
         led_number = led_sequence.led_list[pattern_index][led_idx];
-        led_array_interface->setLedFast(led_number, 0, true); // assume the fast that there is a LED # implies this LED is on
-        // TODO: make the above line respect color channels
+        led_array_interface->setLedFast(led_number, -1, true); // assume the fast that there is a LED # implies this LED is on
       }
+
+      // Check if led_count is zero - if so, clear the array
+      if (led_sequence.led_counts[pattern_index] == 0)
+        led_array_interface->setLedFast(-1, -1, false);
 
       // Ensure that we haven't set too short of a delay
       if ((float)elapsed_us_display > delay_us_used)
@@ -1502,7 +1503,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
       }
 
       // Set all LEDs to zero
-      led_array_interface->setLedFast(-1, -1, 0);
+      led_array_interface->setLedFast(-1, -1, false);
 
       // Wait for the defined mininum amount of time (delay_ms) before checking trigger input state
       while ((float)elapsed_us_display < (delay_us_used)) {} // Wait until this is true
@@ -1521,7 +1522,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
   }
 
   // Clear LED Array
-  led_array_interface->setLedFast(-1, -1, 0);
+  led_array_interface->setLedFast(-1, -1, false);
 
   // Wait for all devices to finish acquiring
   for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)

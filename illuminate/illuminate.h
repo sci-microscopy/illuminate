@@ -25,5 +25,7 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#define USE_TARGET_ARRAY 1
+// This file allows the user to define which LED array interface is usd. This should be set before compilation.
+//#define USE_TARGET_ARRAY 1
+#define USE_QUADRANT_ARRAY 1
 //#define USE_QUASI_DOME 1
