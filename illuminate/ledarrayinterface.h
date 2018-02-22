@@ -41,7 +41,7 @@ class LedArrayInterface {
     void setLed(int16_t led_number, int16_t color_channel_index, bool value);         // LED brightness (boolean)
 
     // Fast LED update
-    void setLedFast(uint16_t led_number, int color_channel_index, bool value);
+    void setLedFast(int16_t led_number, int color_channel_index, bool value);
 
     // Get LED Value
     uint16_t getLedValue(uint16_t led_number, int color_channel_index);

@@ -97,7 +97,9 @@ bool LedArrayInterface::getDebug()
 void LedArrayInterface::setDebug(int state)
 {
   debug = state;
+  Serial.printf(F("(LedArrayInterface::setDebug): Set debug level to %d \n"), debug);
 }
+
 
 void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel_index, uint8_t value)
 {
@@ -141,11 +143,11 @@ void LedArrayInterface::setChannelFast(uint16_t channel_number, int color_channe
     Serial.println(F("ERROR (LedArrayInterface::setChannelFast): invalid channel."));
   else
   {
+    pinMode(pin_numbers[channel_number], OUTPUT);
     digitalWriteFast(pin_numbers[channel_number], value);
     led_values[channel_number] = value;
   }
 }
-
 
 uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_index)
 {
@@ -166,19 +168,35 @@ void LedArrayInterface::setPinOrder(int16_t led_number, int16_t color_channel_in
   notImplemented("SetPinOrder");
 }
 
-void LedArrayInterface::setLedFast(uint16_t led_number, int color_channel_index, bool value)
+void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, bool value)
 {
   if (led_number < 0)
   {
-    for (uint16_t led_index = 0; led_index < 4; led_index++)
+    for (uint16_t led_index = 0; led_index < led_count; led_index++)
     {
       // Get channel number
       int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
 
       // Update
+      if (channel_number >= 0)
       {
+        if (debug >= 2)
+        {
+          Serial.print(F("Quickly Setting pin #"));
+          Serial.print(pin_numbers[channel_number]);
+          Serial.print(F(" to "));
+          Serial.println(value);
+        }
+        pinMode(pin_numbers[channel_number], OUTPUT);
         digitalWriteFast(pin_numbers[channel_number], value);
         led_values[led_index] = value;
+      }
+      else
+      {
+        Serial.print(F("ERROR (LedArrayInterface::setLedFast, all leds): Invalid LED number (led# "));
+        Serial.print(led_number);
+        Serial.print(F(", channel #"));
+        Serial.println(channel_number);
       }
     }
   }
@@ -190,11 +208,19 @@ void LedArrayInterface::setLedFast(uint16_t led_number, int color_channel_index,
     // Update
     if (channel_number >= 0)
     {
+      if (debug >= 2)
+      {
+        Serial.print(F("Quickly Setting pin #"));
+        Serial.print(pin_numbers[channel_number]);
+        Serial.print(F(" to "));
+        Serial.println(value);
+      }
+      pinMode(pin_numbers[channel_number], OUTPUT);
       digitalWriteFast(pin_numbers[channel_number], value);
       led_values[led_number] = value;
     }
     else
-      Serial.println(F("ERROR (LedArrayInterface::setLedFast): Invalid LED number."));
+      Serial.println(F("ERROR (LedArrayInterface::setLedFast, single led): Invalid LED number."));
   }
 }
 
@@ -266,9 +292,10 @@ void LedArrayInterface::update()
 
 void LedArrayInterface::clear()
 {
-  for (uint16_t led_index = 0; led_index < 4; led_index++)
-    setLed(led_index, 0, false);
-  update();
+  setLedFast(-1, -1, false);
+  //  for (uint16_t led_index = 0; led_index < 4; led_index++)
+  //    setLed(led_index, 0, false);
+  //  update();
 }
 
 void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_index, uint8_t value)
@@ -323,13 +350,13 @@ void LedArrayInterface::deviceSetup()
   // For simplicity all three grayscale clocks are tied to the same pin
   for (uint16_t led_index = 0; led_index < 4; led_index++)
   {
-    pinMode(pin_numbers[led_index], OUTPUT);
-    //analogWriteFrequency(pin_numbers[led_index], 375000);
+    int16_t channel = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
+    pinMode(pin_numbers[channel], OUTPUT);
+    Serial.println(pin_numbers[channel]);
   }
 
   // Adjust PWM timer for 8-bit precision
   analogWriteResolution(8);
-
 
   // Output trigger Pins
   for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
