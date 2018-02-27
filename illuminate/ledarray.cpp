@@ -253,7 +253,7 @@ void LedArray::clearNaList()
 /* A function to calculate the NA of each LED given the XYZ position and an offset */
 void LedArray::buildNaList(float new_board_distance)
 {
-  float Na_x, Na_y, Na_d, yz, xz, x, y, z;
+  float Na_x, Na_y, Na_d, yz, xz, x, y, z, z0;
   // Initialize new position list
   led_position_list_na = new float * [led_array_interface->led_count];
 
@@ -267,7 +267,8 @@ void LedArray::buildNaList(float new_board_distance)
     {
       x = float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][2]))) / 100.0;
       y = float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][3]))) / 100.0;
-      z = led_array_distance_z;
+      z0 = float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[0][4]))) / 100.0; // z position of center LED
+      z = float((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][4]))) / 100.0 - z0 + led_array_distance_z;
 
       yz = sqrt(y * y + z * z);
       xz = sqrt(x * x + z * z);
@@ -540,8 +541,8 @@ void LedArray::drawAnnulus(int argc, char * * argv)
   }
   else if (argc == 2)
   {
-    start_na = atof(argv[0]);
-    end_na = atof(argv[1]);
+    start_na = (float)atoi(argv[0]) / 100.0;
+    end_na = (float)atoi(argv[1]) / 100.0;
   }
   else
   {
@@ -1805,6 +1806,9 @@ void LedArray::setup()
 {
   // Initialize led array
   led_array_interface->deviceSetup();
+
+  // Set z-distance to device default
+  led_array_distance_z = led_array_interface->led_array_distance_z_default;
 
   // Initialize trigger setting arrays
   trigger_pulse_width_list_us = new uint16_t [led_array_interface->trigger_output_count];

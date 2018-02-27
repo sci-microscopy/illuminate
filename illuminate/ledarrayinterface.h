@@ -88,6 +88,7 @@ class LedArrayInterface {
     static const int bit_depth;
     static const int16_t tlc_chip_count;
     static const bool supports_fast_sequence;
+    static const float led_array_distance_z_default;
 
     // Debug flag
     static int debug;

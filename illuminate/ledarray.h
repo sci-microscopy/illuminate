@@ -159,7 +159,7 @@ class LedArray {
     boolean auto_clear_flag = true;
     int debug = 0;
     float objective_na = 0.25;
-    float led_array_distance_z = 50.0;
+    float led_array_distance_z = 60.0;
     int color_channel_count = 3;
     char * device_name;
     int8_t default_brightness = 63;

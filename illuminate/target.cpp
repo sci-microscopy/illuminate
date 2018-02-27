@@ -57,6 +57,7 @@ const float LedArrayInterface::color_channel_center_wavelengths[] = {0.53};
 const int LedArrayInterface::bit_depth = 16;
 const int16_t LedArrayInterface::tlc_chip_count = 6;
 const bool LedArrayInterface::supports_fast_sequence = false;
+const float LedArrayInterface::led_array_distance_z_default = 50.0;
 
 const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0};
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0};
