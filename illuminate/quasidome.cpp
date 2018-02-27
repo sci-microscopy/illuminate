@@ -30,13 +30,15 @@
 
 // Pin definitions (used internally)
 #define GSCLK 6 // 10 on Arduino Mega
-#define LAT 3   // 44 on Arduino Mega
+#define LAT 2   // 44 on Arduino Mega
 #define SPI_MOSI 11
 #define SPI_CLK 13
 #define TRIGGER_OUTPUT_PIN_0 23
-#define TRIGGER_INPUT_PIN_0 21
-#define TRIGGER_OUTPUT_COUNT 1
-#define TRIGGER_INPUT_COUNT 1
+#define TRIGGER_OUTPUT_PIN_1 22
+#define TRIGGER_INPUT_PIN_0 20
+#define TRIGGER_INPUT_PIN_1 19
+#define TRIGGER_OUTPUT_COUNT 2
+#define TRIGGER_INPUT_COUNT 2
 
 #define SN 1
 
@@ -53,19 +55,18 @@ const int LedArrayInterface::color_channel_count = 3;
 const char LedArrayInterface::color_channel_names[] = {'r', 'g', 'b'};
 const float LedArrayInterface::color_channel_center_wavelengths[] = {0.48, 0.525, 0.625};
 const int LedArrayInterface::bit_depth = 16;
-const int16_t LedArrayInterface::tlc_chip_count = 6;
+const int16_t LedArrayInterface::tlc_chip_count = 37;
 const bool LedArrayInterface::supports_fast_sequence = false;
 
-const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0};
-const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0};
-bool LedArrayInterface::trigger_input_state[] = {false};
+const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, TRIGGER_OUTPUT_PIN_1};
+const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
+bool LedArrayInterface::trigger_input_state[] = {false, false};
 
 int LedArrayInterface::debug = 0;
 
 /**** Device-specific variables ****/
 TLC5955 tlc; // TLC5955 object
-uint32_t gsclk_frequency = 1000000;
-int update_write_count = 2;
+uint32_t gsclk_frequency = 10000000;
 
 // FORMAT: hole number, channel, 100*x, 100*y, 100*z
 PROGMEM const int16_t LedArrayInterface::led_positions[][5] = {
@@ -678,7 +679,7 @@ uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_i
   }
 }
 
-void LedArrayInterface::setLedFast(uint16_t led_number, int color_channel_index, bool value)
+void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, bool value)
 {
   notImplemented("setLedFast");
 }
@@ -691,7 +692,7 @@ bool LedArrayInterface::getDebug()
 
 void LedArrayInterface::setDebug(int state)
 {
-  debug = state;
+  LedArrayInterface::debug = state;
   Serial.printf(F("(LedArrayInterface::setDebug): Set debug level to %d \n"), debug);
 }
 
@@ -857,7 +858,7 @@ void LedArrayInterface::deviceSetup()
   pinMode(GSCLK, OUTPUT);
   pinMode(LAT, OUTPUT);
 
-  // Adjust PWM timer for maximum GSCLK frequency (5 MHz)
+  // Adjust PWM timer for maximum GSCLK frequency
   analogWriteFrequency(GSCLK, gsclk_frequency);
   analogWriteResolution(1);
   analogWrite(GSCLK, 1);
@@ -865,9 +866,9 @@ void LedArrayInterface::deviceSetup()
   // The library does not ininiate SPI for you, so as to prevent issues with other SPI libraries
   SPI.setMOSI(SPI_MOSI);
   SPI.begin();
-  SPI.setClockDivider(SPI_CLOCK_DIV4);
+  SPI.setClockDivider(SPI_CLOCK_DIV128);
 
-  tlc.init(tlc_chip_count, true, LAT, SPI_MOSI, SPI_CLK);
+  tlc.init(tlc_chip_count, false, LAT, SPI_MOSI, SPI_CLK);
 
   // We must set dot correction values, so set them all to the brightest adjustment
   tlc.setAllDcData(127);
@@ -892,9 +893,8 @@ void LedArrayInterface::deviceSetup()
   tlc.setRgbPinOrder(2, 1, 0);
 
   // Update the GS register (ideally LEDs should be dark up to here)
-  tlc.setAllLed(0);
-  tlc.updateLeds();
-  
+  clear();
+
   // Output trigger Pins
   for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
   {
@@ -906,6 +906,7 @@ void LedArrayInterface::deviceSetup()
   for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
     pinMode(trigger_input_pin_list[trigger_index], INPUT);
 
+  Serial.println("PIN SETUP");
   // Correct LED pins
   tlc.setRgbPinOrderSingle(79, 0, 1, 2); // channel 79 has B/R swapped.
   tlc.setRgbPinOrderSingle(80, 0, 1, 2); // channel 80 has B/R swapped.

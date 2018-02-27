@@ -33,11 +33,7 @@
 
 #define MAX_ARGUMENT_ELEMENT_LENGTH 10
 #define MAX_COMMAND_LENGTH 20
-#define MAX_ARGUMENT_COUNT_CHAR 600
-#define MAX_ARGUMENT_COUNT_BOOL 2000
-#define MAX_ARGUMENT_COUNT_UINT8 2000
-#define MAX_ARGUMENT_COUNT_UINT16 2000
-#define MAX_LED_NUMBER_ARGUMENT_COUNT 1000
+#define MAX_ARGUMENT_COUNT_CHAR 100
 
 #define COMMAND_ROUTING_VERSION 1.11
 #include "commandconstants.h"
@@ -114,8 +110,6 @@ void CommandRouter::setDebug(int16_t argc, char * * argv)
   else
     Serial.println(F("ERROR (CommandRouter::setDebug): Invalud argument count."));
 }
-
-
 
 int CommandRouter::getArgumentBitDepth(char * command_header)
 {
@@ -239,6 +233,8 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->printSystemParams();
   else if ((strcmp(command_header, command_list[CMD_DEMO_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DEMO_IDX][1]) == 0))
     led_array->demo();
+  else if ((strcmp(command_header, command_list[CMD_WATER_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_WATER_IDX][1]) == 0))
+    led_array->waterDrop();
   else
   {
     Serial.print(F("Command ["));
@@ -278,10 +274,11 @@ void CommandRouter::processSerialStream()
           {
             if (debug > 0) {
               Serial.print(F("Copying new argument inside newline with index "));
-              Serial.println(argument_total_count);
+              Serial.print(argument_total_count);
+              Serial.print(F(" with bit depth "));
+              Serial.println(argument_bit_depth);
             }
-
-
+            
             // Character argument (standard)
             if (argument_bit_depth == -1)
             {
@@ -376,7 +373,7 @@ void CommandRouter::processSerialStream()
           // Clear serial buffer so we don't act on any serial input received during command processing.
           while (Serial.available())
             Serial.read();
-            
+
           if (argument_count > 0)
           {
             // Delete argument list elements

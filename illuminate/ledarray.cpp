@@ -190,6 +190,8 @@ void LedArray::drawDiscoPattern()
   // Party time
   while (Serial.available() == 0)
   {
+    led_array_interface->clear();
+
     for (uint16_t led_index = 0; led_index < led_on_count; led_index++)
     {
       led_index = random(0, led_array_interface->led_count);
@@ -198,6 +200,42 @@ void LedArray::drawDiscoPattern()
     }
     led_array_interface->update();
     delay(10);
+  }
+
+  // Clear the array
+  led_array_interface->clear();
+}
+
+/* A function to draw a random "disco" pattern. For parties, mostly. */
+void LedArray::waterDrop()
+{
+  // Clear the array
+  led_array_interface->clear();
+
+  float na_period = led_position_list_na[led_array_interface->led_count - 1][0] * led_position_list_na[led_array_interface->led_count - 1][0];
+  na_period += led_position_list_na[led_array_interface->led_count - 1][1] * led_position_list_na[led_array_interface->led_count - 1][1];
+  na_period = sqrt(na_period) / 2.0;
+
+  Serial.println(na_period);
+
+  uint8_t value;
+  float na;
+
+  uint8_t phase_counter = 0;
+  while (Serial.available() == 0)
+  {
+    for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
+    {
+      na = sqrt(led_position_list_na[led_index][0] * led_position_list_na[led_index][0] + led_position_list_na[led_index][1] * led_position_list_na[led_index][1]);
+      value = (uint8_t)round(sin(na / na_period * 2 * 3.14 + (float)phase_counter / 255 * 3.14 - 3.14) * 255);
+      for (int color_channel_index = 0; color_channel_index <  led_array_interface->color_channel_count; color_channel_index++)
+        led_array_interface->setLed(led_index, color_channel_index, value);
+    }
+    led_array_interface->update();
+    delay(10);
+    phase_counter++;
+    if (phase_counter == 255)
+      phase_counter = 0;
   }
 
   // Clear the array
@@ -649,9 +687,13 @@ void LedArray::triggerInputTest(uint16_t channel)
 /* Draw a LED list */
 void LedArray::drawLedList(uint16_t argc, char ** argv)
 {
+  if (debug >= 2)
+    Serial.println(F("LedArray::drawLedList called"));
+
   uint16_t led_number;
   if (auto_clear_flag)
     clear();
+
   for (uint16_t led_index = 0; led_index < argc; led_index++)
   {
     led_number = strtoul(argv[led_index], NULL, 0);
@@ -739,6 +781,12 @@ void LedArray::setColor(int16_t argc, char ** argv)
         led_value[1] = 0;
         led_value[2] = default_brightness;
       }
+      else if (strcmp(argv[0], "white") == 0 && led_array_interface->color_channel_count == 3)
+      {
+        led_value[0] = default_brightness;
+        led_value[1] = default_brightness;
+        led_value[2] = default_brightness;
+      }
       else if (strcmp(argv[0], "redmax") == 0 && led_array_interface->color_channel_count == 3)
       {
         led_value[0] = UINT8_MAX;
@@ -757,6 +805,13 @@ void LedArray::setColor(int16_t argc, char ** argv)
         led_value[1] = 0;
         led_value[2] = UINT8_MAX;
       }
+      else if (strcmp(argv[0], "whitemax") == 0 && led_array_interface->color_channel_count == 3)
+      {
+        led_value[0] = UINT8_MAX;
+        led_value[1] = UINT8_MAX;
+        led_value[2] = UINT8_MAX;
+      }
+
     }
     else if ((strcmp(argv[0], "all") == 0) || (strcmp(argv[0], "white") == 0))
     {
@@ -1574,7 +1629,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
       Serial.print(F(", \"wait_delay_us\" : "));
       Serial.print((int)sequence_timing_us[trigger_index][4]);
       Serial.print('}');
-      if (trigger_index < trigger_sent_count-1)
+      if (trigger_index < trigger_sent_count - 1)
         Serial.print(',');
       Serial.print('\n');
     }

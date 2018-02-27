@@ -29,7 +29,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 45
+#define COMMAND_COUNT 46
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -84,6 +84,7 @@
 
 #define CMD_DISCO_IDX 43
 #define CMD_DEMO_IDX 44
+#define CMD_WATER_IDX 45
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -149,7 +150,8 @@ const char* command_list[COMMAND_COUNT][4] = {
 
   // Stored Patterns
   {"disco", "party", "Illuminate a random color pattern of LEDs", "disco,[Number of LEDs in pattern]"},
-  {"demo", "runDemo", "Runs a demo routine to show what the array can do.", "demo"}
+  {"demo", "runDemo", "Runs a demo routine to show what the array can do.", "demo"},
+  {"water", "warerDrop", "Water drop demo", "water"}
 };
 
 #endif

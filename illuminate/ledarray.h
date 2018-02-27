@@ -71,6 +71,7 @@ class LedArray {
     void fillArray();
     void clear();
     void drawDiscoPattern();
+    void waterDrop();
 
     // Drawing primatives
     void drawQuadrant(int quadrant_number, float start_na, float end_na, bool include_center);
@@ -94,7 +95,6 @@ class LedArray {
     void clearNaList();
     void buildNaList(float boardDistance);
     void toggleAutoClear(uint16_t argc, char ** argv);
-    void drawSpiralPattern(uint16_t delay_ms);
 
     // Sequencing
     int getSequenceBitDepth();
@@ -117,7 +117,7 @@ class LedArray {
     void printVersion();
 
     // Internal functions
-    
+
     void setDebug(uint16_t new_debug_level);
     void setup();   // Setup command
     int getArgumentLedNumberPitch(char * command_header);

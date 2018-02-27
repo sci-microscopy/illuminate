@@ -356,7 +356,7 @@ void LedArrayInterface::setPinOrder(int16_t led_number, int16_t color_channel_in
   notImplemented("SetPinOrder");
 }
 
-void LedArrayInterface::setLedFast(uint16_t led_number, int color_channel_index, bool value)
+void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, bool value)
 {
   notImplemented("setLedFast");
 }
