@@ -214,7 +214,7 @@ void LedArray::waterDrop()
 
   float na_period = led_position_list_na[led_array_interface->led_count - 1][0] * led_position_list_na[led_array_interface->led_count - 1][0];
   na_period += led_position_list_na[led_array_interface->led_count - 1][1] * led_position_list_na[led_array_interface->led_count - 1][1];
-  na_period = sqrt(na_period) / 1.5;
+  na_period = sqrt(na_period) / 2.0;
 
   uint8_t value;
   float na;
@@ -232,7 +232,7 @@ void LedArray::waterDrop()
         led_array_interface->setLed(led_index, color_channel_index, value);
     }
     led_array_interface->update();
-    delay(5);
+    delay(1);
     phase_counter++;
     if (phase_counter == 100)
       phase_counter = 0;

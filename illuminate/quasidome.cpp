@@ -55,7 +55,7 @@ const int LedArrayInterface::color_channel_count = 3;
 const char LedArrayInterface::color_channel_names[] = {'r', 'g', 'b'};
 const float LedArrayInterface::color_channel_center_wavelengths[] = {0.48, 0.525, 0.625};
 const int LedArrayInterface::bit_depth = 16;
-const int16_t LedArrayInterface::tlc_chip_count = 37;
+const int16_t LedArrayInterface::tlc_chip_count = 38;
 const bool LedArrayInterface::supports_fast_sequence = false;
 const float LedArrayInterface::led_array_distance_z_default = 60.0;
 
@@ -644,7 +644,7 @@ PROGMEM const int16_t LedArrayInterface::led_positions[][5] = {
   {570, 331, 3804, 3532, 2806},
   {571, 300, 3804, -3532, 2806},
   {572, 313, 5243, -552, 1367},
-  {573, 200, -3960, -3168, 2650}, // THIS IS INCORRECT
+  {573, 591, -3960, -3168, 2650}, // THIS IS INCORRECT
   {574, 463, -3168, 3960, 2650},
   {575, 207, 3168, -3960, 2650},
   {576, 335, 3960, 3168, 2650},
@@ -907,7 +907,6 @@ void LedArrayInterface::deviceSetup()
   for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
     pinMode(trigger_input_pin_list[trigger_index], INPUT);
 
-  Serial.println("PIN SETUP");
   // Correct LED pins
   tlc.setRgbPinOrderSingle(79, 0, 1, 2); // channel 79 has B/R swapped.
   tlc.setRgbPinOrderSingle(80, 0, 1, 2); // channel 80 has B/R swapped.
