@@ -214,9 +214,7 @@ void LedArray::waterDrop()
 
   float na_period = led_position_list_na[led_array_interface->led_count - 1][0] * led_position_list_na[led_array_interface->led_count - 1][0];
   na_period += led_position_list_na[led_array_interface->led_count - 1][1] * led_position_list_na[led_array_interface->led_count - 1][1];
-  na_period = sqrt(na_period) / 2.0;
-
-  Serial.println(na_period);
+  na_period = sqrt(na_period) / 1.5;
 
   uint8_t value;
   float na;
@@ -224,17 +222,19 @@ void LedArray::waterDrop()
   uint8_t phase_counter = 0;
   while (Serial.available() == 0)
   {
+    // Clear array
+    led_array_interface->setLed(-1, -1, false);
     for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
     {
       na = sqrt(led_position_list_na[led_index][0] * led_position_list_na[led_index][0] + led_position_list_na[led_index][1] * led_position_list_na[led_index][1]);
-      value = (uint8_t)round(sin(na / na_period * 2 * 3.14 + (float)phase_counter / 255 * 3.14 - 3.14) * 255);
+      value = (uint8_t)round((1.0 + sin(((na / na_period) + ((float)phase_counter / 100.0)) * 2.0 * 3.14)) * 64.0);
       for (int color_channel_index = 0; color_channel_index <  led_array_interface->color_channel_count; color_channel_index++)
         led_array_interface->setLed(led_index, color_channel_index, value);
     }
     led_array_interface->update();
-    delay(10);
+    delay(5);
     phase_counter++;
-    if (phase_counter == 255)
+    if (phase_counter == 100)
       phase_counter = 0;
   }
 
