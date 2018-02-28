@@ -174,8 +174,7 @@ void LedArray::printSystemParams()
 void LedArray::reset()
 {
   Serial.println(F("Resetting Array"));
-  led_array_interface->clear();
-  led_array_interface->deviceSetup();
+  led_array_interface->deviceReset();
 }
 
 /* A function to draw a random "disco" pattern. For parties, mostly. */

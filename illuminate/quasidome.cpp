@@ -852,6 +852,12 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
   setLed(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX));
 }
 
+void LedArrayInterface::deviceReset()
+{
+  tlc.deallocate();
+  deviceSetup();
+}
+
 void LedArrayInterface::deviceSetup()
 {
   // Now set the GSCK to an output and a 50% PWM duty-cycle

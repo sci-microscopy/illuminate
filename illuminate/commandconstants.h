@@ -151,7 +151,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   // Stored Patterns
   {"disco", "party", "Illuminate a random color pattern of LEDs", "disco,[Number of LEDs in pattern]"},
   {"demo", "runDemo", "Runs a demo routine to show what the array can do.", "demo"},
-  {"water", "warerDrop", "Water drop demo", "water"}
+  {"water", "waterDrop", "Water drop demo", "water"}
 };
 
 #endif

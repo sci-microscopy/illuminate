@@ -34,6 +34,7 @@
 class LedArrayInterface {
   public:
     void deviceSetup();
+    void deviceReset();
 
     // Note that passing a -1 for led_number or color_channel_index sets all LEDs or all color channels respectively
     void setLed(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)

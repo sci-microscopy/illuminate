@@ -537,6 +537,12 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
   setLed(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX));
 }
 
+void LedArrayInterface::deviceReset()
+{
+  tlc.deallocate();
+  deviceSetup();
+}
+
 void LedArrayInterface::deviceSetup()
 {
   // Now set the GSCK to an output and a 50% PWM duty-cycle
@@ -554,6 +560,7 @@ void LedArrayInterface::deviceSetup()
   SPI.begin();
   SPI.setClockDivider(SPI_CLOCK_DIV4);
 
+  // Instantiate TLC5955
   tlc.init(tlc_chip_count, true, LAT, SPI_MOSI, SPI_CLK);
 
   // We must set dot correction values, so set them all to the brightest adjustment
