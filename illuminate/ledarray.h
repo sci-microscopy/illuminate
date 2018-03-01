@@ -33,10 +33,14 @@
 
 #include <Arduino.h>
 
-// Trigger Mode constants
+// Trigger mode constants
 #define TRIG_MODE_NONE 0
 #define TRIG_MODE_ITERATION -1   // trigger at the start of each iteration (when the user
 #define TRIG_MODE_START -2   // Triggering at the start of each acquisition
+
+// Trigger timing constants
+#define TRIGGER_PULSE_WIDTH_DEFAULT 500
+#define TRIGGER_DELAY_DEFAULT 0
 
 // Annulus constants
 #define ANNULUS_START_OFFSET 0.03

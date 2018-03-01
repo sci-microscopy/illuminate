@@ -101,7 +101,6 @@ void LedArrayInterface::setDebug(int state)
   Serial.printf(F("(LedArrayInterface::setDebug): Set debug level to %d \n"), debug);
 }
 
-
 void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel_index, uint8_t value)
 {
   if (color_channel_index == 0 || color_channel_index == -1)
@@ -343,6 +342,11 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_index, 
 void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_index, bool value)
 {
   setLed(led_number, color_channel_index, (uint8_t) (value * UINT8_MAX));
+}
+
+void LedArrayInterface::deviceReset()
+{
+  deviceSetup();
 }
 
 void LedArrayInterface::deviceSetup()

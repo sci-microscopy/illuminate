@@ -1195,6 +1195,10 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
   uint16_t delay_ms = 10;
   uint16_t acquisition_count = 1;
 
+  // Print Argument syntax if no arguments are provided
+  if (argc == 0)
+    Serial.println(F("ERROR (LedArray::runSequence): Wrong number of arguments. Syntax: rseq.[frame dt,ms],[# acquisitions],[trigger output mode 0], [trigger input mode 0], ..."));
+
   for (int argc_index = 0; argc_index < argc; argc_index++)
   {
     if (argc_index == 0)
@@ -1809,13 +1813,19 @@ void LedArray::setup()
   // Set z-distance to device default
   led_array_distance_z = led_array_interface->led_array_distance_z_default;
 
-  // Initialize trigger setting arrays
+  // Initialize output trigger settings
   trigger_pulse_width_list_us = new uint16_t [led_array_interface->trigger_output_count];
   trigger_start_delay_list_us = new uint16_t [led_array_interface->trigger_output_count];
-  trigger_input_mode_list = new int [led_array_interface->trigger_input_count];
   trigger_output_mode_list = new int [led_array_interface->trigger_output_count];
+  for (uint16_t trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
+  {
+    trigger_pulse_width_list_us[trigger_index] = TRIGGER_PULSE_WIDTH_DEFAULT;
+    trigger_start_delay_list_us[trigger_index] = TRIGGER_DELAY_DEFAULT;
+    trigger_output_mode_list[trigger_index] = 0;
+  }
 
   // Set up trigger pins
+  trigger_input_mode_list = new int [led_array_interface->trigger_input_count];
   for (int trig_input_pin = 0; trig_input_pin < led_array_interface->trigger_input_count; trig_input_pin++)
     pinMode(led_array_interface->trigger_input_pin_list[trig_input_pin], INPUT);
 
