@@ -660,12 +660,11 @@ void LedArray::waitForTriggerState(int trigger_index, bool state)
   {
     delayMicroseconds(1);
     delayed_ms += 0.001;
-    if (delayed_ms > trigger_feedback_timeout_ms)
+    if (delayed_ms > MAX_TRIGGER_WAIT_TIME_S * 1000.0)
     {
-      Serial.print(F("WARNING: Exceeding max delay for trigger input "));
+      Serial.print(F("ERROR (LedArray::waitForTriggerState): Exceeding max delay for trigger input "));
       Serial.println(trigger_index);
-      led_array_interface->setLed(-1, -1, (uint8_t)0);
-      break;
+      return;
     }
   }
 }
@@ -1424,12 +1423,13 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
     else if (trigger_output_mode_list[trigger_pin_index] == TRIG_MODE_START)
       trigger_count += 1;
     else
-      trigger_count += acquisition_count * (led_sequence.number_of_patterns_assigned % trigger_output_mode_list[trigger_pin_index]);
+      trigger_count += ceil(acquisition_count * led_sequence.number_of_patterns_assigned / trigger_output_mode_list[trigger_pin_index]);
   }
   if (debug >= 2)
     Serial.printf(F("Sending %d trigger pulses this acquisition"), trigger_count);
 
-  sequence_timing_us = new float * [trigger_count];
+  // Initialize variable to keep track of timing
+  sequence_timing_us = new float * [trigger_count]; // trigger_count
   for (uint16_t index = 0; index < trigger_count; index++)
     sequence_timing_us[index] = new float[5] (); // Initialize to zero
 
@@ -1527,6 +1527,11 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
               trigger_wait_list[trigger_index] = (float) elapsed_us_inner - elapsed_us_0;
               trigger_finished_waiting_count += 1;
             }
+            else if ((float) elapsed_us_inner - elapsed_us_0 < MAX_TRIGGER_WAIT_TIME_S * 1000000.0)
+            {
+              Serial.println(F("ERROR (ledArray::runSequenceFast): trigger input timenout"));
+              return;
+            }
           }
           else
           {
@@ -1539,20 +1544,23 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
         }
       }
 
-      for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
+      if (debug)
       {
-        if (trigger_wait_list[trigger_index] >= 0.0)
+        for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
         {
-          if (trigger_wait_list[trigger_index] > 0.0 && debug >= 2)
+          if (trigger_wait_list[trigger_index] >= 0.0)
           {
-            Serial.print(F("WARNING (LedArray::runSequenceFast): Trigger "));
-            Serial.print(trigger_index);
-            Serial.print(F(" had excess delay of "));
-            Serial.print(trigger_wait_list[trigger_index]);
-            Serial.print(F("us for pattern #"));
-            Serial.print(pattern_index);
-            Serial.print(F(", acquisition #"));
-            Serial.println(acquisition_index);
+            if (trigger_wait_list[trigger_index] > 0.0 && debug >= 2)
+            {
+              Serial.print(F("WARNING (LedArray::runSequenceFast): Trigger "));
+              Serial.print(trigger_index);
+              Serial.print(F(" had excess delay of "));
+              Serial.print(trigger_wait_list[trigger_index]);
+              Serial.print(F("us for pattern #"));
+              Serial.print(pattern_index);
+              Serial.print(F(", acquisition #"));
+              Serial.println(acquisition_index);
+            }
           }
         }
       }
@@ -1588,10 +1596,6 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
         led_array_interface->setLedFast(led_number, -1, true); // assume the fast that there is a LED # implies this LED is on
       }
 
-      // Check if led_count is zero - if so, clear the array
-      if (led_sequence.led_counts[pattern_index] == 0)
-        led_array_interface->clear();
-
       // Ensure that we haven't set too short of a delay
       if ((float)elapsed_us_display > delay_us_used)
       {
@@ -1601,7 +1605,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
         return;
       }
 
-      // Wait for the defined mininum amount of time (delay_ms) before checking trigger input state
+      // Wait for the defined mininum amount of time (delay_us_used) before checking trigger input state
       while ((float)elapsed_us_display < (delay_us_used)) {} // Wait until this is true
     }
   }
