@@ -1468,6 +1468,11 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
   // Determine max start delay
   uint16_t max_start_delay_us = 0;
 
+  // This variable is used to speed up checking of trigger status
+  bool triggers_used_this_pattern;
+
+  float elapsed_us_display;
+  float elapsed_us_inner;
   // Clear LED Array
   led_array_interface->clear();
 
@@ -1475,11 +1480,8 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
   {
     for (uint16_t pattern_index = 0; pattern_index < led_sequence.number_of_patterns_assigned; pattern_index++)
     {
-      elapsedMicros elapsed_us_inner;
-
-      // Return if we send any command to interrupt.
-      if (Serial.available())
-        return;
+      elapsed_us_inner = (float) elapsed_us_outer;
+      elapsed_us_display = (float) elapsed_us_outer;
 
       for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
         triggered[trigger_index] = true;
@@ -1498,7 +1500,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
         // Set the wait list to inactive state
         trigger_spin_up_delay_list[trigger_index] = -0.1;
       }
-
+      triggers_used_this_pattern = false;
       // Determine max start delay using trigger output settings and wait for defined amount before continuing
       for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
       {
@@ -1506,6 +1508,9 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
             || ((trigger_output_mode_list[trigger_index] == TRIG_MODE_ITERATION) && (pattern_index == 0))
             || ((trigger_output_mode_list[trigger_index] == TRIG_MODE_START) && (acquisition_index == 0 && pattern_index == 0)))
         {
+          // Indicate that trigger pulses ARE used this pattern
+          triggers_used_this_pattern = true;
+
           // Set triggered flag to indicate that we need to send this trigger pulse this iteration
           triggered[trigger_index] = false;
 
@@ -1532,109 +1537,109 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
         }
       }
 
-      // Send output trigger pulses before illuminating
-      elapsed_us_0 = (float) elapsed_us_inner;
-      while (((float)elapsed_us_inner - elapsed_us_0) < (float)max_start_delay_us)
+      if (acquisition_index == 0 && pattern_index == 0)
+        acquisition_start_time = (float)elapsed_us_outer;
+
+      if (triggers_used_this_pattern)
       {
+        // Send output trigger pulses before illuminating
+        elapsed_us_0 = (float) elapsed_us_outer;
+        while (((float)elapsed_us_outer - elapsed_us_0) < (float)max_start_delay_us)
+        {
+          for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
+          {
+            if (((trigger_output_mode_list[trigger_index] > 0) && (pattern_index % trigger_output_mode_list[trigger_index] == 0))
+                || ((trigger_output_mode_list[trigger_index] == TRIG_MODE_ITERATION) && (pattern_index == 0))
+                || ((trigger_output_mode_list[trigger_index] == TRIG_MODE_START) && (acquisition_index == 0 && pattern_index == 0)))
+            {
+              // Check that we are waiting the correct amount of time
+              if (!triggered[trigger_index])
+              {
+                // Start triggers trigger_start_delay_list_us BEFORE t0, which occurs at the end of this loop
+                if (((float)elapsed_us_outer - elapsed_us_0) > (float)(max_start_delay_us - trigger_start_delay_list_us[trigger_index] - trigger_pulse_width_list_us[trigger_index])) // check if we're ready to trigger
+                {
+                  led_array_interface->sendTriggerPulse(trigger_index, trigger_pulse_width_list_us[trigger_index], false);
+                  triggered[trigger_index] = true;
+                }
+              }
+            }
+          }
+        }
+
+        //      // Wait for all devices to be in an acquiring state (if input triggers are configured)
+        //      elapsed_us_0 = (float) elapsed_us_outer;
+        //      trigger_finished_waiting_count = 0;
+        //      while (trigger_finished_waiting_count < led_array_interface->trigger_input_count)
+        //      {
+        //        trigger_finished_waiting_count = 0;
+        //        for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
+        //        {
+        //          if (((trigger_input_mode_list[trigger_index] > 0) && (pattern_index % trigger_input_mode_list[trigger_index] == 0))
+        //              || ((trigger_input_mode_list[trigger_index] == TRIG_MODE_ITERATION) && (pattern_index == 0))
+        //              || ((trigger_input_mode_list[trigger_index] == TRIG_MODE_START) && (acquisition_index == 0 && pattern_index == 0)))
+        //          {
+        //            if (getTriggerState(trigger_index) && trigger_spin_up_delay_list[trigger_index] < 0)
+        //            {
+        //              trigger_spin_up_delay_list[trigger_index] = (float) elapsed_us_outer - elapsed_us_0;
+        //              trigger_finished_waiting_count += 1;
+        //              elapsed_us_display = (float) elapsed_us_outer; // reset display timer
+        //            }
+        //            else if ((float) elapsed_us_outer - elapsed_us_0 < MAX_TRIGGER_WAIT_TIME_S * 1000000.0)
+        //            {
+        //              Serial.println(F("ERROR (ledArray::runSequenceFast): trigger input timeout"));
+        //              return;
+        //            }
+        //          }
+        //          else
+        //          {
+        //            if (trigger_spin_up_delay_list[trigger_index] < 0)
+        //            {
+        //              trigger_spin_up_delay_list[trigger_index] = 0.0;
+        //              trigger_finished_waiting_count += 1;
+        //            }
+        //          }
+        //        }
+        //      }
+        //
+        //      if (debug >= 2)
+        //      {
+        //        for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
+        //        {
+        //          if (trigger_spin_up_delay_list[trigger_index] >= 0.0)
+        //          {
+        //            if (trigger_spin_up_delay_list[trigger_index] > 0.0 && debug >= 2)
+        //            {
+        //              Serial.print(F("WARNING (LedArray::runSequenceFast): Trigger "));
+        //              Serial.print(trigger_index);
+        //              Serial.print(F(" had excess delay of "));
+        //              Serial.print(trigger_spin_up_delay_list[trigger_index]);
+        //              Serial.print(F("us for pattern #"));
+        //              Serial.print(pattern_index);
+        //              Serial.print(F(", acquisition #"));
+        //              Serial.println(acquisition_index);
+        //            }
+        //          }
+        //        }
+        //      }
+
         for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
         {
           if (((trigger_output_mode_list[trigger_index] > 0) && (pattern_index % trigger_output_mode_list[trigger_index] == 0))
               || ((trigger_output_mode_list[trigger_index] == TRIG_MODE_ITERATION) && (pattern_index == 0))
               || ((trigger_output_mode_list[trigger_index] == TRIG_MODE_START) && (acquisition_index == 0 && pattern_index == 0)))
           {
-            // Check that we are waiting the correct amount of time
-            if (!triggered[trigger_index])
-            {
-              // Start triggers trigger_start_delay_list_us BEFORE t0, which occurs at the end of this loop
-              if (((float)elapsed_us_inner - elapsed_us_0) > (float)(max_start_delay_us - trigger_start_delay_list_us[trigger_index] - trigger_pulse_width_list_us[trigger_index])) // check if we're ready to trigger
-              {
-                led_array_interface->sendTriggerPulse(trigger_index, trigger_pulse_width_list_us[trigger_index], false);
-                triggered[trigger_index] = true;
-              }
-            }
+            // Store timing infrmation to print in an array
+            sequence_timing_us[trigger_sent_count][0] = (float)acquisition_index;
+            sequence_timing_us[trigger_sent_count][1] = (float)pattern_index;
+            sequence_timing_us[trigger_sent_count][2] = (float)trigger_index;
+            sequence_timing_us[trigger_sent_count][3] = (float)elapsed_us_outer - acquisition_start_time;
+            sequence_timing_us[trigger_sent_count][4] = (float)trigger_spin_up_delay_list[trigger_index];
+            sequence_timing_us[trigger_sent_count][5] = (float)trigger_pulse_excess_delay_list[trigger_index];
+            trigger_sent_count += 1;
+            elapsed_us_display = (float) elapsed_us_outer; // reset display timer
           }
         }
       }
-
-      // Wait for all devices to be in an acquiring state (if input triggers are configured)
-      elapsed_us_0 = (float) elapsed_us_inner;
-      trigger_finished_waiting_count = 0;
-      while (trigger_finished_waiting_count < led_array_interface->trigger_input_count)
-      {
-        trigger_finished_waiting_count = 0;
-        for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
-        {
-          if (((trigger_input_mode_list[trigger_index] > 0) && (pattern_index % trigger_input_mode_list[trigger_index] == 0))
-              || ((trigger_input_mode_list[trigger_index] == TRIG_MODE_ITERATION) && (pattern_index == 0))
-              || ((trigger_input_mode_list[trigger_index] == TRIG_MODE_START) && (acquisition_index == 0 && pattern_index == 0)))
-          {
-            if (getTriggerState(trigger_index) && trigger_spin_up_delay_list[trigger_index] < 0)
-            {
-              trigger_spin_up_delay_list[trigger_index] = (float) elapsed_us_inner - elapsed_us_0;
-              trigger_finished_waiting_count += 1;
-            }
-            else if ((float) elapsed_us_inner - elapsed_us_0 < MAX_TRIGGER_WAIT_TIME_S * 1000000.0)
-            {
-              Serial.println(F("ERROR (ledArray::runSequenceFast): trigger input timenout"));
-              return;
-            }
-          }
-          else
-          {
-            if (trigger_spin_up_delay_list[trigger_index] < 0)
-            {
-              trigger_spin_up_delay_list[trigger_index] = 0.0;
-              trigger_finished_waiting_count += 1;
-            }
-          }
-        }
-      }
-
-      if (debug)
-      {
-        for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
-        {
-          if (trigger_spin_up_delay_list[trigger_index] >= 0.0)
-          {
-            if (trigger_spin_up_delay_list[trigger_index] > 0.0 && debug >= 2)
-            {
-              Serial.print(F("WARNING (LedArray::runSequenceFast): Trigger "));
-              Serial.print(trigger_index);
-              Serial.print(F(" had excess delay of "));
-              Serial.print(trigger_spin_up_delay_list[trigger_index]);
-              Serial.print(F("us for pattern #"));
-              Serial.print(pattern_index);
-              Serial.print(F(", acquisition #"));
-              Serial.println(acquisition_index);
-            }
-          }
-        }
-      }
-
-      if (acquisition_index == 0 && pattern_index == 0)
-        acquisition_start_time = (float)elapsed_us_outer;
-
-      for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
-      {
-        if (((trigger_output_mode_list[trigger_index] > 0) && (pattern_index % trigger_output_mode_list[trigger_index] == 0))
-            || ((trigger_output_mode_list[trigger_index] == TRIG_MODE_ITERATION) && (pattern_index == 0))
-            || ((trigger_output_mode_list[trigger_index] == TRIG_MODE_START) && (acquisition_index == 0 && pattern_index == 0)))
-        {
-          // Store timing infrmation to print in an array
-          sequence_timing_us[trigger_sent_count][0] = (float)acquisition_index;
-          sequence_timing_us[trigger_sent_count][1] = (float)pattern_index;
-          sequence_timing_us[trigger_sent_count][2] = (float)trigger_index;
-          sequence_timing_us[trigger_sent_count][3] = (float)elapsed_us_outer - acquisition_start_time;
-          sequence_timing_us[trigger_sent_count][4] = (float)trigger_spin_up_delay_list[trigger_index];
-          sequence_timing_us[trigger_sent_count][5] = (float)trigger_pulse_excess_delay_list[trigger_index];
-          trigger_sent_count += 1;
-        }
-      }
-
-      elapsedMicros elapsed_us_display;
-
-      // Set all LEDs to zero
-      led_array_interface->clear();
 
       // Display pattern
       for (uint16_t led_idx = 0; led_idx < led_sequence.led_counts[pattern_index]; led_idx++)
@@ -1644,7 +1649,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
       }
 
       // Ensure that we haven't set too short of a delay
-      if ((float)elapsed_us_display > delay_us_used)
+      if ((float)elapsed_us_outer - elapsed_us_display > delay_us_used)
       {
         Serial.println(F("Error - delay("));
         Serial.print((float)delay_us_used);
@@ -1653,9 +1658,9 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
       }
 
       // Wait for the defined mininum amount of time (delay_us_used) before checking trigger input state
-      while ((float)elapsed_us_display < (delay_us_used)) {} // Wait until this is true
+      while ((float)elapsed_us_outer - elapsed_us_display  < (delay_us_used)) {} // Wait until this is true
 
-      // Set all LEDs to zero after we've waited the defined amount
+      // Set all LEDs to zero
       led_array_interface->clear();
     }
   }
