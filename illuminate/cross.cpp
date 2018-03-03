@@ -272,7 +272,11 @@ int LedArrayInterface::sendTriggerPulse(int trigger_index, uint16_t delay_us, bo
       digitalWriteFast(trigger_pin, HIGH);
     else
       digitalWriteFast(trigger_pin, LOW);
+
+    if (debug >= 2)
+      Serial.printf(F("(LedArrayInterface::sendTriggerPulse): Sent trigger pulse on pin %d with delay %d\n"), trigger_index, delay_us);
     return (1);
+
   } else {
     return (-1);
   }
