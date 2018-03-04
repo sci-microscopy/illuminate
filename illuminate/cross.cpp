@@ -69,6 +69,7 @@ const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TR
 bool LedArrayInterface::trigger_input_state[] = {false, false};
 
 int LedArrayInterface::debug = 0;
+bool digital_mode = true;
 
 // FORMAT: LED number, channel, 100*x, 100*y, 100*z
 const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
@@ -187,7 +188,8 @@ void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, 
           Serial.print(F(" to "));
           Serial.println(value);
         }
-        pinMode(pin_numbers[channel_number], OUTPUT);
+        if (!digital_mode)
+          pinMode(pin_numbers[channel_number], OUTPUT);
         digitalWriteFast(pin_numbers[channel_number], value);
         led_values[led_index] = value;
       }
@@ -284,6 +286,10 @@ int LedArrayInterface::sendTriggerPulse(int trigger_index, uint16_t delay_us, bo
 
 void LedArrayInterface::update()
 {
+  // Indicate we are now in analog mode, and will need to re-call pinMode to use setLedFast again
+  digital_mode = false;
+
+  // Send illuminaiton values
   for (uint16_t led_index = 0; led_index < 4; led_index++)
   {
     // Get channel number
@@ -296,6 +302,7 @@ void LedArrayInterface::update()
 
 void LedArrayInterface::clear()
 {
+  digital_mode = false; // ensure pin mode gets configured
   setLedFast(-1, -1, false);
   //  for (uint16_t led_index = 0; led_index < 4; led_index++)
   //    setLed(led_index, 0, false);
