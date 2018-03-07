@@ -1447,8 +1447,6 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
   led_array_interface->clear();
 
   // Initialize variables
-  uint16_t led_number;
-
   elapsedMicros elapsed_us_outer;
   float acquisition_start_time = 0;
   float elapsed_us_0 = 0;
