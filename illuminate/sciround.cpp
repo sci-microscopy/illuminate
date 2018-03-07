@@ -29,6 +29,7 @@
 #ifdef USE_SCI_ROUND_ARRAY
 
 #include "ledarrayinterface.h"
+#include "src/TLC5955/TLC5955.h"
 
 // Pin definitions (used internally)
 #define GSCLK 6 // 10 on Arduino Mega

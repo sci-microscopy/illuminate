@@ -29,7 +29,6 @@
 #define LED_ARRAY_INTERFACE_H
 
 #include <Arduino.h>
-#include <TLC5955.h>
 
 class LedArrayInterface {
   public:

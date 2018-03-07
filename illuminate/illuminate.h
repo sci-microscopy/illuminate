@@ -29,5 +29,5 @@
 // The value these are set to does not matter - only that they are defined.
 //#define USE_SCI_ROUND_ARRAY 1
 //#define USE_QUADRANT_ARRAY 1
-//#define USE_QUASI_DOME_ARRAY 1
-#define USE_SCI_WING_ARRAY 1
+#define USE_QUASI_DOME_ARRAY 1
+//#define USE_SCI_WING_ARRAY 1
