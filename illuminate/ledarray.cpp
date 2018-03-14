@@ -209,7 +209,7 @@ void LedArray::drawDiscoPattern()
   led_array_interface->clear();
 }
 
-/* A function to draw a random "disco" pattern. For parties, mostly. */
+/* A function to draw a water drop (radial sine pattern)*/
 void LedArray::waterDrop()
 {
   // Clear the array
@@ -221,6 +221,7 @@ void LedArray::waterDrop()
 
   uint8_t value;
   float na;
+  uint8_t max_led_value = 32;
 
   uint8_t phase_counter = 0;
   while (Serial.available() == 0)
@@ -230,7 +231,7 @@ void LedArray::waterDrop()
     for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
     {
       na = sqrt(led_position_list_na[led_index][0] * led_position_list_na[led_index][0] + led_position_list_na[led_index][1] * led_position_list_na[led_index][1]);
-      value = (uint8_t)round((1.0 + sin(((na / na_period) + ((float)phase_counter / 100.0)) * 2.0 * 3.14)) * 64.0);
+      value = (uint8_t)round((1.0 + sin(((na / na_period) + ((float)phase_counter / 100.0)) * 2.0 * 3.14)) * max_led_value);
       for (int color_channel_index = 0; color_channel_index <  led_array_interface->color_channel_count; color_channel_index++)
         led_array_interface->setLed(led_index, color_channel_index, value);
     }
@@ -765,58 +766,53 @@ void LedArray::setColor(int16_t argc, char ** argv)
     ; // Do nothing
   else if (argc == 1)
   {
-    if (led_array_interface->color_channel_count == 3)
+    if (strcmp(argv[0], "red") == 0  && led_array_interface->color_channel_count == 3)
     {
-      Serial.println("HC");
-      if (strcmp(argv[0], "red") == 0)
-      {
-        led_value[0] = default_brightness;
-        led_value[1] = 0;
-        led_value[2] = 0;
-      }
-      else if (strcmp(argv[0], "green") == 0 && led_array_interface->color_channel_count == 3)
-      {
-        led_value[0] = 0;
-        led_value[1] = default_brightness;
-        led_value[2] = 0;
-      }
-      else if (strcmp(argv[0], "blue") == 0 && led_array_interface->color_channel_count == 3)
-      {
-        led_value[0] = 0;
-        led_value[1] = 0;
-        led_value[2] = default_brightness;
-      }
-      else if (strcmp(argv[0], "white") == 0 && led_array_interface->color_channel_count == 3)
-      {
-        led_value[0] = default_brightness;
-        led_value[1] = default_brightness;
-        led_value[2] = default_brightness;
-      }
-      else if (strcmp(argv[0], "redmax") == 0 && led_array_interface->color_channel_count == 3)
-      {
-        led_value[0] = UINT8_MAX;
-        led_value[1] = 0;
-        led_value[2] = 0;
-      }
-      else if (strcmp(argv[0], "greenmax") == 0 && led_array_interface->color_channel_count == 3)
-      {
-        led_value[0] = 0;
-        led_value[1] = UINT8_MAX;
-        led_value[2] = 0;
-      }
-      else if (strcmp(argv[0], "bluemax") == 0 && led_array_interface->color_channel_count == 3)
-      {
-        led_value[0] = 0;
-        led_value[1] = 0;
-        led_value[2] = UINT8_MAX;
-      }
-      else if (strcmp(argv[0], "whitemax") == 0 && led_array_interface->color_channel_count == 3)
-      {
-        led_value[0] = UINT8_MAX;
-        led_value[1] = UINT8_MAX;
-        led_value[2] = UINT8_MAX;
-      }
-
+      led_value[0] = default_brightness;
+      led_value[1] = 0;
+      led_value[2] = 0;
+    }
+    else if (strcmp(argv[0], "green") == 0 && led_array_interface->color_channel_count == 3)
+    {
+      led_value[0] = 0;
+      led_value[1] = default_brightness;
+      led_value[2] = 0;
+    }
+    else if (strcmp(argv[0], "blue") == 0 && led_array_interface->color_channel_count == 3)
+    {
+      led_value[0] = 0;
+      led_value[1] = 0;
+      led_value[2] = default_brightness;
+    }
+    else if (strcmp(argv[0], "white") == 0 && led_array_interface->color_channel_count == 3)
+    {
+      led_value[0] = default_brightness;
+      led_value[1] = default_brightness;
+      led_value[2] = default_brightness;
+    }
+    else if (strcmp(argv[0], "redmax") == 0 && led_array_interface->color_channel_count == 3)
+    {
+      led_value[0] = UINT8_MAX;
+      led_value[1] = 0;
+      led_value[2] = 0;
+    }
+    else if (strcmp(argv[0], "greenmax") == 0 && led_array_interface->color_channel_count == 3)
+    {
+      led_value[0] = 0;
+      led_value[1] = UINT8_MAX;
+      led_value[2] = 0;
+    }
+    else if (strcmp(argv[0], "bluemax") == 0 && led_array_interface->color_channel_count == 3)
+    {
+      led_value[0] = 0;
+      led_value[1] = 0;
+      led_value[2] = UINT8_MAX;
+    }
+    else if (strcmp(argv[0], "whitemax") == 0 && led_array_interface->color_channel_count == 3)
+    {
+      led_value[0] = UINT8_MAX;
+      led_value[1] = UINT8_MAX;
+      led_value[2] = UINT8_MAX;
     }
     else if ((strcmp(argv[0], "all") == 0) || (strcmp(argv[0], "white") == 0))
     {

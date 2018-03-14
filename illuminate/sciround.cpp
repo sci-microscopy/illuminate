@@ -26,9 +26,10 @@
 */
 #include "illuminate.h"
 
-#ifdef USE_TARGET_ARRAY
+#ifdef USE_SCI_ROUND_ARRAY
 
 #include "ledarrayinterface.h"
+#include "src/TLC5955/TLC5955.h"
 
 // Pin definitions (used internally)
 #define GSCLK 6 // 10 on Arduino Mega
@@ -64,6 +65,14 @@ const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0};
 bool LedArrayInterface::trigger_input_state[] = {false};
 
 int LedArrayInterface::debug = 0;
+
+const uint8_t TLC5955::_tlc_count = 52;          // Change to reflect number of TLC chips
+
+// Define dot correction, pin rgb order, and grayscale data arrays in program memory
+uint8_t TLC5955::_dc_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
+uint8_t TLC5955::_rgb_order[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
+uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
+
 
 /**** Device-specific variables ****/
 TLC5955 tlc; // TLC5955 object
@@ -539,7 +548,6 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
 
 void LedArrayInterface::deviceReset()
 {
-  tlc.deallocate();
   deviceSetup();
 }
 
@@ -561,7 +569,7 @@ void LedArrayInterface::deviceSetup()
   SPI.setClockDivider(SPI_CLOCK_DIV4);
 
   // Instantiate TLC5955
-  tlc.init(tlc_chip_count, true, LAT, SPI_MOSI, SPI_CLK);
+  tlc.init(LAT, SPI_MOSI, SPI_CLK);
 
   // We must set dot correction values, so set them all to the brightest adjustment
   tlc.setAllDcData(127);
