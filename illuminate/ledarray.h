@@ -132,6 +132,8 @@ class LedArray {
     void setPinOrder(int argc, char * *argv);
     void notFinished(const char * command_name);
     int getColorChannelCount();
+    static void tripTimer();
+    static void patternIncrementFast();
 
   private:
 
@@ -158,7 +160,7 @@ class LedArray {
     LedArrayInterface * led_array_interface;
 
     // LED sequence object for storage and retreival
-    LedSequence led_sequence;
+    static LedSequence led_sequence;
 
     // LED Controller Parameters
     boolean auto_clear_flag = true;
@@ -181,6 +183,10 @@ class LedArray {
 
     // Sequence stepping index
     uint16_t sequence_number_displayed = 0;
+
+    // timer variable
+    static volatile bool timer_tripped;
+    static volatile uint16_t pattern_index;
 
 };
 #endif
