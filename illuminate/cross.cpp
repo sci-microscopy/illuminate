@@ -38,8 +38,8 @@
 #define TRIGGER_OUTPUT_COUNT 2
 #define TRIGGER_INPUT_COUNT 2
 
-#define Q1_PIN 5
-#define Q2_PIN 6
+#define Q1_PIN 6
+#define Q2_PIN 5
 #define Q3_PIN 9
 #define Q4_PIN 10
 
@@ -73,8 +73,8 @@ bool digital_mode = true;
 
 // FORMAT: LED number, channel, 100*x, 100*y, 100*z
 const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
-  {0, 1, -1, 1, 4000,},
-  {1, 0, 1, 1, 4000,},
+  {0, 0, 1, 1, 4000,},
+  {1, 1, -1, 1, 4000,},
   {2, 2, 1, -1, 4000,},
   {3, 3, -1, -1, 4000,}
 };
@@ -175,50 +175,45 @@ void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, 
   {
     for (uint16_t led_index = 0; led_index < led_count; led_index++)
     {
-      // Get channel number
-      int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
-
       // Update
-      if (channel_number >= 0)
+      if (pin_numbers[led_index] >= 0)
       {
         if (debug >= 2)
         {
           Serial.print(F("Quickly Setting pin #"));
-          Serial.print(pin_numbers[channel_number]);
+          Serial.print(pin_numbers[led_index]);
           Serial.print(F(" to "));
           Serial.println(value);
         }
         if (!digital_mode)
-          pinMode(pin_numbers[channel_number], OUTPUT);
-        digitalWriteFast(pin_numbers[channel_number], value);
+          pinMode(pin_numbers[led_index], OUTPUT);
+        digitalWriteFast(pin_numbers[led_index], value);
         led_values[led_index] = value;
       }
       else
       {
         Serial.print(F("ERROR (LedArrayInterface::setLedFast, all leds): Invalid LED number (led# "));
         Serial.print(led_number);
-        Serial.print(F(", channel #"));
-        Serial.println(channel_number);
+        Serial.print(F(", pin #"));
+        Serial.println(pin_numbers[led_index]);
       }
     }
   }
   else
   {
-    // Get channel number
-    int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_number][1]));
-
     // Update
-    if (channel_number >= 0)
+    if (pin_numbers[led_number] >= 0)
     {
       if (debug >= 2)
       {
         Serial.print(F("Quickly Setting pin #"));
-        Serial.print(pin_numbers[channel_number]);
+        Serial.print(pin_numbers[led_number]);
         Serial.print(F(" to "));
         Serial.println(value);
       }
-      pinMode(pin_numbers[channel_number], OUTPUT);
-      digitalWriteFast(pin_numbers[channel_number], value);
+      if (!digital_mode)
+        pinMode(pin_numbers[led_number], OUTPUT);
+      digitalWriteFast(pin_numbers[led_number], value);
       led_values[led_number] = value;
     }
     else

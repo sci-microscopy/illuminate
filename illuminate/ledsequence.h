@@ -33,15 +33,14 @@
 struct LedSequence
 {
   uint16_t length = 0;                      // Length of values
-  uint16_t * led_counts;           // Number of LEDs in each values
-  uint16_t * * led_list;           // LED numbers used in each entry
-  uint8_t * * values;                     // Actual LED values (will be assigned to one of the other variables
-  uint16_t number_of_patterns_assigned = 0; // Number of patterns which have been assigned
-  uint16_t current_pattern_led_index = 0;   // Current led index within current pattern
+  volatile uint16_t * led_counts;           // Number of LEDs in each values
+  volatile uint16_t * * led_list;           // LED numbers used in each entry
+  volatile uint8_t * * values;                     // Actual LED values (will be assigned to one of the other variables
+  volatile uint16_t number_of_patterns_assigned = 0; // Number of patterns which have been assigned
+  volatile uint16_t current_pattern_led_index = 0;   // Current led index within current pattern
   uint8_t color_channel_count = 1;
   uint8_t bit_depth = 8;
   int debug = 1;
-
 
   void reset()
   {
@@ -54,7 +53,7 @@ struct LedSequence
     if (bit_depth == 1)
       ; // Don't allocate anything - any LED in the LED list is considered "on" or true.
     else if (bit_depth == 8)
-      values = new uint8_t * [values_length];
+      values = new volatile uint8_t * [values_length];
     else if (bit_depth == 16)
       Serial.println(F("16bit sequences not yet supported"));
     else
@@ -63,8 +62,8 @@ struct LedSequence
       return;
     }
 
-    led_list = new uint16_t * [values_length];
-    led_counts = new uint16_t [values_length];
+    led_list = new volatile uint16_t * [values_length];
+    led_counts = new volatile uint16_t [values_length];
 
     // Assign new vector length
     length = values_length;
