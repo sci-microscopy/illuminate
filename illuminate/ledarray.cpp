@@ -1715,6 +1715,8 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
         asm volatile("nop\n"); // no operation (assembly bullshit)
       }
 
+      
+
       // At this point, the interrupt function has been called, and the led pattern has been updated.
       LedArray::timer_tripped = false;
     }
@@ -1753,6 +1755,11 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
     Serial.println(F("    ]\n}"));
   }
 
+  // Delete sequence timing variable
+  for (uint16_t index = 0; index < trigger_sent_count; index++)
+    delete [] sequence_timing_us[index]; // Initialize to zero
+  delete[] sequence_timing_us;
+  
   // Print confirmation that acquisition is finished
   Serial.println(F("Finished fast Sequence"));
 }
