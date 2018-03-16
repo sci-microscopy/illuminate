@@ -291,7 +291,8 @@ void LedArrayInterface::update()
     int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
 
     // Update
-    analogWrite(pin_numbers[channel_number], led_values[led_index]);
+    digitalWriteFast(pin_numbers[channel_number], led_values[led_index]);
+//    analogWrite(pin_numbers[channel_number], led_values[led_index]);
   }
 }
 
