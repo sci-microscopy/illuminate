@@ -1928,7 +1928,7 @@ void LedArray::setup()
 
   // Initialize output trigger settings
   trigger_pulse_width_list_us = new uint16_t [led_array_interface->trigger_output_count];
-  trigger_start_delay_list_us = new uint16_t [led_array_interface->trigger_output_count];
+  trigger_start_delay_list_us = new uint32_t [led_array_interface->trigger_output_count];
   trigger_output_mode_list = new int [led_array_interface->trigger_output_count];
   for (uint16_t trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
   {
@@ -2093,4 +2093,5 @@ int LedArray::getColorChannelCount()
 {
   return led_array_interface->color_channel_count;
 }
+
 

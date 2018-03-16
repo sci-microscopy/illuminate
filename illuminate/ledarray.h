@@ -41,7 +41,7 @@
 // Trigger timing constants
 #define TRIGGER_PULSE_WIDTH_DEFAULT 500
 #define TRIGGER_DELAY_DEFAULT 0
-#define MAX_TRIGGER_WAIT_TIME_S 5.0
+#define MAX_TRIGGER_WAIT_TIME_S 20.0
 
 // Annulus constants
 #define ANNULUS_START_OFFSET 0.03
@@ -174,7 +174,7 @@ class LedArray {
     // Trigger Input (feedback) Settings
     float trigger_feedback_timeout_ms = 1000;
     uint16_t * trigger_pulse_width_list_us;
-    uint16_t * trigger_start_delay_list_us;
+    uint32_t * trigger_start_delay_list_us;
     int * trigger_input_mode_list;
     int * trigger_output_mode_list;
 
@@ -190,3 +190,4 @@ class LedArray {
 
 };
 #endif
+
