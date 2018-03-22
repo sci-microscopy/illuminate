@@ -884,7 +884,7 @@ void LedArrayInterface::notImplemented(const char * command_name)
 {
   Serial.print(F("Command "));
   Serial.print(command_name);
-  Serial.println(F(" is not implemented for this device."));
+  Serial.print(F(" is not implemented for this device.\n"));
 }
 
 uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_index)
@@ -896,7 +896,7 @@ uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_i
   {
     Serial.print(F("ERROR (LedArrayInterface::getLedValue) - invalid LED number ("));
     Serial.print(led_number);
-    Serial.println(F(")"));
+    Serial.print(F(")\n"));
     return 0;
   }
 }
@@ -991,7 +991,8 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
     Serial.print(F(", color_channel #"));
     Serial.print(color_channel_number);
     Serial.print(F(" to value "));
-    Serial.println(value);
+    Serial.print(value);
+    Serial.print(F("\n"));
   }
 
   if (channel_number >= 0)
@@ -1009,7 +1010,7 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
   {
     Serial.print(F("Error (LedArrayInterface::setChannel): Invalid channel ("));
     Serial.print(channel_number);
-    Serial.println(F(")"));
+    Serial.print(F(")\n"));
   }
 }
 
@@ -1032,7 +1033,8 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
     Serial.print(", color channel #");
     Serial.print(color_channel_number);
     Serial.print(" to value ");
-    Serial.println(value);
+    Serial.print(value);
+    Serial.print(F("\n"));
   }
   if (led_number < 0)
   {
@@ -1056,7 +1058,8 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
     Serial.print("U8 Setting led #");
     Serial.print(led_number);
     Serial.print(", color channel #");
-    Serial.println(color_channel_number);
+    Serial.print(color_channel_number);
+    Serial.print(F("\n"));
   }
   setLed(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX / UINT8_MAX));
 }
@@ -1068,7 +1071,8 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
     Serial.print("B Setting led #");
     Serial.print(led_number);
     Serial.print(", color channel #");
-    Serial.println(color_channel_number);
+    Serial.print(color_channel_number);
+    Serial.print(F("\n"));
   }
   setLed(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX));
 }

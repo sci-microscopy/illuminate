@@ -41,10 +41,10 @@ void LedArray::printLedPositions(bool print_na)
   if (print_na)
   {
     buildNaList(led_array_distance_z);
-    Serial.println(F("{\n    \"led_position_list_na\" = {"));
+    Serial.print(F("{\n    \"led_position_list_na\" = {\n"));
   }
   else
-    Serial.println(F("{\n    \"led_position_list_cartesian\" : {"));
+    Serial.print(F("{\n    \"led_position_list_cartesian\" : {\n"));
 
   for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
@@ -78,14 +78,14 @@ void LedArray::printLedPositions(bool print_na)
         Serial.printf(F("%02.02f]\n"), z);
     }
   }
-  Serial.println(F("    }\n}"));
+  Serial.print(F("    }\n}\n"));
 }
 
 /* A function to print current LED values */
 void LedArray::printCurrentLedValues()
 {
   uint16_t led_number;
-  Serial.println(F("{\n    \"led_values\" : {"));
+  Serial.print(F("{\n    \"led_values\" : {\n"));
   for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
     led_number = (int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][0]));
@@ -111,13 +111,14 @@ void LedArray::printCurrentLedValues()
       }
     }
   }
-  Serial.println("    }\n}");
+  Serial.print("    }\n}\n");
 }
 
 /* A function to the version of this device */
 void LedArray::printVersion()
 {
-  Serial.println(version);
+  Serial.print(version);
+  Serial.print(F("\n"));
 }
 
 /* A function to print a human-readable about page */
@@ -125,18 +126,18 @@ void LedArray::printAbout()
 {
   Serial.print("=== ");
   Serial.print(led_array_interface->device_name);
-  Serial.println(F(" LED Array Controller"));
+  Serial.print(F(" LED Array Controller\n"));
   Serial.print(F("=== HW Version: r"));
   Serial.print(led_array_interface->device_hardware_revision);
   Serial.print(F(", Controller Version: r"));
   Serial.print(version);
-  Serial.println(F(")\n=== For help, type ? "));
+  Serial.print(F(")\n=== For help, type ? \n"));
 }
 
 /* A function to print a json-formatted file which contains relevant system parameters */
 void LedArray::printSystemParams()
 {
-  Serial.println(F("{"));
+  Serial.print(F("{\n"));
   Serial.print(F("    \"device_name\" : \""));
   Serial.print(led_array_interface->device_name);
   Serial.print(F("\",\n    \"led_count\" : "));
@@ -171,13 +172,13 @@ void LedArray::printSystemParams()
   Serial.print(led_array_interface->serial_number);
 
   // Terminate JSON
-  Serial.println("\n}");
+  Serial.print("\n}\n");
 }
 
 /* A function to reset the device to power-on state */
 void LedArray::reset()
 {
-  Serial.println(F("Resetting Array"));
+  Serial.print(F("Resetting Array\n"));
   led_array_interface->deviceReset();
 }
 
@@ -292,7 +293,7 @@ void LedArray::buildNaList(float new_board_distance)
     }
   }
   if (debug)
-    Serial.println(F("Finished updating led positions."));
+    Serial.print(F("Finished updating led positions.\n"));
 }
 
 /* A function to fill the LED array with the color specified by led_value */
@@ -303,7 +304,7 @@ void LedArray::fillArray()
   led_array_interface->update();
 
   if (debug)
-    Serial.println(F("Filled Array"));
+    Serial.print(F("Filled Array\n"));
 }
 
 /* A function to clear the LED array */
@@ -323,13 +324,14 @@ void LedArray::setNa(int argc, char ** argv)
     if ((new_na > 0) && new_na < 100 * led_array_interface->max_na)
       objective_na = (float)new_na / 100.0;
     else
-      Serial.println(F("ERROR (LedArray::setNa): invalid NA. Make sure NA is 100*na"));
+      Serial.print(F("ERROR (LedArray::setNa): invalid NA. Make sure NA is 100*na\n"));
   }
   else
-    Serial.println(F("ERROR (LedArray::setNa): wrong number of arguments."));
+    Serial.print(F("ERROR (LedArray::setNa): wrong number of arguments.\n"));
 
   Serial.print(F("Current NA is: "));
-  Serial.println(objective_na);
+  Serial.print(objective_na);
+  Serial.print(F("\n"));
 }
 
 void LedArray::printTriggerSettings()
@@ -340,7 +342,8 @@ void LedArray::printTriggerSettings()
     Serial.print("Trigger input pin index ");
     Serial.print(trigger_index);
     Serial.print(F(" uses Pin #"));
-    Serial.println(LedArrayInterface::trigger_input_pin_list[trigger_index]);
+    Serial.print(LedArrayInterface::trigger_input_pin_list[trigger_index]);
+    Serial.print(F("\n"));
   }
 
   // Output Pins
@@ -354,7 +357,8 @@ void LedArray::printTriggerSettings()
     Serial.print(trigger_pulse_width_list_us[trigger_index]);
     Serial.print(F("us. Start delay is "));
     Serial.print(trigger_start_delay_list_us[trigger_index]);
-    Serial.println(F("us."));
+    Serial.print(F("us."));
+    Serial.print(F("\n"));
   }
 }
 
@@ -390,7 +394,7 @@ void LedArray::drawCdpc(int argc, char * *argv)
       illumination_intensity = (uint8_t)atoi(argv[0]);
     else
     {
-      Serial.println(F("ERROR (LedArray::drawCdpc): Invalid number of arguments"));
+      Serial.print(F("ERROR (LedArray::drawCdpc): Invalid number of arguments\n"));
       return;
     }
 
@@ -438,7 +442,7 @@ void LedArray::drawHalfAnnulus(int argc, char * *argv)
   }
   else
   {
-    Serial.println(F("ERROR (LedArray::drawHalfAnnulus) Invlaid number of arguments."));
+    Serial.print(F("ERROR (LedArray::drawHalfAnnulus) Invlaid number of arguments.\n"));
     return;
   }
 
@@ -450,7 +454,7 @@ void LedArray::drawHalfAnnulus(int argc, char * *argv)
     Serial.print(na_start);
     Serial.print(F("NA to "));
     Serial.print(na_end);
-    Serial.println(F("NA."));
+    Serial.print(F("NA.\n"));
   }
 
   int8_t half_annulus_type = 0;
@@ -463,7 +467,7 @@ void LedArray::drawHalfAnnulus(int argc, char * *argv)
   else if ( (strcmp(argv[0], DPC_RIGHT1) == 0) || (strcmp(argv[0], DPC_RIGHT2) == 0))
     half_annulus_type = 3;
   else
-    Serial.println(F("ERROR - invalid half annulus circle type. Options are t, b, l, and r"));
+    Serial.print(F("ERROR - invalid half annulus circle type. Options are t, b, l, and r\n"));
 
   if (half_annulus_type >= 0)
   {
@@ -502,7 +506,7 @@ void LedArray::drawColorDarkfield(int argc, char * * argv)
     }
     else
     {
-      Serial.println(F("ERROR (LedArray::drawColorDarkfield): Invalid number of arguments"));
+      Serial.print(F("ERROR (LedArray::drawColorDarkfield): Invalid number of arguments\n"));
       return;
     }
 
@@ -550,7 +554,7 @@ void LedArray::drawAnnulus(int argc, char * * argv)
   }
   else
   {
-    Serial.println(F("ERROR (LedArray::drawAnnulus): Invalid number of arguments!"));
+    Serial.print(F("ERROR (LedArray::drawAnnulus): Invalid number of arguments!\n"));
     return;
   }
 
@@ -560,7 +564,7 @@ void LedArray::drawAnnulus(int argc, char * * argv)
     Serial.print(start_na);
     Serial.print(F("NA to "));
     Serial.print(end_na);
-    Serial.println(F("NA."));
+    Serial.print(F("NA.\n"));
   }
 
   if (auto_clear_flag)
@@ -598,7 +602,7 @@ void LedArray::setPinOrder(int argc, char * *argv)
     for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
       led_array_interface->setPinOrder(strtoul(argv[0], NULL, 0) , color_channel_index, strtoul(argv[color_channel_index + 1], NULL, 0));
   else
-    Serial.println(F("ERROR (LedArray::setPinOrder): Wrong number of arguments"));
+    Serial.print(F("ERROR (LedArray::setPinOrder): Wrong number of arguments\n"));
 }
 
 /* Trigger setup function for setting the trigger pulse width and delay after sending */
@@ -627,10 +631,10 @@ void LedArray::triggerSetup(int argc, char ** argv)
     Serial.print(trigger_pulse_width_list_us[trigger_index] );
     Serial.print("us and a start delay of ");
     Serial.print(trigger_start_delay_list_us[trigger_index]);
-    Serial.println(F("us."));
+    Serial.print(F("us.\n"));
   }
   else
-    Serial.println(F("ERROR: Invalid number of arguments for setTriggerPulse!"));
+    Serial.print(F("ERROR: Invalid number of arguments for setTriggerPulse!\n"));
 }
 
 /* Send a trigger pulse */
@@ -638,7 +642,7 @@ void LedArray::sendTriggerPulse(int trigger_index, bool show_output)
 {
   // TODO: store polarity and use it here
   if (debug >= 2)
-    Serial.println(F("Called sendTriggerPulse"));
+    Serial.print(F("Called sendTriggerPulse\n"));
 
   // Send trigger pulse with pulse_width
   int status = led_array_interface->sendTriggerPulse(trigger_index, trigger_pulse_width_list_us[trigger_index], true);
@@ -670,7 +674,8 @@ void LedArray::waitForTriggerState(int trigger_index, bool state)
     if (delayed_ms > MAX_TRIGGER_WAIT_TIME_S * 1000.0)
     {
       Serial.print(F("WARNING (LedArray::waitForTriggerState): Exceeding max delay for trigger input "));
-      Serial.println(trigger_index);
+      Serial.print(trigger_index);
+      Serial.print(F("\n"));
       return;
     }
   }
@@ -681,10 +686,15 @@ void LedArray::triggerInputTest(uint16_t channel)
 {
   led_array_interface->setLed(-1, -1, (uint8_t)0);
   led_array_interface->update();
-  Serial.println(LedArrayInterface::trigger_input_state[channel]);
-  Serial.print("Begin trigger input test for channel "); Serial.println(channel);
+  Serial.print(LedArrayInterface::trigger_input_state[channel]);
+  Serial.print(F("\n"));
+  Serial.print(F("Begin trigger input test for channel "));
+  Serial.print(channel);
+  Serial.print(F("\n"));
   waitForTriggerState(channel, !LedArrayInterface::trigger_input_state[channel]);
-  Serial.print("Passed trigger input test for channel "); Serial.println(channel);
+  Serial.print(F("Passed trigger input test for channel "));
+  Serial.print(channel);
+  Serial.print(F("\n"));
   led_array_interface->setLed(-1, -1, (uint8_t)0);
   led_array_interface->setLed(0, -1, (uint8_t)255);
   led_array_interface->update();
@@ -694,7 +704,7 @@ void LedArray::triggerInputTest(uint16_t channel)
 void LedArray::drawLedList(uint16_t argc, char ** argv)
 {
   if (debug >= 2)
-    Serial.println(F("LedArray::drawLedList called"));
+    Serial.print(F("LedArray::drawLedList called\n"));
 
   uint16_t led_number;
   if (auto_clear_flag)
@@ -727,7 +737,7 @@ void LedArray::scanBrightfieldLeds(uint16_t argc, char ** argv)
   scanLedRange(delay_ms, 0.0, objective_na, true);
 
   if (debug >= 1)
-    Serial.println(F("Finished brightfield LED scan"));
+    Serial.print(F("Finished brightfield LED scan\n"));
 }
 
 /* Scan all LEDs */
@@ -751,10 +761,10 @@ void LedArray::scanAllLeds(uint16_t argc, char ** argv)
     scanLedRange(delay_ms, 0.0, 1.0, true);
 
     if (debug >= 1)
-      Serial.println(F("Finished full LED scan."));
+      Serial.print(F("Finished full LED scan.\n"));
   }
   else
-    Serial.println(F("ERROR - full scan delay too short/long"));
+    Serial.print(F("ERROR - full scan delay too short/long\n"));
 }
 
 /* Allows setting of current color buffer, which is respected by most other commands */
@@ -842,7 +852,7 @@ void LedArray::setColor(int16_t argc, char ** argv)
     }
     else
     {
-      Serial.println(F("ERROR (LedArray::setColor): Invalid color value"));
+      Serial.print(F("ERROR (LedArray::setColor): Invalid color value\n"));
       return;
     }
   }
@@ -853,7 +863,7 @@ void LedArray::setColor(int16_t argc, char ** argv)
   }
   else
   {
-    Serial.println(F("ERROR (LedArray::setColor): Invalid color value"));
+    Serial.print(F("ERROR (LedArray::setColor): Invalid color value\n"));
     return;
   }
 
@@ -874,7 +884,8 @@ void LedArray::drawQuadrant(int quadrant_number, float start_na, float end_na, b
   if (debug >= 2)
   {
     Serial.print(F("Drawing Quadrant "));
-    Serial.println(quadrant_number);
+    Serial.print(quadrant_number);
+    Serial.print(F("\n"));
   }
 
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
@@ -913,8 +924,9 @@ void LedArray::drawHalfCircle(int8_t half_circle_type, float start_na, float end
 {
   if (debug >= 2)
   {
-    Serial.println(F("Drawing Half Annulus:"));
-    Serial.println(half_circle_type);
+    Serial.print(F("Drawing Half Annulus:\n"));
+    Serial.print(half_circle_type);
+    Serial.print(F("\n"));
   }
 
   float x, y, d;
@@ -946,7 +958,8 @@ void LedArray::drawCircle(float start_na, float end_na)
     Serial.print(start_na);
     Serial.print(F("NA to "));
     Serial.print(end_na);
-    Serial.println(F("NA"));
+    Serial.print(F("NA\n"));
+
   }
 
   float d;
@@ -1022,7 +1035,8 @@ void LedArray::drawDpc(uint16_t argc, char ** argv)
     if (debug >= 1)
     {
       Serial.print(F("Drew DPC pattern with type: "));
-      Serial.println(argv[0]);
+      Serial.print(argv[0]);
+      Serial.print(F("\n"));
     }
 
     if (auto_clear_flag)
@@ -1038,7 +1052,7 @@ void LedArray::drawDpc(uint16_t argc, char ** argv)
     else if ( (strcmp(argv[0], DPC_RIGHT1) == 0) || (strcmp(argv[0], DPC_RIGHT2) == 0))
       dpc_type = 3;
     else
-      Serial.println(F("ERROR - invalid dpc circle type. Options are dpc.t, dpc.b, dpc.l, dpc.r"));
+      Serial.print(F("ERROR - invalid dpc circle type. Options are dpc.t, dpc.b, dpc.l, dpc.r\n"));
 
     if (dpc_type >= 0)
     {
@@ -1047,14 +1061,14 @@ void LedArray::drawDpc(uint16_t argc, char ** argv)
     }
   }
   else
-    Serial.println(F("ERROR (LedArray::drawDpc) Invlaid number of arguments."));
+    Serial.print(F("ERROR (LedArray::drawDpc) Invlaid number of arguments.\n"));
 }
 
 /* Draw brightfield pattern */
 void LedArray::drawBrightfield(uint16_t argc, char ** argv)
 {
   if (debug)
-    Serial.println(F("Drawing brightfield pattern"));
+    Serial.print(F("Drawing brightfield pattern\n"));
 
   if (auto_clear_flag)
     clear();
@@ -1076,7 +1090,8 @@ void LedArray::setSequenceLength(uint16_t new_seq_length, bool quiet)
   if (!quiet)
   {
     Serial.print(F("New sequence length is: "));
-    Serial.println(new_seq_length);
+    Serial.print(new_seq_length);
+    Serial.print(F("\n"));
   }
 }
 
@@ -1087,7 +1102,8 @@ void LedArray::setSequenceBitDepth(uint8_t bit_depth, bool quiet)
   if (!quiet)
   {
     Serial.print(F("New sequence bit depth is: "));
-    Serial.println(bit_depth);
+    Serial.print(bit_depth);
+    Serial.print(F("\n"));
   }
 }
 
@@ -1151,19 +1167,20 @@ void LedArray::setSequenceValue(uint16_t argc, void ** led_values, int16_t * led
   }
   else
   {
-    Serial.print(F("Error (LedArray::setSequenceValue) - invalid number of arguments (should be divisible by ")); Serial.print(led_array_interface->color_channel_count); Serial.println(F(")"));
+    Serial.print(F("Error (LedArray::setSequenceValue) - invalid number of arguments (should be divisible by ")); Serial.print(led_array_interface->color_channel_count); Serial.print(F(")\n"));
   }
 }
 
 void LedArray::printSequence()
 {
-  Serial.print(F("Sequence has ")); Serial.print(LedArray::led_sequence.length); Serial.print("x "); Serial.print(LedArray::led_sequence.bit_depth); Serial.println(F(" bit patterns:"));
+  Serial.print(F("Sequence has ")); Serial.print(LedArray::led_sequence.length); Serial.print("x "); Serial.print(LedArray::led_sequence.bit_depth); Serial.print(F(" bit patterns:\n"));
   LedArray::led_sequence.print();
 }
 
 void LedArray::printSequenceLength()
 {
-  Serial.println(LedArray::led_sequence.length);
+  Serial.print(LedArray::led_sequence.length);
+  Serial.print(F("\n"));
 }
 
 
@@ -1176,7 +1193,8 @@ void LedArray::resetSequence()
 void LedArray::runSequence(uint16_t argc, char ** argv)
 {
   if (debug)
-    Serial.println(F("Starting sequence."));
+    Serial.print(F("Starting sequence."));
+    Serial.print(F("\n"));
 
   /* Format for argv:
      0: delay between acquisitions, us/ms
@@ -1198,7 +1216,7 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
 
   // Print Argument syntax if no arguments are provided
   if (argc == 0)
-    Serial.println(F("ERROR (LedArray::runSequence): Wrong number of arguments. Syntax: rseq.[frame dt,ms],[# acquisitions],[trigger output mode 0], [trigger input mode 0], ..."));
+    Serial.print(F("ERROR (LedArray::runSequence): Wrong number of arguments. Syntax: rseq.[frame dt,ms],[# acquisitions],[trigger output mode 0], [trigger input mode 0], ...\n"));
 
   for (int argc_index = 0; argc_index < argc; argc_index++)
   {
@@ -1211,24 +1229,29 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
     else if (argc_index >= 4 && argc_index < 6)
       trigger_input_mode_list[argc_index - 4] = atoi(argv[argc_index]);
     else
-      Serial.println("WARNING:  Ignoring additional argument in runSequence");
+      Serial.print("WARNING:  Ignoring additional argument in runSequence\n");
   }
 
   if (debug)
   {
-    Serial.println("OPTIONS:");
-    Serial.print("  delay: ");
+    Serial.print(F("OPTIONS:\n"));
+    Serial.print(F("  delay: "));
     Serial.print(delay_ms);
-    Serial.print("ms\n  acquisition_count: ");
-    Serial.println(acquisition_count);
-    Serial.print("  trigger out 0: ");
-    Serial.println(trigger_output_mode_list[0]);
+    Serial.print(F("ms\n  acquisition_count: "));
+    Serial.print(acquisition_count);
+    Serial.print(F("\n"));
+    Serial.print(F("  trigger out 0: "));
+    Serial.print(trigger_output_mode_list[0]);
+    Serial.print(F("\n"));
     Serial.print("  trigger out 1: ");
-    Serial.println(trigger_output_mode_list[1]);
+    Serial.print(trigger_output_mode_list[1]);
+    Serial.print(F("\n"));
     Serial.print("  trigger in 0: ");
-    Serial.println(trigger_input_mode_list[0]);
+    Serial.print(trigger_input_mode_list[0]);
+    Serial.print(F("\n"));
     Serial.print("  trigger in 1: ");
-    Serial.println(trigger_input_mode_list[1]);
+    Serial.print(trigger_input_mode_list[1]);
+    Serial.print(F("\n"));
   }
 
   // Check to be sure we're not trying to go faster than the hardware will allow
@@ -1308,7 +1331,7 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
       // Ensure that we haven't set too short of a delay
       if ((float)elapsed_us_inner > (1000 * (float)delay_ms))
       {
-        Serial.println(F("Error - delay too short!"));
+        Serial.print(F("Error - delay too short!\n"));
         return;
       }
 
@@ -1327,7 +1350,7 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
       {
         Serial.print(F("Elapsed time: "));
         Serial.print((float)elapsed_us_outer);
-        Serial.println(F("us"));
+        Serial.print(F("us\n"));
       }
     }
   }
@@ -1336,7 +1359,7 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
   led_array_interface->update();
 
   // Let user know we're done
-  Serial.println("Finished sending sequence.");
+  Serial.print("Finished sending sequence.\n");
 }
 
 void LedArray::patternIncrementFast()
@@ -1369,7 +1392,7 @@ void LedArray::patternIncrementFast()
 void LedArray::runSequenceFast(uint16_t argc, char ** argv)
 {
   if (debug)
-    Serial.println(F("Starting fast Sequence"));
+    Serial.print(F("Starting fast Sequence\n"));
 
   uint16_t delay_us = 100;
   uint16_t acquisition_count = 1;
@@ -1412,7 +1435,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
     else if (argc_index >= 7 && argc_index < 9)
       trigger_min_dt_us[argc_index - 7] = atof(argv[argc_index]);
     else
-      Serial.println("WARNING:  Ignoring additional argument in runSequence");
+      Serial.print("WARNING:  Ignoring additional argument in runSequence\n");
   }
 
   float delay_us_used = 0;
@@ -1423,23 +1446,31 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
 
   if (debug)
   {
-    Serial.println("OPTIONS:");
+    Serial.print("OPTIONS:\n");
     Serial.print("  delay_us: ");
-    Serial.println(delay_us_used);
+    Serial.print(delay_us_used);
+    Serial.print(F("\n"));
     Serial.print("  acquisition_count: ");
-    Serial.println(acquisition_count);
+    Serial.print(acquisition_count);
+    Serial.print(F("\n"));
     Serial.print("  trigger output mode [0]: ");
-    Serial.println(trigger_output_mode_list[0]);
+    Serial.print(trigger_output_mode_list[0]);
+    Serial.print(F("\n"));
     Serial.print("  trigger output mode [1]: ");
-    Serial.println(trigger_output_mode_list[1]);
+    Serial.print(trigger_output_mode_list[1]);
+    Serial.print(F("\n"));
     Serial.print("  trigger input mode [0]: ");
-    Serial.println(trigger_input_mode_list[0]);
+    Serial.print(trigger_input_mode_list[0]);
+    Serial.print(F("\n"));
     Serial.print("  trigger input mode [1]: ");
-    Serial.println(trigger_input_mode_list[1]);
+    Serial.print(trigger_input_mode_list[1]);
+    Serial.print(F("\n"));
     Serial.print("  trigger min dt 0: ");
-    Serial.println(trigger_min_dt_us[0]);
+    Serial.print(trigger_min_dt_us[0]);
+    Serial.print(F("\n"));
     Serial.print("  trigger min dt 1: ");
-    Serial.println(trigger_min_dt_us[1]);
+    Serial.print(trigger_min_dt_us[1]);
+    Serial.print(F("\n"));
   }
 
   // Check to be sure we're not trying to go faster than the hardware will allow
@@ -1634,7 +1665,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
                 }
                 else if ((float) elapsed_us_outer - elapsed_us_0 < MAX_TRIGGER_WAIT_TIME_S * 1000000.0)
                 {
-                  Serial.println(F("ERROR (ledArray::runSequenceFast): trigger input timeout"));
+                  Serial.print(F("ERROR (ledArray::runSequenceFast): trigger input timeout\n"));
                   return;
                 }
               }
@@ -1664,7 +1695,8 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
                   Serial.print(F("us for pattern #"));
                   Serial.print(LedArray::pattern_index );
                   Serial.print(F(", acquisition #"));
-                  Serial.println(acquisition_index);
+                  Serial.print(acquisition_index);
+                  Serial.print(F("\n"));
                 }
               }
             }
@@ -1705,7 +1737,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
   // Print timing information if triggering was used
   if (trigger_sent_count > 0)
   {
-    Serial.println(F("{\n    \"sequence_timing\" : [ "));
+    Serial.print(F("{\n    \"sequence_timing\" : [ \n"));
     for (uint16_t trigger_index = 0; trigger_index < trigger_sent_count; trigger_index++)
     {
       Serial.print(F("        {\"acquisition_number\" : "));
@@ -1725,7 +1757,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
         Serial.print(',');
       Serial.print('\n');
     }
-    Serial.println(F("    ]\n}"));
+    Serial.print(F("    ]\n}\n"));
   }
 
   // Delete sequence timing variable
@@ -1734,12 +1766,12 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
   delete[] sequence_timing_us;
 
   // Print confirmation that acquisition is finished
-  Serial.println(F("Finished fast Sequence"));
+  Serial.print(F("Finished fast Sequence\n"));
 }
 
 void LedArray::stepSequence(uint16_t argc, char ** argv)
 {
-  Serial.println(F("Stepping sequence"));
+  Serial.print(F("Stepping sequence\n"));
 
   /* Format for argv:
      0: trigger output 1 setting
@@ -1761,20 +1793,24 @@ void LedArray::stepSequence(uint16_t argc, char ** argv)
     else if (argc_index >= 2 && argc_index < 4)
       trigger_input_mode_list[argc_index - 2] = atoi(argv[argc_index]);
     else
-      Serial.println("WARNING:  Ignoring additional argument in stepSequence");
+      Serial.print("WARNING:  Ignoring additional argument in stepSequence\n");
   }
 
   if (debug)
   {
-    Serial.println("OPTIONS:");
+    Serial.print("OPTIONS:\n");
     Serial.print("  trigger out 0: ");
-    Serial.println(trigger_output_mode_list[0]);
+    Serial.print(trigger_output_mode_list[0]);
+    Serial.print(F("\n"));
     Serial.print("  trigger out 1: ");
-    Serial.println(trigger_output_mode_list[1]);
+    Serial.print(trigger_output_mode_list[1]);
+    Serial.print(F("\n"));
     Serial.print("  trigger in 0: ");
-    Serial.println(trigger_input_mode_list[0]);
+    Serial.print(trigger_input_mode_list[0]);
+    Serial.print(F("\n"));
     Serial.print("  trigger in 1: ");
-    Serial.println(trigger_input_mode_list[1]);
+    Serial.print(trigger_input_mode_list[1]);
+    Serial.print(F("\n"));
   }
 
   // Reset Trigger parameters
@@ -1841,7 +1877,7 @@ void LedArray::stepSequence(uint16_t argc, char ** argv)
   sequence_number_displayed++;
 
   // Print user feedback
-  Serial.print(F("Displayed pattern # ")); Serial.print(sequence_number_displayed); Serial.print(F(" of ")); Serial.println( LedArray::led_sequence.number_of_patterns_assigned);
+  Serial.print(F("Displayed pattern # ")); Serial.print(sequence_number_displayed); Serial.print(F(" of ")); Serial.print( LedArray::led_sequence.number_of_patterns_assigned);Serial.print(F("\n"));
 }
 
 /* A function to set the distance from the sample to the LED array. Used for calculating the NA of each LED.*/
@@ -1858,14 +1894,14 @@ void LedArray::setDistanceZ(int argc, char ** argv)
       buildNaList(led_array_distance_z);
     }
     else
-      Serial.println(F("ERROR (LedArray::setDistanceZ): invalid z-distance."));
+      Serial.print(F("ERROR (LedArray::setDistanceZ): invalid z-distance.\n"));
   }
   else
-    Serial.println(F("ERROR (LedArray::setDistanceZ): wrong number of arguments."));
+    Serial.print(F("ERROR (LedArray::setDistanceZ): wrong number of arguments.\n"));
 
   Serial.print(F("Current array to sample distance (z) is: "));
   Serial.print(led_array_distance_z);
-  Serial.println(F("mm"));
+  Serial.print(F("mm\n"));
 }
 
 void LedArray::toggleAutoClear(uint16_t argc, char ** argv)
@@ -1876,9 +1912,9 @@ void LedArray::toggleAutoClear(uint16_t argc, char ** argv)
     auto_clear_flag = (bool)atoi(argv[0]);
 
   if (auto_clear_flag)
-    Serial.println(F("Auto clear bit is now 1 (The LED array will clear before and after each new command)"));
+    Serial.print(F("Auto clear bit is now 1 (The LED array will clear before and after each new command)\n"));
   else
-    Serial.println(F("Auto clear bit is now 0 (The LED array will NOT clear before and after each new command)"));
+    Serial.print(F("Auto clear bit is now 0 (The LED array will NOT clear before and after each new command)\n"));
 }
 
 void LedArray::setDebug(uint16_t new_debug_level)
@@ -2066,12 +2102,10 @@ void LedArray::notImplemented(const char * command_name)
 {
   Serial.print(F("Command "));
   Serial.print(command_name);
-  Serial.println(F(" is not implemented for this device."));
+  Serial.print(F(" is not implemented for this device.\n"));
 }
 
 int LedArray::getColorChannelCount()
 {
   return led_array_interface->color_channel_count;
 }
-
-

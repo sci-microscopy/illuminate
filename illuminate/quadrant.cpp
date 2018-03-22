@@ -87,7 +87,7 @@ void LedArrayInterface::notImplemented(const char * command_name)
 {
   Serial.print(F("Command "));
   Serial.print(command_name);
-  Serial.println(F(" is not implemented for this device."));
+  Serial.print(F(" is not implemented for this device.\n"));
 }
 
 // Debug Variables
@@ -107,7 +107,7 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
   if (color_channel_index == 0 || color_channel_index == -1)
   {
     if (channel_number < 0)
-      Serial.println(F("ERROR (LedArrayInterface::setChannel): Invalid channel."));
+      Serial.print(F("ERROR (LedArrayInterface::setChannel): Invalid channel.\n"));
     else
     {
       // Find the led number corresponding to this channel
@@ -123,7 +123,8 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
   else
   {
     Serial.print(F("ERROR (LedArrayInterface::setLed): Invalid color channel "));
-    Serial.println(color_channel_index);
+    Serial.print(color_channel_index);
+    Serial.print(F("\n"));
   }
 }
 
@@ -141,7 +142,7 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
 void LedArrayInterface::setChannelFast(uint16_t channel_number, int color_channel_index, bool value)
 {
   if (channel_number < 0)
-    Serial.println(F("ERROR (LedArrayInterface::setChannelFast): invalid channel."));
+    Serial.print(F("ERROR (LedArrayInterface::setChannelFast): invalid channel.\n"));
   else
   {
     pinMode(pin_numbers[channel_number], OUTPUT);
@@ -159,7 +160,7 @@ uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_i
   {
     Serial.print(F("ERROR (LedArrayInterface::getLedValue) - invalid LED number ("));
     Serial.print(led_number);
-    Serial.println(F(")"));
+    Serial.print(F(")\n"));
     return 0;
   }
 }
@@ -183,7 +184,8 @@ void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, 
           Serial.print(F("Quickly Setting pin #"));
           Serial.print(pin_numbers[led_index]);
           Serial.print(F(" to "));
-          Serial.println(value);
+          Serial.print(value);
+          Serial.print(F("\n"));
         }
         if (!digital_mode)
           pinMode(pin_numbers[led_index], OUTPUT);
@@ -195,7 +197,8 @@ void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, 
         Serial.print(F("ERROR (LedArrayInterface::setLedFast, all leds): Invalid LED number (led# "));
         Serial.print(led_number);
         Serial.print(F(", pin #"));
-        Serial.println(pin_numbers[led_index]);
+        Serial.print(pin_numbers[led_index]);
+        Serial.print(F("\n"));
       }
     }
   }
@@ -209,7 +212,8 @@ void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, 
         Serial.print(F("Quickly Setting pin #"));
         Serial.print(pin_numbers[led_number]);
         Serial.print(F(" to "));
-        Serial.println(value);
+        Serial.print(value);
+        Serial.print(F("\n"));
       }
       if (!digital_mode)
         pinMode(pin_numbers[led_number], OUTPUT);
@@ -217,7 +221,7 @@ void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, 
       led_values[led_number] = value;
     }
     else
-      Serial.println(F("ERROR (LedArrayInterface::setLedFast, single led): Invalid LED number."));
+      Serial.print(F("ERROR (LedArrayInterface::setLedFast, single led): Invalid LED number.\n"));
   }
 }
 
@@ -319,7 +323,7 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_index, 
         if (channel_number >= 0)
           led_values[led_index] = value;
         else
-          Serial.println(F("ERROR (LedArrayInterface::setLed): Invalid led number."));
+          Serial.print(F("ERROR (LedArrayInterface::setLed): Invalid led number.\n"));
       }
     }
     else if (led_number < LedArrayInterface::led_count)
@@ -329,15 +333,16 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_index, 
       if (channel_number >= 0)
         led_values[led_number] = value;
       else
-        Serial.println(F("ERROR (LedArrayInterface::setLed): Invalid led number."));
+        Serial.print(F("ERROR (LedArrayInterface::setLed): Invalid led number.\n"));
     }
     else
-      Serial.println(F("ERROR (LedArrayInterface::setLed): Invalid led number."));
+      Serial.print(F("ERROR (LedArrayInterface::setLed): Invalid led number.\n"));
   }
   else
   {
     Serial.print(F("ERROR (LedArrayInterface::setLed): Invalid color channel "));
-    Serial.println(color_channel_index);
+    Serial.print(color_channel_index);
+    Serial.print(F("\n"));
   }
 }
 
@@ -364,7 +369,8 @@ void LedArrayInterface::deviceSetup()
   {
     int16_t channel = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
     pinMode(pin_numbers[channel], OUTPUT);
-    Serial.println(pin_numbers[channel]);
+    Serial.print(pin_numbers[channel]);
+    Serial.print(F("\n"));
   }
 
   // Adjust PWM timer for 8-bit precision
@@ -386,5 +392,3 @@ void LedArrayInterface::deviceSetup()
 }
 
 #endif
-
-

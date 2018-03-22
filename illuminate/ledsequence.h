@@ -55,10 +55,10 @@ struct LedSequence
     else if (bit_depth == 8)
       values = new volatile uint8_t * [values_length];
     else if (bit_depth == 16)
-      Serial.println(F("16bit sequences not yet supported"));
+      Serial.print(F("16bit sequences not yet supported\n"));
     else
     {
-      Serial.println(F("ERROR - invalid bit depth!"));
+      Serial.print(F("ERROR - invalid bit depth!\n"));
       return;
     }
 
@@ -78,7 +78,7 @@ struct LedSequence
     if ((new_bit_depth == 1) || (new_bit_depth == 8))
       bit_depth = new_bit_depth;
     else
-      Serial.println(F("ERROR - invalid bit depth! (allowed values are 1 or 8)"));
+      Serial.print(F("ERROR - invalid bit depth! (allowed values are 1 or 8)\n"));
 
     // Allocate new arrays with new bit depth (and same length as before)
     allocate(length);
@@ -125,7 +125,7 @@ struct LedSequence
     }
     else
     {
-      Serial.print(F("Sequence length (")); Serial.print(length); Serial.println(F(") reached."));
+      Serial.print(F("Sequence length (")); Serial.print(length); Serial.print(F(") reached.\n"));
       return (false);
     }
   }
@@ -160,7 +160,7 @@ struct LedSequence
     {
       print(values_index);
     }
-    Serial.println(" ");
+    Serial.print(" \n");
   }
 
   void print(uint16_t values_index)
@@ -169,7 +169,7 @@ struct LedSequence
     Serial.print(values_index);
     Serial.print(" (");
     Serial.print(led_counts[values_index]);
-    Serial.println(" leds):");
+    Serial.print(" leds):\n");
     for (uint16_t led_index = 0; led_index < led_counts[values_index]; led_index++)
     {
       Serial.print(F(" LED #: "));
@@ -181,7 +181,7 @@ struct LedSequence
         Serial.print(true);
       Serial.print(F(" (bit depth="));
       Serial.print(bit_depth);
-      Serial.println(F(")"));
+      Serial.print(F(")\n"));
     }
   }
 };

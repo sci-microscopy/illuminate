@@ -36,7 +36,7 @@ uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_i
   {
     Serial.print(F("ERROR (LedArrayInterface::getLedValue) - invalid LED number ("));
     Serial.print(led_number);
-    Serial.println(F(")"));
+    Serial.print(F(")\n"));
   }
 }
 
@@ -80,8 +80,9 @@ void LedArrayInterface::triggerInputChange_0()
   trigger_input_state[0] = digitalRead(trigger_input_pin_list[0]);
   if (true)
   {
-    Serial.print("Channel 0 trigger change detected - state: ");
-    Serial.println(trigger_input_state[0]);
+    Serial.print(F("Channel 0 trigger change detected - state: "));
+    Serial.print(trigger_input_state[0]);
+    Serial.print(F("\n"));
   }
   sei();
 }
@@ -93,7 +94,8 @@ void LedArrayInterface::triggerInputChange_1()
   if (true)
   {
     Serial.print("Channel 1 trigger change detected - state: ");
-    Serial.println(trigger_input_state[1]);
+    Serial.print(trigger_input_state[1]);
+    Serial.print(F("\n"));
   }
   sei();
 }
