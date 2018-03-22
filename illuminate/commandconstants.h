@@ -102,7 +102,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"sad", "setArrayDistance", "Set LED array distance", "sad,[100*dist(mm) --or-- 1000*dist(cm)]"},
 
   // Single (or multiple) LED Display
-  {"l", "led", "Turn on a single LED (or multiple LEDs in a list)", "ll.[led #].[led #], ..."},
+  {"l", "led", "Turn on a single LED (or multiple LEDs in a list)", "l.[led #].[led #], ..."},
 
   // General Display
   {"x", "xx", "Clear the LED array.", "x"},
