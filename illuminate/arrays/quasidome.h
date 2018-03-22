@@ -122,7 +122,7 @@ class LedArrayInterface {
 // {
 //   Serial.print(F("Command "));
 //   Serial.print(command_name);
-//   Serial.println(F(" is not implemented for this device."));
+//   Serial.print(F(" is not implemented for this device.\n"));
 // }
 
 // FORMAT: LED number, channel, 100*x, 100*y, 100*z

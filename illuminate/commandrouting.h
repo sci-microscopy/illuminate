@@ -74,20 +74,23 @@ class CommandRouter {
 void CommandRouter::printHelp()
 {
   led_array->printAbout();
-  Serial.println(F("-----------------------------------"));
-  Serial.println(F("Command List:"));
-  Serial.println(F("-----------------------------------"));
+  Serial.print(F("-----------------------------------\n"));
+  Serial.print(F("Command List:\n"));
+  Serial.print(F("-----------------------------------\n"));
   for (int16_t cIdx = 0; cIdx < COMMAND_COUNT; cIdx++)
   {
-    Serial.println(F("COMMAND:"));
+    Serial.print(F("COMMAND:\n"));
     Serial.print(command_list[cIdx][0]);
     Serial.print(" / ");
-    Serial.println(command_list[cIdx][1]);
-    Serial.println(F("SYNTAX:"));
-    Serial.println(command_list[cIdx][3]);
-    Serial.println(F("DESCRIPTION:"));
-    Serial.println(command_list[cIdx][2]);
-    Serial.println(F("-----------------------------------"));
+    Serial.print(command_list[cIdx][1]);
+    Serial.print(F("\n"));
+    Serial.print(F("SYNTAX:\n"));
+    Serial.print(command_list[cIdx][3]);
+    Serial.print(F("\n"));
+    Serial.print(F("DESCRIPTION:\n"));
+    Serial.print(command_list[cIdx][2]);
+    Serial.print(F("\n"));
+    Serial.print(F("-----------------------------------\n"));
   }
 }
 
@@ -108,7 +111,7 @@ void CommandRouter::setDebug(int16_t argc, char * * argv)
     Serial.printf(F("(CommandRouter::setDebug): Set debug level to %d \n"), debug);
   }
   else
-    Serial.println(F("ERROR (CommandRouter::setDebug): Invalud argument count."));
+    Serial.print(F("ERROR (CommandRouter::setDebug): Invalud argument count.\n"));
 }
 
 int CommandRouter::getArgumentBitDepth(char * command_header)
@@ -276,9 +279,10 @@ void CommandRouter::processSerialStream()
               Serial.print(F("Copying new argument inside newline with index "));
               Serial.print(argument_total_count);
               Serial.print(F(" with bit depth "));
-              Serial.println(argument_bit_depth);
+              Serial.print(argument_bit_depth);
+              Serial.print(F("\n"));
             }
-            
+
             // Character argument (standard)
             if (argument_bit_depth == -1)
             {
@@ -314,14 +318,22 @@ void CommandRouter::processSerialStream()
               Serial.print(" and desired bit depth ");
               Serial.print(argument_bit_depth);
               Serial.print(" to new variable which is now ");
-              if (argument_bit_depth == -1)
-                Serial.println(argument_list[argument_count]);
-              else if (argument_bit_depth == 1)
-                Serial.println(argument_list_bool[argument_count]);
-              else if (argument_bit_depth == 8)
-                Serial.println(argument_list_uint8[argument_count]);
-              else if (argument_bit_depth == 16)
-                Serial.println(argument_list_uint16[argument_count]);
+              if (argument_bit_depth == -1){
+                Serial.print(argument_list[argument_count]);
+                Serial.print(F("\n"));
+              }
+              else if (argument_bit_depth == 1){
+                Serial.print(argument_list_bool[argument_count]);
+                Serial.print(F("\n"));
+              }
+              else if (argument_bit_depth == 8){
+                Serial.print(argument_list_uint8[argument_count]);
+                Serial.print(F("\n"));
+              }
+              else if (argument_bit_depth == 16){
+                Serial.print(argument_list_uint16[argument_count]);
+                Serial.print(F("\n"));
+              }
             }
 
             // Increment number of optional arguments
@@ -331,16 +343,16 @@ void CommandRouter::processSerialStream()
 
           if (debug > 0)
           {
-            Serial.print("Command: ");
+            Serial.print(F("Command: "));
             Serial.print(command);
-            Serial.println("");
+            Serial.print(F("\n"));
             if (argument_flag)
             {
               for (uint16_t arg_index = 0; arg_index < argument_count; arg_index++)
               {
-                Serial.print(" Argument ");
+                Serial.print(F(" Argument "));
                 Serial.print(arg_index);
-                Serial.print(": ");
+                Serial.print(F(": "));
                 if (argument_bit_depth == -1)
                   Serial.print(argument_list[arg_index]);
                 else
@@ -352,7 +364,7 @@ void CommandRouter::processSerialStream()
                   else if (argument_bit_depth == 16)
                     Serial.print(argument_list_uint16[arg_index]);
                 }
-                Serial.println(' ');
+                Serial.print(F(' \n'));
               }
             }
           }
@@ -385,7 +397,8 @@ void CommandRouter::processSerialStream()
                 if (debug > 1)
                 {
                   Serial.print(" Deallocated argument ");
-                  Serial.println(argument_index);
+                  Serial.print(argument_index);
+                  Serial.print(F("\n"));
                 }
               }
               delete[] argument_list;
@@ -422,15 +435,18 @@ void CommandRouter::processSerialStream()
             if (argument_bit_depth <= 0)
               argument_list = new char * [MAX_ARGUMENT_COUNT_CHAR];
 
-            if (debug > 1)
-              Serial.println("Switching to argument mode");
+            if (debug > 1){
+              Serial.print(F("Switching to argument mode"));
+              Serial.print(F("\n"));
+            }
           }
 
           else if (argument_bit_depth > 0 && (argument_flag && argument_total_count == 1))
           { // This is the case where we're running a numeric storage command (such as setSequenceValue) and need to collect the number of LEDs in the list (first argument), as provided by the user.
             if (debug > 1) {
-              Serial.print("Processing LED count at index ");
-              Serial.println(argument_total_count);
+              Serial.print(F("Processing LED count at index "));
+              Serial.print(argument_total_count);
+              Serial.print(F("\n"));
               delay(10);
             }
             // Get argument LED count
@@ -480,7 +496,7 @@ void CommandRouter::processSerialStream()
               Serial.print(argument_total_count);
               Serial.print(F(" ("));
               Serial.print(current_argument);
-              Serial.println(F(")"));
+              Serial.print(F(")\n"));
             }
 
             // If this argument is a LED number, store it in the appropriate array
@@ -489,14 +505,15 @@ void CommandRouter::processSerialStream()
 
             if (argument_led_count > argument_max_led_count)
             {
-              Serial.print(F("ERROR - max led count (")); Serial.print(argument_max_led_count); Serial.println(F(") reached!"));
+              Serial.print(F("ERROR - max led count (")); Serial.print(argument_max_led_count); Serial.print(F(") reached!\n"));
             }
           }
           else
           {
             if (debug > 1) {
               Serial.print("Processing argument at index ");
-              Serial.println(argument_total_count);
+              Serial.print(argument_total_count);
+              Serial.print(F("\n"));
               delay(10);
             }
             // Copy argument or led value an argument_list
@@ -521,14 +538,22 @@ void CommandRouter::processSerialStream()
               Serial.print(" and desired bit depth ");
               Serial.print(argument_bit_depth);
               Serial.print(" to new variable which is now ");
-              if (argument_bit_depth == -1)
-                Serial.println(argument_list[argument_count]);
-              else if (argument_bit_depth == 1)
-                Serial.println(argument_list_bool[argument_count]);
-              else if (argument_bit_depth == 8)
-                Serial.println(argument_list_uint8[argument_count]);
-              else if (argument_bit_depth == 16)
-                Serial.println(argument_list_uint16[argument_count]);
+              if (argument_bit_depth == -1){
+                Serial.print(argument_list[argument_count]);
+                Serial.print(F("\n"));
+              }
+              else if (argument_bit_depth == 1){
+                Serial.print(argument_list_bool[argument_count]);
+                Serial.print(F("\n"));
+              }
+              else if (argument_bit_depth == 8){
+                Serial.print(argument_list_uint8[argument_count]);
+                Serial.print(F("\n"));
+              }
+              else if (argument_bit_depth == 16){
+                Serial.print(argument_list_uint16[argument_count]);
+                Serial.print(F("\n"));
+              }
             }
             argument_count++; // Increment number of optional arguments
           }
@@ -545,7 +570,7 @@ void CommandRouter::processSerialStream()
           if (argument_flag)
           {
             if (argument_element_position > MAX_ARGUMENT_ELEMENT_LENGTH)
-              Serial.println(F("ERROR: Optional element was too long!"));
+              Serial.print(F("ERROR: Optional element was too long!\n"));
             else
             {
               // append this to the current optional argument
@@ -556,7 +581,7 @@ void CommandRouter::processSerialStream()
           else
           {
             if (command_position >= MAX_COMMAND_LENGTH)
-              Serial.println(F("ERROR: Command was too long!"));
+              Serial.print(F("ERROR: Command was too long!\n"));
             else
               command [command_position++] = new_byte;
           }
