@@ -41,7 +41,7 @@ void LedArray::printLedPositions(bool print_na)
   if (print_na)
   {
     buildNaList(led_array_distance_z);
-    Serial.println(F("{\n    \"led_position_list_na\" = {"));
+    Serial.println(F("{\n    \"led_position_list_na\" : {"));
   }
   else
     Serial.println(F("{\n    \"led_position_list_cartesian\" : {"));
@@ -2073,5 +2073,3 @@ int LedArray::getColorChannelCount()
 {
   return led_array_interface->color_channel_count;
 }
-
-
