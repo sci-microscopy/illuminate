@@ -1151,7 +1151,7 @@ void LedArray::setSequenceValue(uint16_t argc, void ** led_values, int16_t * led
   }
   else
   {
-    Serial.print(F("Error (LedArray::setSequenceValue) - invalid number of arguments (should be divisible by ")); Serial.print(led_array_interface->color_channel_count); Serial.println(F(")"));
+    Serial.print(F("ERROR (LedArray::setSequenceValue) - invalid number of arguments (should be divisible by ")); Serial.print(led_array_interface->color_channel_count); Serial.println(F(")"));
   }
 }
 
@@ -1308,7 +1308,7 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
       // Ensure that we haven't set too short of a delay
       if ((float)elapsed_us_inner > (1000 * (float)delay_ms))
       {
-        Serial.println(F("Error - delay too short!"));
+        Serial.println(F("ERROR - delay too short!"));
         return;
       }
 
@@ -2073,5 +2073,3 @@ int LedArray::getColorChannelCount()
 {
   return led_array_interface->color_channel_count;
 }
-
-
