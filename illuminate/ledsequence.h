@@ -59,7 +59,7 @@ struct LedSequence
       Serial.printf(F("16bit sequences not yet supported %s"), SERIAL_LINE_ENDING);
     else
     {
-      Serial.printf(F("ERROR - invalid bit depth!%s"),SERIAL_LINE_ENDING);
+      Serial.printf(F("ERROR - invalid bit depth!%s"), SERIAL_LINE_ENDING);
       return;
     }
 
@@ -77,12 +77,13 @@ struct LedSequence
 
     // Set new bit depth
     if ((new_bit_depth == 1) || (new_bit_depth == 8))
+    {
       bit_depth = new_bit_depth;
+      // Allocate new arrays with new bit depth (and same length as before)
+      allocate(length);
+    }
     else
       Serial.printf(F("ERROR - invalid bit depth! (allowed values are 1 or 8) %s"), SERIAL_LINE_ENDING);
-
-    // Allocate new arrays with new bit depth (and same length as before)
-    allocate(length);
   }
 
   void append(uint16_t led_number, uint8_t value)

@@ -1116,8 +1116,8 @@ void LedArray::setSequenceBitDepth(uint8_t bit_depth, bool quiet)
 
   if (!quiet)
   {
-    Serial.print(F("New sequence bit depth is: "));
-    Serial.print(bit_depth);
+    Serial.print(F("Sequence bit depth is now: "));
+    Serial.print(LedArray::led_sequence.bit_depth);
     Serial.print(SERIAL_LINE_ENDING);
   }
 }
