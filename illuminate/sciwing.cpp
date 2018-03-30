@@ -61,13 +61,12 @@ const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, 
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
 bool LedArrayInterface::trigger_input_state[] = {false, false};
 
-const uint8_t TLC5955::_tlc_count = 52;          // Change to reflect number of TLC chips
+const uint8_t TLC5955::_tlc_count = 52;    // Change to reflect number of TLC chips
 
 // Define dot correction, pin rgb order, and grayscale data arrays in program memory
 uint8_t TLC5955::_dc_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 uint8_t TLC5955::_rgb_order[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
-
 
 int LedArrayInterface::debug = 0;
 
