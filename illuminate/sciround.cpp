@@ -457,7 +457,7 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
     tlc.setChannel(channel_number, value);
   else
   {
-    Serial.print(F("Error (LedArrayInterface::setChannel): Invalid channel ("));
+    Serial.print(F("ERROR (LedArrayInterface::setChannel): Invalid channel ("));
     Serial.print(channel_number);
     Serial.println(F(")"));
   }
