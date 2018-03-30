@@ -25,9 +25,20 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef ILLUMINATE_H
+#define ILLUMINATE_H
+
 // This file allows the user to define which LED array interface is used. This should be set before compilation.
 // The value these are set to does not matter - only that they are defined.
-//#define USE_SCI_ROUND_ARRAY 1
-//#define USE_QUADRANT_ARRAY 1
-//#define USE_QUASI_DOME_ARRAY 1
-#define USE_SCI_WING_ARRAY 1
+//#define USE_SCI_ROUND_ARRAY
+//#define USE_QUADRANT_ARRAY
+//#define USE_QUASI_DOME_ARRAY
+#define USE_SCI_WING_ARRAY
+
+// Serial line ending
+static const char SERIAL_LINE_ENDING[] = "\n";
+
+// Serial command termiator
+static const char SERIAL_COMMAND_TERMINATOR[] = "-==-";
+
+#endif

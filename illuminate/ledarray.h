@@ -30,6 +30,7 @@
 
 #include "ledarrayinterface.h"
 #include "ledsequence.h"
+#include "illuminate.h"
 
 #include <Arduino.h>
 #include <EEPROM.h>

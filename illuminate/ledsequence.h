@@ -28,6 +28,7 @@
 #ifndef LED_ARRAY_SEQUENCE_H
 #define LED_ARRAY_SEQUENCE_H
 #include "Arduino.h"
+#include "illuminate.h"
 
 // Define LED Sequence Object
 struct LedSequence
@@ -55,10 +56,10 @@ struct LedSequence
     else if (bit_depth == 8)
       values = new volatile uint8_t * [values_length];
     else if (bit_depth == 16)
-      Serial.println(F("16bit sequences not yet supported"));
+      Serial.printf(F("16bit sequences not yet supported %s"), SERIAL_LINE_ENDING);
     else
     {
-      Serial.println(F("ERROR - invalid bit depth!"));
+      Serial.printf(F("ERROR - invalid bit depth!%s"),SERIAL_LINE_ENDING);
       return;
     }
 
@@ -78,7 +79,7 @@ struct LedSequence
     if ((new_bit_depth == 1) || (new_bit_depth == 8))
       bit_depth = new_bit_depth;
     else
-      Serial.println(F("ERROR - invalid bit depth! (allowed values are 1 or 8)"));
+      Serial.printf(F("ERROR - invalid bit depth! (allowed values are 1 or 8) %s"), SERIAL_LINE_ENDING);
 
     // Allocate new arrays with new bit depth (and same length as before)
     allocate(length);
@@ -125,7 +126,7 @@ struct LedSequence
     }
     else
     {
-      Serial.print(F("Sequence length (")); Serial.print(length); Serial.println(F(") reached."));
+      Serial.print(F("Sequence length (")); Serial.print(length); Serial.printf(F(") reached. %s"), SERIAL_LINE_ENDING);
       return (false);
     }
   }
@@ -160,7 +161,7 @@ struct LedSequence
     {
       print(values_index);
     }
-    Serial.println(" ");
+    Serial.print(SERIAL_LINE_ENDING);
   }
 
   void print(uint16_t values_index)
@@ -169,7 +170,7 @@ struct LedSequence
     Serial.print(values_index);
     Serial.print(" (");
     Serial.print(led_counts[values_index]);
-    Serial.println(" leds):");
+    Serial.printf(" leds): %s", SERIAL_LINE_ENDING);
     for (uint16_t led_index = 0; led_index < led_counts[values_index]; led_index++)
     {
       Serial.print(F(" LED #: "));
@@ -181,7 +182,7 @@ struct LedSequence
         Serial.print(true);
       Serial.print(F(" (bit depth="));
       Serial.print(bit_depth);
-      Serial.println(F(")"));
+      Serial.printf(F(")%s"), SERIAL_LINE_ENDING);
     }
   }
 };
