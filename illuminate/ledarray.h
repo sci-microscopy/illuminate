@@ -32,6 +32,7 @@
 #include "ledsequence.h"
 
 #include <Arduino.h>
+#include <EEPROM.h>
 
 // Trigger mode constants
 #define TRIG_MODE_NONE 0
@@ -42,6 +43,10 @@
 #define TRIGGER_PULSE_WIDTH_DEFAULT 500
 #define TRIGGER_DELAY_DEFAULT 0
 #define MAX_TRIGGER_WAIT_TIME_S 20.0
+
+// Serial and part number addresses in EEPROM
+#define PN_ADDRESS 100
+#define SN_ADDRESS 200
 
 // Annulus constants
 #define ANNULUS_START_OFFSET 0.03
@@ -134,6 +139,8 @@ class LedArray {
     int getColorChannelCount();
     static void tripTimer();
     static void patternIncrementFast();
+    uint16_t getSerialNumber();
+    uint16_t getPartNumber();
 
   private:
 

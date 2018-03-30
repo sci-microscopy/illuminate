@@ -43,11 +43,8 @@
 #define Q3_PIN 9
 #define Q4_PIN 10
 
-#define SN 1
-
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "quadrant-array";
-const int LedArrayInterface::serial_number = SN;
 const char * LedArrayInterface::device_hardware_revision = "1.0";
 const float LedArrayInterface::max_na = 1.0;
 const int16_t LedArrayInterface::led_count = 4;

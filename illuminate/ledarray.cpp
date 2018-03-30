@@ -126,11 +126,13 @@ void LedArray::printAbout()
   Serial.print("=== ");
   Serial.print(led_array_interface->device_name);
   Serial.println(F(" LED Array Controller"));
-  Serial.print(F("=== HW Version: r"));
-  Serial.print(led_array_interface->device_hardware_revision);
-  Serial.print(F(", Controller Version: r"));
+  Serial.print(F("=== Controller Version: r"));
   Serial.print(version);
-  Serial.println(F(")\n=== For help, type ? "));
+  Serial.print(F(" | Serial Number: "));
+  Serial.printf("%04d", getSerialNumber());
+  Serial.print(F(" | Part Number: "));
+  Serial.printf("%04d", getPartNumber());
+  Serial.println(F("\n=== For help, type ? "));
 }
 
 /* A function to print a json-formatted file which contains relevant system parameters */
@@ -168,10 +170,24 @@ void LedArray::printSystemParams()
   Serial.print(F(",\n    \"bit_depth\" : "));
   Serial.print(led_array_interface->bit_depth);
   Serial.print(F(",\n    \"serial_number\" : "));
-  Serial.print(led_array_interface->serial_number);
+  Serial.print(getSerialNumber());
+  Serial.print(F(",\n    \"part_number\" : "));
+  Serial.print(getPartNumber());
 
   // Terminate JSON
   Serial.println("\n}");
+}
+
+uint16_t LedArray::getSerialNumber()
+{
+  uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
+  return (sn_read);
+}
+
+uint16_t LedArray::getPartNumber()
+{
+  uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
+  return (pn_read);
 }
 
 /* A function to reset the device to power-on state */
@@ -1360,9 +1376,9 @@ void LedArray::patternIncrementFast()
     digitalWriteFast(9, false);
     digitalWriteFast(10, false);
   }
+  LedArray::pattern_index++;
+  if (LedArray::pattern_index >= LedArray::led_sequence.length)
     LedArray::pattern_index++;
-    if (LedArray::pattern_index >= LedArray::led_sequence.length)
-            LedArray::pattern_index++;
   interrupts();
 }
 
@@ -1495,7 +1511,6 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
 
   // This variable is used to speed up checking of trigger status
   bool triggers_used_this_pattern;
-  bool first_frame = true;
 
   // Clear LED Array
   led_array_interface->clear();

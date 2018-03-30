@@ -41,11 +41,8 @@
 #define TRIGGER_OUTPUT_COUNT 1
 #define TRIGGER_INPUT_COUNT 1
 
-#define SN 1
-
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "sci-target";
-const int LedArrayInterface::serial_number = SN;
 const char * LedArrayInterface::device_hardware_revision = "1.0";
 const float LedArrayInterface::max_na = 1.0;
 const int16_t LedArrayInterface::led_count = 257;
@@ -72,7 +69,6 @@ const uint8_t TLC5955::_tlc_count = 52;          // Change to reflect number of 
 uint8_t TLC5955::_dc_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 uint8_t TLC5955::_rgb_order[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
-
 
 /**** Device-specific variables ****/
 TLC5955 tlc; // TLC5955 object
