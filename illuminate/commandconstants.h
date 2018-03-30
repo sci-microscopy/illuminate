@@ -109,7 +109,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"ff", "fillArray", "Fill the LED array with default color.", "ff"},
   {"bf", "brightfield", "Display brightfield pattern", "bf"},
   {"df", "darkfield", "Display darkfield pattern", "df"},
-  {"dpc", "halfCircle", "Illuminate half-circle (DPC) pattern", "dpc.[t/b/l/r] --or-- dpc.[top/bottom/left/right]"},
+  {"dpc", "halfCircle", "Illuminate half-circle (DPC) pattern", "dpc.[t/b/l/r] --or-- dpc.[top/bottom/left/right] --or-- dpc (will raw first pattern)"},
   {"cdpc", "colorDpc", "Illuminate color DPC (cDPC) pattern", "cdpc.[rVal],[gVal].[bVal]) --or-- cdpc.[rgbVal]) --or-- cdpc"},
   {"an", "annulus", "Display annulus pattern set by min/max na", "an.[minNA*100].[maxNA*100]"},
   {"ha", "halfAnnulus", "Illuminate half annulus", "ha.[type].[minNA*100].[maxNA*100]"},

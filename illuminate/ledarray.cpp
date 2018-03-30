@@ -1075,6 +1075,13 @@ void LedArray::drawDpc(uint16_t argc, char ** argv)
       led_array_interface->update();
     }
   }
+  else if (argc == 0)
+  {
+    // Draw the first DPC pattern
+    drawHalfCircle(0, 0.0, objective_na);
+    led_array_interface->update();
+  }
+
   else
     Serial.printf(F("ERROR (LedArray::drawDpc) Invlaid number of arguments.%s"), SERIAL_LINE_ENDING);
 }
