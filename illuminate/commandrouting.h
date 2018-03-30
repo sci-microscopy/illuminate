@@ -99,24 +99,39 @@ void CommandRouter::setLedArray(LedArray* new_led_array)
 
 void CommandRouter::setDebug(int16_t argc, char * * argv)
 {
+  int interface_debug = 0;
   if (argc == 1)
   {
     uint16_t debug_value = strtoul(argv[0], NULL, 0);
     if (debug_value > 10)
     {
       debug = (int) ((debug_value % 1000 - debug_value % 100) / 100.0);
-      led_array->setDebug(debug_value - debug * 100);
+      interface_debug = debug_value - debug * 100;
     }
     else
     {
-      led_array->setDebug(debug_value); // Set all to the same vaue
+      debug = debug_value;
+      interface_debug = debug_value;
     }
-
-    // User feedback
-    Serial.printf(F("(CommandRouter::setDebug): Set debug level to %d \n"), debug);
+  }
+  else if (argc == 0)
+  {
+    debug = (debug == 0) * 1;
+    interface_debug = debug;
+  }
+  else if (argc == 3)
+  {
+    debug = (uint8_t)atoi(argv[0]);
+    interface_debug = 10 * (uint8_t)atoi(argv[1]) + (uint8_t)atoi(argv[2]);
   }
   else
     Serial.printf(F("ERROR (CommandRouter::setDebug): Invalud argument count.%s"), SERIAL_LINE_ENDING);
+
+  // User feedback
+  Serial.printf(F("(CommandRouter::setDebug): Debug level is %d \n"), debug);
+
+  // Set lower-level debug
+  led_array->setDebug(interface_debug); // Set all to the same vaue
 }
 
 int CommandRouter::getArgumentBitDepth(char * command_header)

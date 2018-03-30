@@ -1940,7 +1940,7 @@ void LedArray::setDebug(uint16_t new_debug_level)
   if (new_debug_level > 10)
   {
     // Set debug level for this file
-    debug = (int) (new_debug_level % 10);
+    debug = (int) ((new_debug_level % 100 - new_debug_level % 10) / 10.0);
   }
   else
     debug = new_debug_level;
@@ -1949,7 +1949,7 @@ void LedArray::setDebug(uint16_t new_debug_level)
   Serial.printf(F("(LedArray::setDebug): Set debug level to %d \n"), debug);
 
   // Set debug level for interface
-  led_array_interface->setDebug((int) ((new_debug_level % 100 - new_debug_level % 10) / 10.0));
+  led_array_interface->setDebug((int) (new_debug_level % 10));
 }
 
 void LedArray::setInterface(LedArrayInterface * interface)

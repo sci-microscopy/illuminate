@@ -96,13 +96,13 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"ver", "version", "Display controller version number"},
 
   // System Parameters
-  {"ac", "autoClear", "Toggle clearing of array between led updates. Can call with or without options.", "ac --or-- ac.[0,1]"},
+  {"ac", "autoClear", "Toggle clearing of array between led updates. Can call with or without options.", "ac --or-- ac.[0/1]"},
   {"na", "setNa", "Set na used for bf/df/dpc/cdpc patterns", "na.[na*100]"},
-  {"sc", "setColor", "Set LED array color", "sc.[rgbVal] --or-- sc.[rVal].[gVal].[bVal]"},
-  {"sad", "setArrayDistance", "Set LED array distance", "sad.[100*dist(mm) --or-- 1000*dist(cm)]"},
+  {"sc", "setColor", "Set LED array color", "sc,[rgbVal] --or-- sc.[rVal].[gVal].[bVal]"},
+  {"sad", "setArrayDistance", "Set LED array distance", "sad,[100*dist(mm) --or-- 1000*dist(cm)]"},
 
   // Single (or multiple) LED Display
-  {"l", "led", "Turn on a single LED (or multiple LEDs in a list)", "l.[led #].[led #], ..."},
+  {"l", "led", "Turn on a single LED (or multiple LEDs in a list)", "ll.[led #].[led #], ..."},
 
   // General Display
   {"x", "xx", "Clear the LED array.", "x"},
@@ -110,7 +110,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"bf", "brightfield", "Display brightfield pattern", "bf"},
   {"df", "darkfield", "Display darkfield pattern", "df"},
   {"dpc", "halfCircle", "Illuminate half-circle (DPC) pattern", "dpc.[t/b/l/r] --or-- dpc.[top/bottom/left/right]"},
-  {"cdpc", "colorDpc", "Illuminate color DPC (cDPC) pattern", "cdpc.[rVal].[gVal].[bVal]) --or-- cdpc.[rgbVal]) --or-- cdpc"},
+  {"cdpc", "colorDpc", "Illuminate color DPC (cDPC) pattern", "cdpc.[rVal],[gVal].[bVal]) --or-- cdpc.[rgbVal]) --or-- cdpc"},
   {"an", "annulus", "Display annulus pattern set by min/max na", "an.[minNA*100].[maxNA*100]"},
   {"ha", "halfAnnulus", "Illuminate half annulus", "ha.[type].[minNA*100].[maxNA*100]"},
   {"dq", "drawQuadrant", "Draws single quadrant", "dq --or-- dq.[rVal].[gVal].[bVal]"},
@@ -118,15 +118,15 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"ndpc", "navigator", "Illuminate half-circle (DPC) pattern with navigator", "ndpc.[t/b/l/r] --or-- ndpc.[top/bottom/left/right]"},
 
   // Single LED Scanning
-  {"scf", "scanFull", "Scan all active LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scf.[delay_ms]"},
-  {"scb", "scanBrightfield", "Scan all brightfield LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scb.[delay_ms]"},
+  {"scf", "scanFull", "Scan all active LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scf,[delay_ms]"},
+  {"scb", "scanBrightfield", "Scan all brightfield LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scb,[delay_ms]"},
 
   // Custom Sequence Scanning
-  {"ssl",   "setSeqLength", "Set sequence length in terms of independent patterns", "ssl.[Sequence length]"},
+  {"ssl",   "setSeqLength", "Set sequence length in terms of independent patterns", "ssl,[Sequence length]"},
   {"ssv",   "setSeqValue", "Set sequence value", "ssl.[1st LED #]. [1st rVal]. [1st gVal]. [1st bVal]. [2nd LED #]. [2nd rVal]. [2nd gVal]. [2nd bVal] ..."},
-  {"rseq",  "runSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq.[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
-  {"rseqf",  "runSequenceFast", "Runs sequence with specified delay between each update. Uses parallel digital IO to acheive very fast speeds. Only available on certain LED arrays.", "rseqf.[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
-  {"pseq",  "printSeq", "Prints sequence values to the terminal", "pseq"},
+  {"rseq",  "runSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
+  {"rseqf",  "runSequenceFast", "Runs sequence with specified delay between each update. Uses parallel digital IO to acheive very fast speeds. Only available on certain LED arrays.", "rseqf,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
+  {"pseq",  "printSeq", "Prints sequence values to the terminal", "pseq"}, \
   {"pseql", "printSeqLength", "Prints sequence length to the terminal", "pseql"},
   {"sseq",  "stepSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "sseq.[trigger output mode for index 0].[trigger output mode for index 1],"},
   {"reseq", "resetSeq", "Resets sequence index to start", "reseq"},
@@ -138,7 +138,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"ptr", "trigPrint", "Prints information about the current i/o trigger setting", "ptr"},
   {"trt", "trigTest", "Waits for trigger pulses on the defined channel", "trt.[trigger input index]"},
   {"ch", "drawChannel", "Draw LED by hardware channel (use for debugging)", "dc.[led#]"},
-  {"dbg", "debug", "Toggle debug flag. Can call with or without options.", "dbg --or-- dbg.[0 --or-- 1]"},
+  {"dbg", "debug", "Toggle debug flag. Can call with or without options.", "dbg.[command router debug].[LED array (generic) debug].[LED interface debug] --or-- dbg (toggles all between level 1 or 0)"},
   {"spo", "setPinOrder", "Sets pin order (R/G/B) for setup purposes. Also can flip individual leds by passing fourth argument.", "spo.[rChan].[gChan].[bChan] --or-- spo.[led#].[rChan].[gChan].[bChan]"},
   {"delay", "wait", "Simply puts the device in a loop for the amount of time in ms", "delay.[length of time in ms]"},
 
@@ -149,7 +149,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"pledposna", "printLedPositionsNa", "Prints the positions of each LED in NA coordinates (NA_x, NA_y, NA_distance", "pledposna"},
 
   // Stored Patterns
-  {"disco", "party", "Illuminate a random color pattern of LEDs", "disco.[Number of LEDs in pattern]"},
+  {"disco", "party", "Illuminate a random color pattern of LEDs", "disco,[Number of LEDs in pattern]"},
   {"demo", "runDemo", "Runs a demo routine to show what the array can do.", "demo"},
   {"water", "waterDrop", "Water drop demo", "water"}
 };
