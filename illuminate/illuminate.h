@@ -41,4 +41,7 @@ static const char SERIAL_LINE_ENDING[] = "\n";
 // Serial command termiator
 static const char SERIAL_COMMAND_TERMINATOR[] = "-==-";
 
+// Serial delimeter
+static const char SERIAL_DELIMITER[] = ".";
+
 #endif

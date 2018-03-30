@@ -994,6 +994,9 @@ void LedArray::scanLedRange(uint16_t delay_ms, float start_na, float end_na, boo
       sendTriggerPulse(trigger_index, false);
   }
 
+  if (print_indicies)
+    Serial.print(F("scan_start:"));
+
   int16_t led_index = 0;
   while (led_index < (int16_t)led_array_interface->led_count && !Serial.available())
   {
@@ -1008,14 +1011,12 @@ void LedArray::scanLedRange(uint16_t delay_ms, float start_na, float end_na, boo
       for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
         led_array_interface->setLed(led_index, color_channel_index, led_value[color_channel_index]);
 
-      //      if (print_indicies)
-      //      {
-      //        Serial.print(led_index);
-      //        if (led_index < led_array_interface->led_count - 1)
-      //          Serial.print(", ");
-      //        else
-      //          Serial.print('\n');
-      //      }
+      if (print_indicies)
+      {
+        Serial.print(led_index);
+        if (led_index < led_array_interface->led_count - 1)
+          Serial.print(SERIAL_DELIMITER);
+      }
 
       // Update LED Pattern
       led_array_interface->update();
@@ -1032,6 +1033,12 @@ void LedArray::scanLedRange(uint16_t delay_ms, float start_na, float end_na, boo
     }
     led_index++;
   }
+
+  if (print_indicies)
+    Serial.print(F(":scan_end"));
+
+  Serial.print(SERIAL_LINE_ENDING);
+
   delay(delay_ms);
   led_array_interface->clear();
 }

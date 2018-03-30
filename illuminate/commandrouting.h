@@ -54,7 +54,6 @@ class CommandRouter {
     // Standard element variables
     int debug = 0;
     const float version = 1.1;
-    const char serial_delimeter = '.';
 
     // Serial command holders
     LedArray * led_array;
@@ -431,7 +430,7 @@ void CommandRouter::processSerialStream()
           }
           break;
         }
-      case '.':   // dot serial_delimeter
+      case '.':   // dot SERIAL_DELIMITER
         {
           if (!argument_flag) { // This is the case where we've just finished a command and need to initialize argument parameters
             argument_flag = true;
