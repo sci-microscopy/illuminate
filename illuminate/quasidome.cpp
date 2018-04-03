@@ -64,6 +64,8 @@ bool LedArrayInterface::trigger_input_state[] = {false, false};
 int LedArrayInterface::debug = 0;
 
 const uint8_t TLC5955::_tlc_count = 37;          // Change to reflect number of TLC chips
+float TLC5955::max_current_amps = 2.0;      // Maximum current output, amps
+bool TLC5955::enforce_max_current = true;   // Whether to enforce max current limit
 
 // Define dot correction, pin rgb order, and grayscale data arrays in program memory
 uint8_t TLC5955::_dc_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
