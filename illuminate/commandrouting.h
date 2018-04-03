@@ -246,9 +246,12 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->printLedPositions(false);
   else if ((strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS_NA][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS_NA][1]) == 0))
     led_array->printLedPositions(true);
-
   else if ((strcmp(command_header, command_list[CMD_DELAY][0]) == 0) || (strcmp(command_header, command_list[CMD_DELAY][1]) == 0))
     delay(strtoul((char *) argv[0], NULL, 0));
+  else if ((strcmp(command_header, command_list[CMD_SET_MAX_CURRENT][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_MAX_CURRENT][1]) == 0))
+    led_array->setMaxCurrentLimit(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_SET_MAX_CURRENT_ENFORCEMENT][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_MAX_CURRENT_ENFORCEMENT][1]) == 0))
+    led_array->setMaxCurrentEnforcement(argc, (char * *) argv);
 
   else if ((strcmp(command_header, command_list[CMD_DISCO_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_DISCO_IDX][1]) == 0))
     led_array->drawDiscoPattern();

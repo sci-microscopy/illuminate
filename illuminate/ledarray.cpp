@@ -183,6 +183,22 @@ void LedArray::printSystemParams()
   Serial.printf("\n}", SERIAL_LINE_ENDING);
 }
 
+void LedArray::setMaxCurrentLimit(int argc, char ** argv)
+{
+  if (argc == 1)
+    led_array_interface->setMaxCurrentLimit(atof(argv[0]));
+  else
+    Serial.printf(F("ERROR (LedArray::setMaxCurrentLimit): Invalid number of arguments.%s"), SERIAL_LINE_ENDING);
+}
+
+void LedArray::setMaxCurrentEnforcement(int argc, char ** argv)
+{
+  if (argc == 1)
+    led_array_interface->setMaxCurrentEnforcement(atoi(argv[0]) > 0);
+  else
+    Serial.printf(F("ERROR (LedArray::setMaxCurrentEnforcement): Invalid number of arguments.%s"), SERIAL_LINE_ENDING);
+}
+
 void LedArray::printMacAddress()
 {
   print_mac();
@@ -1988,7 +2004,7 @@ void LedArray::setup()
 
   // Read device mac address once
   read_mac();
-  
+
   // Initialize led array
   led_array_interface->deviceSetup();
 

@@ -873,6 +873,17 @@ PROGMEM const int16_t LedArrayInterface::led_positions[793][5] = {
     {792, 801, 4791, 1957, 3892},
 };
 
+void LedArrayInterface::setMaxCurrentEnforcement(bool enforce);
+{
+  TLC5955::enforce_max_current = enforce;
+}
+
+void LedArrayInterface::setMaxCurrentLimit(float limit)
+{
+  if (limit > 0)
+    TLC5955::max_current_amps = limit;
+}
+
 void LedArrayInterface::setPinOrder(int16_t led_number, int16_t color_channel_index, uint8_t position)
 {
   tlc.setPinOrderSingle(led_number, color_channel_index, position);

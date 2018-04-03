@@ -70,12 +70,15 @@ class LedArrayInterface {
     // Set pin order
     void setPinOrder(int16_t led_number, int16_t color_channel_index, uint8_t position);
 
+    // Maximum current limits
+    void setMaxCurrentEnforcement(bool enforce);
+    void setMaxCurrentLimit(float limit);
+
     // Not implemented function
     void notImplemented(const char * command_name);
 
     // Device and Software Descriptors
     static const char * device_name;
-//    static const int serial_number;
     static const char * device_hardware_revision;
     static const float max_na;
     static const int16_t led_count;

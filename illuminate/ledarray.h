@@ -107,6 +107,8 @@ class LedArray {
     void clearNaList();
     void buildNaList(float boardDistance);
     void toggleAutoClear(uint16_t argc, char ** argv);
+    void setMaxCurrentEnforcement(int argc, char ** argv);
+    void setMaxCurrentLimit(int argc, char ** argv);
 
     // Sequencing
     int getSequenceBitDepth();

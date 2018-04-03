@@ -338,6 +338,17 @@ const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
   {256, 145, 400, -4321, 0}
 };
 
+void LedArrayInterface::setMaxCurrentEnforcement(bool enforce);
+{
+  TLC5955::enforce_max_current = enforce;
+}
+
+void LedArrayInterface::setMaxCurrentLimit(float limit)
+{
+  if (limit > 0)
+    TLC5955::max_current_amps = limit;
+}
+
 void LedArrayInterface::notImplemented(const char * command_name)
 {
   Serial.print(F("Command "));

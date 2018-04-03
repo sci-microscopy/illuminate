@@ -29,7 +29,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 46
+#define COMMAND_COUNT 48
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -76,15 +76,17 @@
 #define CMD_TOGGLE_DEBUG_IDX 36
 #define CMD_PIN_ORDER_IDX 37
 #define CMD_DELAY 38
+#define CMD_SET_MAX_CURRENT 39
+#define CMD_SET_MAX_CURRENT_ENFORCEMENT 40
 
-#define CMD_PRINT_VALS_IDX 39
-#define CMD_PRINT_PARAMS 40
-#define CMD_PRINT_LED_POSITIONS 41
-#define CMD_PRINT_LED_POSITIONS_NA 42
+#define CMD_PRINT_VALS_IDX 41
+#define CMD_PRINT_PARAMS 42
+#define CMD_PRINT_LED_POSITIONS 43
+#define CMD_PRINT_LED_POSITIONS_NA 44
 
-#define CMD_DISCO_IDX 43
-#define CMD_DEMO_IDX 44
-#define CMD_WATER_IDX 45
+#define CMD_DISCO_IDX 45
+#define CMD_DEMO_IDX 46
+#define CMD_WATER_IDX 47
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -141,6 +143,8 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"dbg", "debug", "Toggle debug flag. Can call with or without options.", "dbg.[command router debug].[LED array (generic) debug].[LED interface debug] --or-- dbg (toggles all between level 1 or 0)"},
   {"spo", "setPinOrder", "Sets pin order (R/G/B) for setup purposes. Also can flip individual leds by passing fourth argument.", "spo.[rChan].[gChan].[bChan] --or-- spo.[led#].[rChan].[gChan].[bChan]"},
   {"delay", "wait", "Simply puts the device in a loop for the amount of time in ms", "delay.[length of time in ms]"},
+  {"smc", "setMaxCurrent", "Sets max current in amps", "smc.[current limit in amps]"},
+  {"smce", "setMaxCurrentEnforcement", "Sets whether or not max current limit is enforced (0 is no, all other values are yes)", "smce.[0, 1]"},
 
   // Quering System State
   {"pvals", "printVals", "Print led values for software interface", "pvals"},

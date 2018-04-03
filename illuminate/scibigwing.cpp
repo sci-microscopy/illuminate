@@ -1616,6 +1616,17 @@ void LedArrayInterface::setPinOrder(int16_t led_number, int16_t color_channel_in
   tlc.setPinOrderSingle(led_number, color_channel_index, position);
 }
 
+void LedArrayInterface::setMaxCurrentEnforcement(bool enforce)
+{
+  TLC5955::enforce_max_current = enforce;
+}
+
+void LedArrayInterface::setMaxCurrentLimit(float limit)
+{
+  if (limit > 0)
+    TLC5955::max_current_amps = limit;
+}
+
 void LedArrayInterface::notImplemented(const char * command_name)
 {
   Serial.print(F("Command "));
