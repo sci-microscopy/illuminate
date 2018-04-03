@@ -74,7 +74,6 @@ uint8_t TLC5955::_dc_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::
 uint8_t TLC5955::_rgb_order[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 
-
 /**** Device-specific variables ****/
 TLC5955 tlc;                            // TLC5955 object
 uint32_t gsclk_frequency = 2000000;     // Grayscale clock speed
@@ -959,11 +958,11 @@ PROGMEM const int16_t LedArrayInterface::led_positions[1529][5] = {
     {876, 473, 3263, 4791, 3892},
     {877, 557, -4350, 4573, 4200},
     {878, 1229, 4350, -4573, 4200},
-    {879, 461, 4350, 4573, 4200},
+    {879, 459, 4350, 4573, 4200},
     {880, 893, 4573, 4350, 4200},
-    {881, 1133, -4350, -4573, 4200},
-    {882, 797, 4573, -4350, 4200},
-    {883, 1469, -4573, 4350, 4200},
+    {881, 1131, -4350, -4573, 4200},
+    {882, 795, 4573, -4350, 4200},
+    {883, 1467, -4573, 4350, 4200},
     {884, 1565, -4573, -4350, 4200},
     {885, 648, 5009, 2175, 3585},
     {886, 351, 2175, 5009, 3585},
@@ -1873,6 +1872,12 @@ void LedArrayInterface::deviceSetup()
 
   if (LED_SWAP_GROUP_1)
     tlc.setRgbPinOrderSingle(141, 2, 1, 0);
+
+  // swap green and red for custom led connection
+  tlc.setRgbPinOrderSingle(459, 1, 0, 2); // led 879
+  tlc.setRgbPinOrderSingle(1131, 1, 0, 2); // led 881
+  tlc.setRgbPinOrderSingle(795, 1, 0, 2); // led 882
+  tlc.setRgbPinOrderSingle(1467, 1, 0, 2); // led 883
 
   // Update the GS register
   clear();
