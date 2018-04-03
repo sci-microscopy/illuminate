@@ -133,6 +133,8 @@ void LedArray::printAbout()
   Serial.printf("%04d", getSerialNumber());
   Serial.print(F(" | Part Number: "));
   Serial.printf("%04d", getPartNumber());
+  Serial.print(F(" | Teensy MAC address: "));
+  printMacAddress();
   Serial.printf(F("\n=== For help, type ? %s"), SERIAL_LINE_ENDING);
 }
 
@@ -174,9 +176,16 @@ void LedArray::printSystemParams()
   Serial.print(getSerialNumber());
   Serial.print(F(",\n    \"part_number\" : "));
   Serial.print(getPartNumber());
+  Serial.print(F(",\n    \"mac_address\" : "));
+  printMacAddress();
 
   // Terminate JSON
   Serial.printf("\n}", SERIAL_LINE_ENDING);
+}
+
+void LedArray::printMacAddress()
+{
+  print_mac();
 }
 
 uint16_t LedArray::getSerialNumber()
@@ -386,6 +395,9 @@ void LedArray::drawNavDpc()
 /* A function to draw a darkfield pattern */
 void LedArray::drawDarkfield()
 {
+  if (auto_clear_flag)
+    clear();
+
   //TODO: Add check for max current
   drawCircle(objective_na, 1.0);
   led_array_interface->update();
@@ -422,7 +434,9 @@ void LedArray::drawCdpc(int argc, char * *argv)
     };
 
     // Clear array
-    led_array_interface->clear();
+    if (auto_clear_flag)
+      clear();
+
     for (int quadrant_index = 0; quadrant_index < 4; quadrant_index++)
     {
       // Set all colors to zero (off)
@@ -444,6 +458,8 @@ void LedArray::drawCdpc(int argc, char * *argv)
 /* A function to draw a half annulus */
 void LedArray::drawHalfAnnulus(int argc, char * *argv)
 {
+
+
   float na_start, na_end;
   if (argc == 1)
   {
@@ -471,6 +487,9 @@ void LedArray::drawHalfAnnulus(int argc, char * *argv)
     Serial.print(na_end);
     Serial.printf(F("NA.%s"), SERIAL_LINE_ENDING);
   }
+
+  if (auto_clear_flag)
+    clear();
 
   int8_t half_annulus_type = 0;
   if ( (strcmp(argv[0], DPC_TOP1) == 0) || (strcmp(argv[0], DPC_TOP2) == 0))
@@ -1966,6 +1985,10 @@ void LedArray::setInterface(LedArrayInterface * interface)
 
 void LedArray::setup()
 {
+
+  // Read device mac address once
+  read_mac();
+  
   // Initialize led array
   led_array_interface->deviceSetup();
 

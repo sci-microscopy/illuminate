@@ -31,6 +31,7 @@
 #include "ledarrayinterface.h"
 #include "ledsequence.h"
 #include "illuminate.h"
+#include "src/T3Mac/T3Mac.h"
 
 #include <Arduino.h>
 #include <EEPROM.h>
@@ -142,6 +143,7 @@ class LedArray {
     static void patternIncrementFast();
     uint16_t getSerialNumber();
     uint16_t getPartNumber();
+    void printMacAddress();
 
   private:
 
