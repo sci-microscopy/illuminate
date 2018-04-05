@@ -32,8 +32,8 @@
 
 // Pin definitions (used internally)
 #define TRIGGER_OUTPUT_PIN_0 23
-#define TRIGGER_OUTPUT_PIN_1 22
-#define TRIGGER_INPUT_PIN_0 20
+#define TRIGGER_OUTPUT_PIN_1 20
+#define TRIGGER_INPUT_PIN_0 22
 #define TRIGGER_INPUT_PIN_1 19
 #define TRIGGER_OUTPUT_COUNT 2
 #define TRIGGER_INPUT_COUNT 2

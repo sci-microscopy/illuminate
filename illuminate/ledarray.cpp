@@ -639,7 +639,7 @@ void LedArray::sendTriggerPulse(int trigger_index, bool show_output)
   // TODO: store polarity and use it here
   if (debug >= 2)
     Serial.println(F("Called sendTriggerPulse"));
-
+  
   // Send trigger pulse with pulse_width
   int status = led_array_interface->sendTriggerPulse(trigger_index, trigger_pulse_width_list_us[trigger_index], true);
 
@@ -1495,7 +1495,6 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
 
   // This variable is used to speed up checking of trigger status
   bool triggers_used_this_pattern;
-  bool first_frame = true;
 
   // Clear LED Array
   led_array_interface->clear();
@@ -1634,7 +1633,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
                 }
                 else if ((float) elapsed_us_outer - elapsed_us_0 < MAX_TRIGGER_WAIT_TIME_S * 1000000.0)
                 {
-                  Serial.println(F("ERROR (ledArray::runSequenceFast): trigger input timeout"));
+                  Serial.printf(F("ERROR (ledArray::runSequenceFast): trigger input timeout for channel %d\n"), trigger_index);
                   return;
                 }
               }
@@ -1931,13 +1930,16 @@ void LedArray::setup()
   LedArray::led_sequence.deallocate();
 
   // Initialize sequences at every bit depth so these are defined
-  LedArray::led_sequence.allocate(4);
+  LedArray::led_sequence.allocate(7);
   LedArray::led_sequence.incriment(1);
   LedArray::led_sequence.append(0, 127);
+  LedArray::led_sequence.incriment(0);
   LedArray::led_sequence.incriment(1);
   LedArray::led_sequence.append(1, 127);
+  LedArray::led_sequence.incriment(0);
   LedArray::led_sequence.incriment(1);
   LedArray::led_sequence.append(2, 127);
+  LedArray::led_sequence.incriment(0);
   LedArray::led_sequence.incriment(1);
   LedArray::led_sequence.append(3, 127);
 
