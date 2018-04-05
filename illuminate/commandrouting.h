@@ -263,9 +263,23 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->waterDrop();
   else
   {
-    Serial.print(F("Command ["));
-    Serial.print(command_header);
-    Serial.print(F("] is not implemented yet."));
+    // Check if the command is equal to any device-specific commands
+    bool command_found = false;
+    for (uint16_t command_index = 0; command_index < led_array->getDeviceCommandCount(); command_index++)
+    {
+      if ((strcmp(command_header, led_array->getDeviceCommandNameShort(command_index)) == 0) || (strcmp(command_header, led_array->getDeviceCommandNameLong(command_index)) == 0))
+      {
+        led_array->deviceCommand(command_index, argc, (char * *) argv);
+        command_found = true;
+      }
+    }
+
+    if (!command_found)
+    {
+      Serial.print(F("Command ["));
+      Serial.print(command_header);
+      Serial.print(F("] is not implemented yet."));
+    }
   }
 }
 

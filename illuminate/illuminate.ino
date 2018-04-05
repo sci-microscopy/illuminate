@@ -28,7 +28,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define DEMO_MODE 0
 #define SW_VERSION 1.12
 #define SERIAL_BAUD_RATE 115200
-#define USE_TARGET_ARRAY 1
 
 // Include various files depending on which LED array is used
 #include "ledarrayinterface.h"

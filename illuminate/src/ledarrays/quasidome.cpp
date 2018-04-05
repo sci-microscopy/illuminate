@@ -76,6 +76,12 @@ uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][T
 TLC5955 tlc; // TLC5955 object
 uint32_t gsclk_frequency = 5000000;
 
+/**** Device-specific commands ****/
+const uint8_t LedArrayInterface::device_command_count = 0;
+const char * LedArrayInterface::deviceCommandNamesShort[] = {};
+const char * LedArrayInterface::deviceCommandNamesLong[] = {};
+const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
+
 // FORMAT: hole number, channel, 100*x, 100*y, 100*z
 PROGMEM const int16_t LedArrayInterface::led_positions[][5] = {
   {0, 68, 0, 0, 5000},
@@ -661,7 +667,7 @@ PROGMEM const int16_t LedArrayInterface::led_positions[][5] = {
   {580, 296, 3960, -3168, 2650}
 };
 
-void LedArrayInterface::setMaxCurrentEnforcement(bool enforce);
+void LedArrayInterface::setMaxCurrentEnforcement(bool enforce)
 {
   TLC5955::enforce_max_current = enforce;
 }
@@ -1066,4 +1072,82 @@ void LedArrayInterface::deviceSetup()
   tlc.setRgbPinOrderSingle(500, 0, 1, 2); // channel 500 has B/R swapped.
   tlc.setRgbPinOrderSingle(585, 0, 1, 2); // channel 79 has B/R swapped.
 }
+
+uint8_t LedArrayInterface::getDeviceCommandCount()
+{
+  return (LedArrayInterface::device_command_count);
+}
+
+const char * LedArrayInterface::getDeviceCommandNameShort(int device_command_index)
+{
+  if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
+    return (LedArrayInterface::deviceCommandNamesShort[device_command_index]);
+  else
+  {
+    Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+    return ("");
+  }
+}
+
+const char * LedArrayInterface::getDeviceCommandNameLong(int device_command_index)
+{
+  if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
+    return (LedArrayInterface::deviceCommandNamesLong[device_command_index]);
+  else
+  {
+    Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+    return ("");
+  }
+}
+
+uint32_t LedArrayInterface::getDeviceCommandLedListSize(int device_command_index)
+{
+  if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
+  {
+    // Get stored pattern cound and led per pattern for this command
+    uint16_t pattern_count = LedArrayInterface::device_command_pattern_dimensions[device_command_index][0];
+    uint16_t leds_per_pattern = LedArrayInterface::device_command_pattern_dimensions[device_command_index][1];
+
+    // Concatenate these two into 32-bit unsigned integer
+    uint32_t concatenated = ((uint32_t)pattern_count) << 16 | leds_per_pattern;
+    return (concatenated);
+  }
+  else
+  {
+    Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+    return (0);
+  }
+}
+
+uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_index, uint16_t pattern_index, uint16_t led_index)
+{
+  if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
+  {
+    uint32_t concatenated = getDeviceCommandLedListSize(device_command_index);
+    uint16_t pattern_count  = (uint16_t)(concatenated >> 16);
+    uint16_t leds_per_pattern = (uint16_t)concatenated;
+
+    if ((pattern_index < pattern_count) && (led_index < leds_per_pattern))
+    {
+      //      if (device_command_index == 0)
+      //        return (uint16_t)pgm_read_word(&(hole_led_list[pattern_index][led_index]));
+      //      else if (device_command_index == 1)
+      //        return (uint16_t)pgm_read_word(&(uv_led_list[pattern_index][led_index]));
+      //      else
+      return 0;
+
+    }
+    else
+    {
+      Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid pattern index (%d) / led index (%d)"), pattern_index, led_index, SERIAL_LINE_ENDING);
+      return (0);
+    }
+  }
+  else
+  {
+    Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+    return (0);
+  }
+}
+
 #endif

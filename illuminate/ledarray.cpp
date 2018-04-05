@@ -31,6 +31,72 @@ volatile bool LedArray::timer_tripped = false;
 volatile uint16_t LedArray::pattern_index = 0;
 LedSequence LedArray::led_sequence;
 
+uint8_t LedArray::getDeviceCommandCount()
+{
+  return led_array_interface->getDeviceCommandCount();
+}
+
+const char * LedArray::getDeviceCommandNameShort(int device_command_index)
+{
+  return led_array_interface->getDeviceCommandNameShort(device_command_index);
+}
+const char * LedArray::getDeviceCommandNameLong(int device_command_index)
+{
+  return led_array_interface->getDeviceCommandNameLong(device_command_index);
+}
+
+void LedArray::deviceCommand(int device_command_index, int argc, char * *argv)
+{
+  // Get pattern sizes
+  uint32_t concatenated = led_array_interface->getDeviceCommandLedListSize(device_command_index);
+  uint16_t pattern_count  = (uint16_t)(concatenated >> 16);
+  uint16_t leds_per_pattern = (uint16_t)concatenated;
+
+  // Get arguments
+  int16_t pattern_number = 0;
+  if (argc == 0)
+    pattern_number = -1;
+  else if (argc == 1)
+    pattern_number = strtoul(argv[0], NULL, 0);
+  else
+  {
+    Serial.printf("ERROR (LedArray::deviceCommand) Invalid number of arguments (%d) %s", argc, SERIAL_LINE_ENDING);
+    return;
+  }
+
+  if (auto_clear_flag)
+    led_array_interface->clear();
+
+  if (pattern_number < 0)
+  {
+    for (int16_t pattern_index = 0; pattern_index < pattern_count; pattern_index++)
+    {
+      for (int16_t led_index = 0; led_index < leds_per_pattern; led_index++)
+      {
+        if (debug >= 3)
+          Serial.printf("Pattern %d contains led %d %s", pattern_index, led_array_interface->getDeviceCommandLedListElement(device_command_index, pattern_index, led_index), SERIAL_LINE_ENDING);
+
+        for (int color_channel_index = 0; color_channel_index <  led_array_interface->color_channel_count; color_channel_index++)
+          led_array_interface->setLed(led_array_interface->getDeviceCommandLedListElement(device_command_index, pattern_index, led_index), color_channel_index, led_value[color_channel_index]);
+      }
+    }
+  }
+  else
+  {
+    for (int16_t led_index = 0; led_index < leds_per_pattern; led_index++)
+    {
+      if (debug >= 3)
+        Serial.printf("Pattern %d contains led %d %s", pattern_index, led_array_interface->getDeviceCommandLedListElement(device_command_index, pattern_index, led_index), SERIAL_LINE_ENDING);
+
+      for (int color_channel_index = 0; color_channel_index <  led_array_interface->color_channel_count; color_channel_index++)
+        led_array_interface->setLed(led_array_interface->getDeviceCommandLedListElement(device_command_index, pattern_number, led_index), color_channel_index, led_value[color_channel_index]);
+    }
+  }
+
+  // Update pattern
+  led_array_interface->update();
+}
+
 /* A function to print current LED positions (xyz) */
 void LedArray::printLedPositions(bool print_na)
 {

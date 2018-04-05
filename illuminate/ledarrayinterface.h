@@ -92,6 +92,10 @@ class LedArrayInterface {
     static const int16_t tlc_chip_count;
     static const bool supports_fast_sequence;
     static const float led_array_distance_z_default;
+    static const char * deviceCommandNamesShort[];
+    static const char * deviceCommandNamesLong[];  
+    static const uint8_t device_command_count;
+    static const uint16_t device_command_pattern_dimensions[][2];
 
     // Debug flag
     static int debug;
@@ -103,6 +107,13 @@ class LedArrayInterface {
 
     // LED positions
     static const int16_t PROGMEM led_positions[][5];
+
+    // Device-specific commands
+    uint8_t getDeviceCommandCount();
+    const char * getDeviceCommandNameShort(int device_command_index);
+    const char * getDeviceCommandNameLong(int device_command_index);
+    uint32_t getDeviceCommandLedListSize(int device_command_index);
+    uint16_t getDeviceCommandLedListElement(int device_command_index, uint16_t pattern_index, uint16_t led_index);
 };
 
 

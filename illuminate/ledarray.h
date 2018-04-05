@@ -131,7 +131,6 @@ class LedArray {
     void printVersion();
 
     // Internal functions
-
     void setDebug(uint16_t new_debug_level);
     void setup();   // Setup command
     int getArgumentLedNumberPitch(char * command_header);
@@ -146,6 +145,12 @@ class LedArray {
     uint16_t getSerialNumber();
     uint16_t getPartNumber();
     void printMacAddress();
+
+    // Device-specific commands
+    uint8_t getDeviceCommandCount();
+    const char * getDeviceCommandNameShort(int device_command_index);
+    const char * getDeviceCommandNameLong(int device_command_index);
+    void deviceCommand(int device_command_index, int argc, char * *argv);    
 
   private:
 
