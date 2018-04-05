@@ -30,8 +30,8 @@
 #include "../TLC5955/TLC5955.h"
 
 // Pin definitions (used internally)
-#define GSCLK 6 // 10 on Arduino Mega
-#define LAT 2   // 44 on Arduino Mega
+#define GSCLK 6
+#define LAT 2
 #define SPI_MOSI 11
 #define SPI_CLK 13
 #define TRIGGER_OUTPUT_PIN_0 23

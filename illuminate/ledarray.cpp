@@ -2096,7 +2096,7 @@ void LedArray::setup()
   // Define led_value
   led_value = new uint8_t[led_array_interface->color_channel_count];
   for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-    led_value[color_channel_index] = 127; // TODO: make this respect bit depth
+    led_value[color_channel_index] = LED_VALUE_DEFAULT; // TODO: make this respect bit depth
 
   // Reset sequence
   LedArray::led_sequence.deallocate();

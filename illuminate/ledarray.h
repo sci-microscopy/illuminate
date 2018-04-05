@@ -173,6 +173,9 @@ class LedArray {
     // Controller version
     const float version = 0.2;
 
+    // Defualt brightness
+    const uint8_t LED_VALUE_DEFAULT = 63;
+
     // LED array control object
     LedArrayInterface * led_array_interface;
 
