@@ -406,8 +406,13 @@ void LedArray::buildNaList(float new_board_distance)
 /* A function to fill the LED array with the color specified by led_value */
 void LedArray::fillArray()
 {
-  //TODO: Add check for max current
+  // Clear array first (helps eleminate weird patterns)
+  clear();
+
+  // Draw an infinite circle
   drawCircle(0.0, 1.0);
+
+  // Update array
   led_array_interface->update();
 
   if (debug)

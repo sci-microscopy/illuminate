@@ -41,7 +41,8 @@ CommandRouter cmd;
 
 // This command runs once at power-on
 void setup() {
-  // Initialize serial
+  
+  // Initialize serial interface
   Serial.begin(SERIAL_BAUD_RATE);
 
   // Initialize LED Array
@@ -57,7 +58,6 @@ void setup() {
 
   // Print the about screen when connected
   led_array.printAbout();
-
 }
 
 // This command runs continuously after setup() runs once
