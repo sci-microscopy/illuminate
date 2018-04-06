@@ -42,7 +42,7 @@
 #define TRIGGER_INPUT_COUNT 2
 
 // LED pin swap
-const bool LED_SWAP_GROUP_1 = false;
+const bool LED_SWAP_GROUP_1 = true;
 
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "sci-big-wing";
@@ -76,7 +76,7 @@ uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][T
 
 /**** Device-specific variables ****/
 TLC5955 tlc;                            // TLC5955 object
-uint32_t gsclk_frequency = 2000000;     // Grayscale clock speed
+uint32_t gsclk_frequency = 3000000;     // Grayscale clock speed
 
 /**** Device-specific commands ****/
 const uint8_t LedArrayInterface::device_command_count = 0;
@@ -1850,7 +1850,6 @@ void LedArrayInterface::deviceSetup()
         // The library does not ininiate SPI for you, so as to prevent issues with other SPI libraries
         SPI.setMOSI(SPI_MOSI);
         SPI.begin();
-        SPI.setClockDivider(SPI_CLOCK_DIV32);
 
         tlc.init(LAT, SPI_MOSI, SPI_CLK);
 
@@ -1858,7 +1857,7 @@ void LedArrayInterface::deviceSetup()
         tlc.setAllDcData(127);
 
         // Set Max Current Values (see TLC5955 datasheet)
-        tlc.setMaxCurrent(6, 6, 6); // Go up to 7
+        tlc.setMaxCurrent(4, 4, 4); // Go up to 7
 
         // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
         // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT

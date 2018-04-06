@@ -406,8 +406,6 @@ void LedArray::buildNaList(float new_board_distance)
 /* A function to fill the LED array with the color specified by led_value */
 void LedArray::fillArray()
 {
-  // Clear array first (helps eleminate weird patterns)
-  clear();
 
   // Draw an infinite circle
   drawCircle(0.0, 1.0);
@@ -1076,6 +1074,10 @@ void LedArray::drawCircle(float start_na, float end_na)
     Serial.print(end_na);
     Serial.printf(F("NA %s"), SERIAL_LINE_ENDING);
   }
+
+  // Clear array first (helps eleminate weird patterns)
+  clear();
+  
 
   float d;
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
