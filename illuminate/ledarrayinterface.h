@@ -29,6 +29,11 @@
 #define LED_ARRAY_INTERFACE_H
 
 #include <Arduino.h>
+#include <EEPROM.h>
+
+// Serial and part number addresses in EEPROM
+#define PN_ADDRESS 100
+#define SN_ADDRESS 200
 
 class LedArrayInterface {
   public:
@@ -93,7 +98,7 @@ class LedArrayInterface {
     static const bool supports_fast_sequence;
     static const float led_array_distance_z_default;
     static const char * deviceCommandNamesShort[];
-    static const char * deviceCommandNamesLong[];  
+    static const char * deviceCommandNamesLong[];
     static const uint8_t device_command_count;
     static const uint16_t device_command_pattern_dimensions[][2];
 
@@ -114,6 +119,10 @@ class LedArrayInterface {
     const char * getDeviceCommandNameLong(int device_command_index);
     uint32_t getDeviceCommandLedListSize(int device_command_index);
     uint16_t getDeviceCommandLedListElement(int device_command_index, uint16_t pattern_index, uint16_t led_index);
+
+    // Serial and part numbers
+    uint16_t getSerialNumber();
+    uint16_t getPartNumber();
 };
 
 

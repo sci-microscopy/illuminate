@@ -1835,6 +1835,18 @@ void LedArrayInterface::deviceReset()
         deviceSetup();
 }
 
+uint16_t LedArrayInterface::getSerialNumber()
+{
+        uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
+        return (sn_read);
+}
+
+uint16_t LedArrayInterface::getPartNumber()
+{
+        uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
+        return (pn_read);
+}
+
 void LedArrayInterface::deviceSetup()
 {
         // Now set the GSCK to an output and a 50% PWM duty-cycle
@@ -1857,11 +1869,11 @@ void LedArrayInterface::deviceSetup()
         tlc.setAllDcData(127);
 
         // Set Max Current Values (see TLC5955 datasheet)
-        tlc.setMaxCurrent(4, 4, 4); // Go up to 7
+        tlc.setMaxCurrent(3, 2, 2); // Go up to 7
 
         // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
         // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT
-        tlc.setFunctionData(true, true, true, true, true); // WORKS with fast update
+        tlc.setFunctionData(true, true, true, true, false); // WORKS with fast update
 
         // Set LED current levels (7-bit, max is 127)
         int currentR = 127;
@@ -1875,8 +1887,13 @@ void LedArrayInterface::deviceSetup()
         // Set RGB pin order
         tlc.setRgbPinOrder(0, 1, 2);
 
-        if (LED_SWAP_GROUP_1)
+        // SN-specific pin corrections
+        if (getSerialNumber() == 17)
+        {
                 tlc.setRgbPinOrderSingle(141, 2, 1, 0);
+                tlc.setRgbPinOrderSingle(1209, 2, 1, 0);
+                tlc.setRgbPinOrderSingle(1251, 2, 1, 0);
+        }
 
         // swap green and red for custom led connection
         tlc.setRgbPinOrderSingle(459, 1, 0, 2); // led 879

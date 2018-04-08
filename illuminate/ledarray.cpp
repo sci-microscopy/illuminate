@@ -196,7 +196,7 @@ void LedArray::printAbout()
   Serial.print(F("=== Controller Version: r"));
   Serial.print(version);
   Serial.print(F(" | Serial Number: "));
-  Serial.printf("%04d", getSerialNumber());
+  Serial.printf("%04d", led_array_interface->getSerialNumber());
   Serial.print(F(" | Part Number: "));
   Serial.printf("%04d", getPartNumber());
   Serial.print(F(" | Teensy MAC address: "));
@@ -239,9 +239,9 @@ void LedArray::printSystemParams()
   Serial.print(F(",\n    \"bit_depth\" : "));
   Serial.print(led_array_interface->bit_depth);
   Serial.print(F(",\n    \"serial_number\" : "));
-  Serial.print(getSerialNumber());
+  Serial.print(led_array_interface->getSerialNumber());
   Serial.print(F(",\n    \"part_number\" : "));
-  Serial.print(getPartNumber());
+  Serial.print(led_array_interface->getPartNumber());
   Serial.print(F(",\n    \"mac_address\" : \""));
   printMacAddress();
   Serial.print(F("\""));
@@ -272,14 +272,12 @@ void LedArray::printMacAddress()
 
 uint16_t LedArray::getSerialNumber()
 {
-  uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
-  return (sn_read);
+  return led_array_interface->getSerialNumber();
 }
 
 uint16_t LedArray::getPartNumber()
 {
-  uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
-  return (pn_read);
+  return led_array_interface->getPartNumber();
 }
 
 /* A function to reset the device to power-on state */
