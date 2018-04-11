@@ -1619,7 +1619,6 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
           trigger_finished_waiting_count = 0;
           while (trigger_finished_waiting_count < led_array_interface->trigger_input_count)
           {
-            trigger_finished_waiting_count = 0;
             for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
             {
               if (((trigger_input_mode_list[trigger_index] > 0) && (LedArray::pattern_index  % trigger_input_mode_list[trigger_index] == 0))

@@ -41,7 +41,7 @@
 // Trigger timing constants
 #define TRIGGER_PULSE_WIDTH_DEFAULT 500
 #define TRIGGER_DELAY_DEFAULT 0
-#define MAX_TRIGGER_WAIT_TIME_S 2.0
+#define MAX_TRIGGER_WAIT_TIME_S 5.0
 
 // Annulus constants
 #define ANNULUS_START_OFFSET 0.03
