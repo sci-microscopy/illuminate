@@ -639,7 +639,7 @@ void LedArray::sendTriggerPulse(int trigger_index, bool show_output)
   // TODO: store polarity and use it here
   if (debug >= 2)
     Serial.println(F("Called sendTriggerPulse"));
-  
+
   // Send trigger pulse with pulse_width
   int status = led_array_interface->sendTriggerPulse(trigger_index, trigger_pulse_width_list_us[trigger_index], true);
 
@@ -1360,9 +1360,9 @@ void LedArray::patternIncrementFast()
     digitalWriteFast(9, false);
     digitalWriteFast(10, false);
   }
+  LedArray::pattern_index++;
+  if (LedArray::pattern_index >= LedArray::led_sequence.length)
     LedArray::pattern_index++;
-    if (LedArray::pattern_index >= LedArray::led_sequence.length)
-            LedArray::pattern_index++;
   interrupts();
 }
 
@@ -1625,15 +1625,18 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
                   || ((trigger_input_mode_list[trigger_index] == TRIG_MODE_ITERATION) && (LedArray::pattern_index  == 0))
                   || ((trigger_input_mode_list[trigger_index] == TRIG_MODE_START) && (acquisition_index == 0 && LedArray::pattern_index  == 0)))
               {
-                if (getTriggerState(trigger_index) && trigger_spin_up_delay_list[trigger_index] < 0)
+                if (trigger_spin_up_delay_list[trigger_index] < 0)
                 {
-                  trigger_spin_up_delay_list[trigger_index] = (float) elapsed_us_outer - elapsed_us_0;
-                  trigger_finished_waiting_count += 1;
-                }
-                else if ((float) elapsed_us_outer - elapsed_us_0 < MAX_TRIGGER_WAIT_TIME_S * 1000000.0)
-                {
-                  Serial.printf(F("ERROR (ledArray::runSequenceFast): trigger input timeout for channel %d\n"), trigger_index);
-                  return;
+                  if (getTriggerState(trigger_index))
+                  {
+                    trigger_spin_up_delay_list[trigger_index] = max((float)elapsed_us_outer - elapsed_us_0, 0.0);
+                    trigger_finished_waiting_count += 1;
+                  }
+                  else if ((float) elapsed_us_outer - elapsed_us_0 > MAX_TRIGGER_WAIT_TIME_S * 1000000.0)
+                  {
+                    Serial.printf(F("ERROR (ledArray::runSequenceFast): trigger input timeout for channel %d\n"), trigger_index);
+                    return;
+                  }
                 }
               }
               else
