@@ -921,6 +921,18 @@ void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, 
         notImplemented("setLedFast");
 }
 
+uint16_t LedArrayInterface::getSerialNumber()
+{
+        uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
+        return (sn_read);
+}
+
+uint16_t LedArrayInterface::getPartNumber()
+{
+        uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
+        return (pn_read);
+}
+
 // Debug Variables
 bool LedArrayInterface::getDebug()
 {
