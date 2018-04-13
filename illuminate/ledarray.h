@@ -185,7 +185,6 @@ class LedArray {
     uint16_t sequence_number_displayed = 0;
 
     // timer variable
-    static volatile bool timer_tripped;
     static volatile uint16_t pattern_index;
 
 };

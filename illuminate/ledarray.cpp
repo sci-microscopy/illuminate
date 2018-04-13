@@ -27,7 +27,6 @@
 
 #include "ledarray.h"
 
-volatile bool LedArray::timer_tripped = false;
 volatile uint16_t LedArray::pattern_index = 0;
 LedSequence LedArray::led_sequence;
 
@@ -641,7 +640,7 @@ void LedArray::sendTriggerPulse(int trigger_index, bool show_output)
     Serial.println(F("Called sendTriggerPulse"));
 
   // Send trigger pulse with pulse_width
-  int status = led_array_interface->sendTriggerPulse(trigger_index, trigger_pulse_width_list_us[trigger_index], true);
+  int status = led_array_interface->sendTriggerPulse(trigger_index, trigger_pulse_width_list_us[trigger_index], false);
 
   if (status < 0)
     Serial.print(F("ERROR - pin not configured!"));
@@ -1342,7 +1341,6 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
 void LedArray::patternIncrementFast()
 {
   noInterrupts();
-  LedArray::timer_tripped = true;
 
   // Display pattern
   if ( LedArray::led_sequence.led_counts[LedArray::pattern_index] > 0)
@@ -1361,8 +1359,6 @@ void LedArray::patternIncrementFast()
     digitalWriteFast(10, false);
   }
   LedArray::pattern_index++;
-  if (LedArray::pattern_index >= LedArray::led_sequence.length)
-    LedArray::pattern_index++;
   interrupts();
 }
 
@@ -1528,8 +1524,6 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
 
           // Turn off interval timer
           itimer.end();
-          LedArray::timer_tripped = true;
-
           // Wait for all devices to be ready to acquire (if input triggers are configured
           max_start_delay_us = 0;
           for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)

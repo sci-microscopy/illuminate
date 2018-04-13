@@ -251,7 +251,7 @@ int LedArrayInterface::sendTriggerPulse(int trigger_index, uint16_t delay_us, bo
 {
   // Get trigger pin
   int trigger_pin = trigger_output_pin_list[trigger_index];
-
+  noInterrupts();
   if (trigger_pin > 0)
   {
     // Write active state
@@ -264,12 +264,12 @@ int LedArrayInterface::sendTriggerPulse(int trigger_index, uint16_t delay_us, bo
     if (delay_us > 0)
       delayMicroseconds(delay_us);
 
-    // Write normal state
+    //  Write inactive state
     if (inverse_polarity)
       digitalWriteFast(trigger_pin, HIGH);
     else
       digitalWriteFast(trigger_pin, LOW);
-
+    interrupts();
     if (debug >= 2)
       Serial.printf(F("(LedArrayInterface::sendTriggerPulse): Sent trigger pulse on pin %d with delay %d\n"), trigger_index, delay_us);
     return (1);
@@ -367,6 +367,11 @@ void LedArrayInterface::deviceSetup()
     Serial.println(pin_numbers[channel]);
   }
 
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+
   // Adjust PWM timer for 8-bit precision
   analogWriteResolution(8);
 
@@ -374,7 +379,7 @@ void LedArrayInterface::deviceSetup()
   for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
   {
     pinMode(trigger_output_pin_list[trigger_index], OUTPUT);
-    digitalWriteFast(trigger_output_pin_list[trigger_index], LOW);
+    digitalWrite(trigger_output_pin_list[trigger_index], LOW);
   }
 
   // Input trigger Pins
