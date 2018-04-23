@@ -29,7 +29,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 46
+#define COMMAND_COUNT 48
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -76,15 +76,17 @@
 #define CMD_TOGGLE_DEBUG_IDX 36
 #define CMD_PIN_ORDER_IDX 37
 #define CMD_DELAY 38
+#define CMD_SET_MAX_CURRENT 39
+#define CMD_SET_MAX_CURRENT_ENFORCEMENT 40
 
-#define CMD_PRINT_VALS_IDX 39
-#define CMD_PRINT_PARAMS 40
-#define CMD_PRINT_LED_POSITIONS 41
-#define CMD_PRINT_LED_POSITIONS_NA 42
+#define CMD_PRINT_VALS_IDX 41
+#define CMD_PRINT_PARAMS 42
+#define CMD_PRINT_LED_POSITIONS 43
+#define CMD_PRINT_LED_POSITIONS_NA 44
 
-#define CMD_DISCO_IDX 43
-#define CMD_DEMO_IDX 44
-#define CMD_WATER_IDX 45
+#define CMD_DISCO_IDX 45
+#define CMD_DEMO_IDX 46
+#define CMD_WATER_IDX 47
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -96,7 +98,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"ver", "version", "Display controller version number"},
 
   // System Parameters
-  {"ac", "autoClear", "Toggle clearing of array between led updates. Can call with or without options.", "ac --or-- ac.[0,1]"},
+  {"ac", "autoClear", "Toggle clearing of array between led updates. Can call with or without options.", "ac --or-- ac.[0/1]"},
   {"na", "setNa", "Set na used for bf/df/dpc/cdpc patterns", "na.[na*100]"},
   {"sc", "setColor", "Set LED array color", "sc,[rgbVal] --or-- sc.[rVal].[gVal].[bVal]"},
   {"sad", "setArrayDistance", "Set LED array distance", "sad,[100*dist(mm) --or-- 1000*dist(cm)]"},
@@ -109,7 +111,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"ff", "fillArray", "Fill the LED array with default color.", "ff"},
   {"bf", "brightfield", "Display brightfield pattern", "bf"},
   {"df", "darkfield", "Display darkfield pattern", "df"},
-  {"dpc", "halfCircle", "Illuminate half-circle (DPC) pattern", "dpc.[t/b/l/r] --or-- dpc.[top/bottom/left/right]"},
+  {"dpc", "halfCircle", "Illuminate half-circle (DPC) pattern", "dpc.[t/b/l/r] --or-- dpc.[top/bottom/left/right] --or-- dpc (will raw first pattern)"},
   {"cdpc", "colorDpc", "Illuminate color DPC (cDPC) pattern", "cdpc.[rVal],[gVal].[bVal]) --or-- cdpc.[rgbVal]) --or-- cdpc"},
   {"an", "annulus", "Display annulus pattern set by min/max na", "an.[minNA*100].[maxNA*100]"},
   {"ha", "halfAnnulus", "Illuminate half annulus", "ha.[type].[minNA*100].[maxNA*100]"},
@@ -138,9 +140,11 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"ptr", "trigPrint", "Prints information about the current i/o trigger setting", "ptr"},
   {"trt", "trigTest", "Waits for trigger pulses on the defined channel", "trt.[trigger input index]"},
   {"ch", "drawChannel", "Draw LED by hardware channel (use for debugging)", "dc.[led#]"},
-  {"dbg", "debug", "Toggle debug flag. Can call with or without options.", "dbg --or-- dbg.[0 --or-- 1]"},
+  {"dbg", "debug", "Toggle debug flag. Can call with or without options.", "dbg.[command router debug].[LED array (generic) debug].[LED interface debug] --or-- dbg (toggles all between level 1 or 0)"},
   {"spo", "setPinOrder", "Sets pin order (R/G/B) for setup purposes. Also can flip individual leds by passing fourth argument.", "spo.[rChan].[gChan].[bChan] --or-- spo.[led#].[rChan].[gChan].[bChan]"},
   {"delay", "wait", "Simply puts the device in a loop for the amount of time in ms", "delay.[length of time in ms]"},
+  {"smc", "setMaxCurrent", "Sets max current in amps", "smc.[current limit in amps]"},
+  {"smce", "setMaxCurrentEnforcement", "Sets whether or not max current limit is enforced (0 is no, all other values are yes)", "smce.[0, 1]"},
 
   // Quering System State
   {"pvals", "printVals", "Print led values for software interface", "pvals"},

@@ -9,9 +9,15 @@ Illuminate was designed to standardize the interface and functionality of LED ar
 ```bash
   git clone https://github.com/zfphil/illuminate.git
 ```
-4. open illuminate.ino in arduino, select micro-controller from Tools -> Board, select port from Tools -> Port
-5. Open Serial Monitor (Tools -> Serial Monitor), set line ending to Newline and baud rate to 115200 (default)
-6. Type command (ex: "bf") and press enter to send
+4. Check out submodule (TLC5955)
+```bash
+  cd illuminate
+  git submodule init
+  git submodule update
+```
+5. open illuminate.ino in arduino, select micro-controller from Tools -> Board, select port from Tools -> Port
+6. Open Serial Monitor (Tools -> Serial Monitor), set line ending to Newline and baud rate to 115200 (default)
+7. Type command (ex: "bf") and press enter to send
 
 ## Commands
 Command help can be accessed by typing "?" into the Arduino terminal.

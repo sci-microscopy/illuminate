@@ -30,6 +30,8 @@
 
 #include "ledarrayinterface.h"
 #include "ledsequence.h"
+#include "illuminate.h"
+#include "src/T3Mac/T3Mac.h"
 
 #include <Arduino.h>
 
@@ -100,6 +102,8 @@ class LedArray {
     void clearNaList();
     void buildNaList(float boardDistance);
     void toggleAutoClear(uint16_t argc, char ** argv);
+    void setMaxCurrentEnforcement(int argc, char ** argv);
+    void setMaxCurrentLimit(int argc, char ** argv);
 
     // Sequencing
     int getSequenceBitDepth();
@@ -122,7 +126,6 @@ class LedArray {
     void printVersion();
 
     // Internal functions
-
     void setDebug(uint16_t new_debug_level);
     void setup();   // Setup command
     int getArgumentLedNumberPitch(char * command_header);
@@ -134,6 +137,15 @@ class LedArray {
     int getColorChannelCount();
     static void tripTimer();
     static void patternIncrementFast();
+    uint16_t getSerialNumber();
+    uint16_t getPartNumber();
+    void printMacAddress();
+
+    // Device-specific commands
+    uint8_t getDeviceCommandCount();
+    const char * getDeviceCommandNameShort(int device_command_index);
+    const char * getDeviceCommandNameLong(int device_command_index);
+    void deviceCommand(int device_command_index, int argc, char * *argv);    
 
   private:
 
@@ -155,6 +167,9 @@ class LedArray {
 
     // Controller version
     const float version = 0.2;
+
+    // Defualt brightness
+    const uint8_t LED_VALUE_DEFAULT = 63;
 
     // LED array control object
     LedArrayInterface * led_array_interface;

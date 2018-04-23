@@ -24,11 +24,9 @@
    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include "illuminate.h"
-
+#include "../../illuminate.h"
 #ifdef USE_QUADRANT_ARRAY
-
-#include "ledarrayinterface.h"
+#include "../../ledarrayinterface.h"
 
 // Pin definitions (used internally)
 #define TRIGGER_OUTPUT_PIN_0 23
@@ -43,11 +41,8 @@
 #define Q3_PIN 9
 #define Q4_PIN 10
 
-#define SN 1
-
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "quadrant-array";
-const int LedArrayInterface::serial_number = SN;
 const char * LedArrayInterface::device_hardware_revision = "1.0";
 const float LedArrayInterface::max_na = 1.0;
 const int16_t LedArrayInterface::led_count = 4;
@@ -71,6 +66,12 @@ bool LedArrayInterface::trigger_input_state[] = {false, false};
 int LedArrayInterface::debug = 0;
 bool digital_mode = true;
 
+/**** Device-specific commands ****/
+const uint8_t LedArrayInterface::device_command_count = 0;
+const char * LedArrayInterface::deviceCommandNamesShort[] = {};
+const char * LedArrayInterface::deviceCommandNamesLong[] = {};
+const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
+
 // FORMAT: LED number, channel, 100*x, 100*y, 100*z
 const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
   {0, 0, 1, 1, 4000,},
@@ -82,6 +83,28 @@ const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
 /* Device-specific variables */
 int pin_numbers[4] = {Q1_PIN, Q2_PIN, Q3_PIN, Q4_PIN};
 uint8_t led_values[4] = {0, 0, 0, 0};
+
+void LedArrayInterface::setMaxCurrentEnforcement(bool enforce)
+{
+  ;
+}
+
+void LedArrayInterface::setMaxCurrentLimit(float limit)
+{
+  ;
+}
+
+uint16_t LedArrayInterface::getSerialNumber()
+{
+        uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
+        return (sn_read);
+}
+
+uint16_t LedArrayInterface::getPartNumber()
+{
+        uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
+        return (pn_read);
+}
 
 void LedArrayInterface::notImplemented(const char * command_name)
 {
@@ -390,6 +413,81 @@ void LedArrayInterface::deviceSetup()
   clear();
 }
 
+uint8_t LedArrayInterface::getDeviceCommandCount()
+{
+        return (LedArrayInterface::device_command_count);
+}
+
+const char * LedArrayInterface::getDeviceCommandNameShort(int device_command_index)
+{
+        if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
+                return (LedArrayInterface::deviceCommandNamesShort[device_command_index]);
+        else
+        {
+                Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+                return ("");
+        }
+}
+
+const char * LedArrayInterface::getDeviceCommandNameLong(int device_command_index)
+{
+        if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
+                return (LedArrayInterface::deviceCommandNamesLong[device_command_index]);
+        else
+        {
+                Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+                return ("");
+        }
+}
+
+uint32_t LedArrayInterface::getDeviceCommandLedListSize(int device_command_index)
+{
+        if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
+        {
+                // Get stored pattern cound and led per pattern for this command
+                uint16_t pattern_count = LedArrayInterface::device_command_pattern_dimensions[device_command_index][0];
+                uint16_t leds_per_pattern = LedArrayInterface::device_command_pattern_dimensions[device_command_index][1];
+
+                // Concatenate these two into 32-bit unsigned integer
+                uint32_t concatenated = ((uint32_t)pattern_count) << 16 | leds_per_pattern;
+                return (concatenated);
+        }
+        else
+        {
+                Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+                return (0);
+        }
+}
+
+uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_index, uint16_t pattern_index, uint16_t led_index)
+{
+        if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
+        {
+                uint32_t concatenated = getDeviceCommandLedListSize(device_command_index);
+                uint16_t pattern_count  = (uint16_t)(concatenated >> 16);
+                uint16_t leds_per_pattern = (uint16_t)concatenated;
+
+                if ((pattern_index < pattern_count) && (led_index < leds_per_pattern))
+                {
+                        //      if (device_command_index == 0)
+                        //        return (uint16_t)pgm_read_word(&(hole_led_list[pattern_index][led_index]));
+                        //      else if (device_command_index == 1)
+                        //        return (uint16_t)pgm_read_word(&(uv_led_list[pattern_index][led_index]));
+                        //      else
+                        return 0;
+
+                }
+                else
+                {
+                        Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid pattern index (%d) / led index (%d)"), pattern_index, led_index, SERIAL_LINE_ENDING);
+                        return (0);
+                }
+        }
+        else
+        {
+                Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+                return (0);
+        }
+}
+
 #endif
-
-

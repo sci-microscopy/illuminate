@@ -29,6 +29,11 @@
 #define LED_ARRAY_INTERFACE_H
 
 #include <Arduino.h>
+#include <EEPROM.h>
+
+// Serial and part number addresses in EEPROM
+#define PN_ADDRESS 100
+#define SN_ADDRESS 200
 
 class LedArrayInterface {
   public:
@@ -70,12 +75,15 @@ class LedArrayInterface {
     // Set pin order
     void setPinOrder(int16_t led_number, int16_t color_channel_index, uint8_t position);
 
+    // Maximum current limits
+    void setMaxCurrentEnforcement(bool enforce);
+    void setMaxCurrentLimit(float limit);
+
     // Not implemented function
     void notImplemented(const char * command_name);
 
     // Device and Software Descriptors
     static const char * device_name;
-    static const int serial_number;
     static const char * device_hardware_revision;
     static const float max_na;
     static const int16_t led_count;
@@ -89,6 +97,10 @@ class LedArrayInterface {
     static const int16_t tlc_chip_count;
     static const bool supports_fast_sequence;
     static const float led_array_distance_z_default;
+    static const char * deviceCommandNamesShort[];
+    static const char * deviceCommandNamesLong[];
+    static const uint8_t device_command_count;
+    static const uint16_t device_command_pattern_dimensions[][2];
 
     // Debug flag
     static int debug;
@@ -100,6 +112,17 @@ class LedArrayInterface {
 
     // LED positions
     static const int16_t PROGMEM led_positions[][5];
+
+    // Device-specific commands
+    uint8_t getDeviceCommandCount();
+    const char * getDeviceCommandNameShort(int device_command_index);
+    const char * getDeviceCommandNameLong(int device_command_index);
+    uint32_t getDeviceCommandLedListSize(int device_command_index);
+    uint16_t getDeviceCommandLedListElement(int device_command_index, uint16_t pattern_index, uint16_t led_index);
+
+    // Serial and part numbers
+    uint16_t getSerialNumber();
+    uint16_t getPartNumber();
 };
 
 
