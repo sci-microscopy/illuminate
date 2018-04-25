@@ -1072,7 +1072,7 @@ void LedArray::drawCircle(float start_na, float end_na)
 
   // Clear array first (helps eleminate weird patterns)
   clear();
-  
+
 
   float d;
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
@@ -1235,6 +1235,29 @@ void LedArray::setSequenceBitDepth(uint8_t bit_depth, bool quiet)
 int LedArray::getSequenceBitDepth()
 {
   return LedArray::led_sequence.bit_depth;
+}
+
+void LedArray::setSequenceZeros(uint16_t argc, char ** argv)
+{
+  if (argc != 1)
+  {
+    Serial.printf(F("ERROR (LedArray::setSequenceZeros): invalid number of arguments! %s"), SERIAL_LINE_ENDING);
+    return;
+  }
+  else
+  {
+    uint16_t zero_count = strtoul(argv[0], NULL, 0);
+    if (zero_count + LedArray::led_sequence.number_of_patterns_assigned <= LedArray::led_sequence.length)
+    {
+      for (uint16_t value_index = 0; value_index < zero_count; value_index++)
+        LedArray::led_sequence.incriment(0);
+    }
+    else
+    {
+      Serial.printf(F("ERROR (LedArray::setSequenceZeros): number of zeros exceeds pattern length! %s"), SERIAL_LINE_ENDING);
+      return;
+    }
+  }
 }
 
 /* Set sequence value */
@@ -1768,11 +1791,11 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
                     trigger_spin_up_delay_list[trigger_index] = max((float)elapsed_us_outer - elapsed_us_0, 0.0);
                     trigger_finished_waiting_count += 1;
                   }
-//                  else if ((float) elapsed_us_outer - elapsed_us_0 > MAX_TRIGGER_WAIT_TIME_S * 1000000.0)
-//                  {
-//                    Serial.printf(F("ERROR (ledArray::runSequenceFast): trigger input timeout for channel %d\n"), trigger_index);
-//                    return;
-//                  }
+                  //                  else if ((float) elapsed_us_outer - elapsed_us_0 > MAX_TRIGGER_WAIT_TIME_S * 1000000.0)
+                  //                  {
+                  //                    Serial.printf(F("ERROR (ledArray::runSequenceFast): trigger input timeout for channel %d\n"), trigger_index);
+                  //                    return;
+                  //                  }
                 }
               }
               else

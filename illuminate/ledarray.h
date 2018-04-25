@@ -117,6 +117,7 @@ class LedArray {
     void setSequenceLength(uint16_t new_seq_length, bool quiet);
     int getSequenceLength();
     void setSequenceBitDepth(uint8_t bit_depth, bool quiet);
+    void setSequenceZeros(uint16_t argc, char ** argv);
 
     // Printing system state and information
     void printLedPositions(bool print_na);
@@ -145,7 +146,7 @@ class LedArray {
     uint8_t getDeviceCommandCount();
     const char * getDeviceCommandNameShort(int device_command_index);
     const char * getDeviceCommandNameLong(int device_command_index);
-    void deviceCommand(int device_command_index, int argc, char * *argv);    
+    void deviceCommand(int device_command_index, int argc, char * *argv);
 
   private:
 

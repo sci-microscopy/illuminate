@@ -218,6 +218,8 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->resetSequence();
   else if ((strcmp(command_header, command_list[CMD_SET_SEQ_BIT_DEPTH][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_SEQ_BIT_DEPTH][1]) == 0))
     led_array->setSequenceBitDepth(atoi((char *) argv[0]), false); // second arg is quiet
+  else if ((strcmp(command_header, command_list[CMD_SET_SEQ_ZEROS][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_SEQ_ZEROS][1]) == 0))
+    led_array->setSequenceZeros(argc, (char * *) argv);
 
   else if ((strcmp(command_header, command_list[CMD_TRIG_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIG_IDX][1]) == 0))
   {
