@@ -180,6 +180,7 @@ class LedArray {
 
     // LED Controller Parameters
     boolean auto_clear_flag = true;
+    boolean initial_setup = true; 
     int debug = 0;
     float objective_na = 0.25;
     float led_array_distance_z = 60.0;
