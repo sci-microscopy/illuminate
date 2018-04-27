@@ -33,9 +33,9 @@
 //#define USE_QUADRANT_ARRAY
 //#define USE_QUASI_DOME_ARRAY
 //#define USE_SCI_ROUND_ARRAY
-//#define USE_SCI_WING_ARRAY
+#define USE_SCI_WING_ARRAY
 //#define USE_SCI_BIG_WING_ARRAY
-#define USE_SCI_C001
+//#define USE_SCI_C001
 
 // Serial line ending
 static const char SERIAL_LINE_ENDING[] = "\n";

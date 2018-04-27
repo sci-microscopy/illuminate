@@ -74,7 +74,7 @@ int LedArrayInterface::debug = 0;
 
 /**** Device-specific variables ****/
 TLC5955 tlc;                            // TLC5955 object
-uint32_t gsclk_frequency = 5000000;     // Grayscale clock speed
+uint32_t gsclk_frequency = 3000000;     // Grayscale clock speed
 
 /**** Device-specific commands ****/
 const uint8_t LedArrayInterface::device_command_count = 0;
@@ -1132,11 +1132,11 @@ void LedArrayInterface::deviceSetup()
         tlc.setAllDcData(127);
 
         // Set Max Current Values (see TLC5955 datasheet)
-        tlc.setMaxCurrent(3, 3, 3); // Go up to 7
+        tlc.setMaxCurrent(2, 2, 2); // Go up to 7
 
         // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
         // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT
-        tlc.setFunctionData(true, true, false, true, true); // WORKS with fast update
+        tlc.setFunctionData(true, true, true, true, true); // WORKS with fast update
 
         // Set all LED current levels to max (127)
         int currentR = 127;

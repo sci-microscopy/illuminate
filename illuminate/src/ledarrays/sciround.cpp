@@ -341,7 +341,7 @@ const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
         {256, 145, 400, -4321, 0}
 };
 
-void LedArrayInterface::setMaxCurrentEnforcement(bool enforce);
+void LedArrayInterface::setMaxCurrentEnforcement(bool enforce)
 {
         TLC5955::enforce_max_current = enforce;
 }
