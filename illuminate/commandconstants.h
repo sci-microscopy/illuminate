@@ -29,7 +29,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 48
+#define COMMAND_COUNT 49
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -67,26 +67,27 @@
 #define CMD_STEP_SEQ_IDX 28
 #define CMD_RESET_SEQ_IDX 29
 #define CMD_SET_SEQ_BIT_DEPTH 30
+#define CMD_SET_SEQ_ZEROS 31
 
-#define CMD_TRIG_IDX 31
-#define CMD_TRIG_SETUP_IDX 32
-#define CMD_TRIG_PRINT_IDX 33
-#define CMD_TRIG_TEST_IDX 34
-#define CMD_CHANNEL_IDX 35
-#define CMD_TOGGLE_DEBUG_IDX 36
-#define CMD_PIN_ORDER_IDX 37
-#define CMD_DELAY 38
-#define CMD_SET_MAX_CURRENT 39
-#define CMD_SET_MAX_CURRENT_ENFORCEMENT 40
+#define CMD_TRIG_IDX 32
+#define CMD_TRIG_SETUP_IDX 33
+#define CMD_TRIG_PRINT_IDX 34
+#define CMD_TRIG_TEST_IDX 35
+#define CMD_CHANNEL_IDX 36
+#define CMD_TOGGLE_DEBUG_IDX 37
+#define CMD_PIN_ORDER_IDX 38
+#define CMD_DELAY 39
+#define CMD_SET_MAX_CURRENT 40
+#define CMD_SET_MAX_CURRENT_ENFORCEMENT 41
 
-#define CMD_PRINT_VALS_IDX 41
-#define CMD_PRINT_PARAMS 42
-#define CMD_PRINT_LED_POSITIONS 43
-#define CMD_PRINT_LED_POSITIONS_NA 44
+#define CMD_PRINT_VALS_IDX 42
+#define CMD_PRINT_PARAMS 43
+#define CMD_PRINT_LED_POSITIONS 44
+#define CMD_PRINT_LED_POSITIONS_NA 45
 
-#define CMD_DISCO_IDX 45
-#define CMD_DEMO_IDX 46
-#define CMD_WATER_IDX 47
+#define CMD_DISCO_IDX 46
+#define CMD_DEMO_IDX 47
+#define CMD_WATER_IDX 48
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -133,6 +134,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"sseq",  "stepSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "sseq.[trigger output mode for index 0].[trigger output mode for index 1],"},
   {"reseq", "resetSeq", "Resets sequence index to start", "reseq"},
   {"ssbd", "setSeqBitDepth", "Sets bit depth of sequence values (1, 8, or 16)", "ssbd.1 --or-- ssbd.8 --or-- ssbd.16"},
+  {"ssz", "setSeqZeros", "Sets a range of the sequence entries to zero, starting at the current sequence index", "ssz.10"},
 
   // Debugging, Low-level Access, etc.
   {"tr", "trig", "Output TTL trigger pulse to camera", "tr.[trigger index]"},

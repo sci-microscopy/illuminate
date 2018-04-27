@@ -43,7 +43,7 @@
 // Trigger timing constants
 #define TRIGGER_PULSE_WIDTH_DEFAULT 500
 #define TRIGGER_DELAY_DEFAULT 0
-#define MAX_TRIGGER_WAIT_TIME_S 20.0
+#define MAX_TRIGGER_WAIT_TIME_S 5.0
 
 // Annulus constants
 #define ANNULUS_START_OFFSET 0.03
@@ -117,6 +117,7 @@ class LedArray {
     void setSequenceLength(uint16_t new_seq_length, bool quiet);
     int getSequenceLength();
     void setSequenceBitDepth(uint8_t bit_depth, bool quiet);
+    void setSequenceZeros(uint16_t argc, char ** argv);
 
     // Printing system state and information
     void printLedPositions(bool print_na);
@@ -145,7 +146,7 @@ class LedArray {
     uint8_t getDeviceCommandCount();
     const char * getDeviceCommandNameShort(int device_command_index);
     const char * getDeviceCommandNameLong(int device_command_index);
-    void deviceCommand(int device_command_index, int argc, char * *argv);    
+    void deviceCommand(int device_command_index, int argc, char * *argv);
 
   private:
 
@@ -179,6 +180,7 @@ class LedArray {
 
     // LED Controller Parameters
     boolean auto_clear_flag = true;
+    boolean initial_setup = true; 
     int debug = 0;
     float objective_na = 0.25;
     float led_array_distance_z = 60.0;
@@ -188,7 +190,7 @@ class LedArray {
 
     // Trigger Input (feedback) Settings
     float trigger_feedback_timeout_ms = 1000;
-    uint16_t * trigger_pulse_width_list_us;
+    uint32_t * trigger_pulse_width_list_us;
     uint32_t * trigger_start_delay_list_us;
     int * trigger_input_mode_list;
     int * trigger_output_mode_list;
@@ -200,7 +202,6 @@ class LedArray {
     uint16_t sequence_number_displayed = 0;
 
     // timer variable
-    static volatile bool timer_tripped;
     static volatile uint16_t pattern_index;
 
 };
