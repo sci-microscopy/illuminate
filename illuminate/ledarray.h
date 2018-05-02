@@ -180,7 +180,7 @@ class LedArray {
 
     // LED Controller Parameters
     boolean auto_clear_flag = true;
-    boolean initial_setup = true; 
+    boolean initial_setup = true;
     int debug = 0;
     float objective_na = 0.25;
     float led_array_distance_z = 60.0;
@@ -194,6 +194,10 @@ class LedArray {
     static volatile uint32_t * trigger_start_delay_list_us;
     static volatile int * trigger_input_mode_list;
     static volatile int * trigger_output_mode_list;
+    static volatile int trigger_input_count;
+    static volatile int trigger_output_count;
+    static const int * trigger_output_pin_list;
+    static const int * trigger_input_pin_list;
 
     // Default illumination
     uint8_t * led_value;
@@ -203,7 +207,7 @@ class LedArray {
 
     // timer variable
     static volatile uint16_t pattern_index;
-    static volatile uint16_t acquisition_index;
+    static volatile uint16_t frame_index;
 
 };
 #endif
