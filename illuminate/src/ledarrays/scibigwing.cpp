@@ -1870,11 +1870,11 @@ void LedArrayInterface::deviceSetup()
         tlc.setAllDcData(127);
 
         // Set Max Current Values (see TLC5955 datasheet)
-        tlc.setMaxCurrent(3, 2, 2); // Go up to 7
+        tlc.setMaxCurrent(2, 2, 2); // Go up to 7
 
         // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
         // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT
-        tlc.setFunctionData(true, true, true, true, false); // WORKS with fast update
+        tlc.setFunctionData(true, true, true, true, true);
 
         // Set LED current levels (7-bit, max is 127)
         int currentR = 127;
@@ -1883,6 +1883,7 @@ void LedArrayInterface::deviceSetup()
         tlc.setBrightnessCurrent(currentR, currentB, currentG);
 
         // Update vontrol register
+        tlc.updateControl();
         tlc.updateControl();
 
         // Set RGB pin order
@@ -1902,7 +1903,7 @@ void LedArrayInterface::deviceSetup()
         tlc.setRgbPinOrderSingle(795, 1, 0, 2); // led 882
         tlc.setRgbPinOrderSingle(1467, 1, 0, 2); // led 883
 
-        // Update the GS register
+        // Clear the array
         clear();
 
         // Output trigger Pins

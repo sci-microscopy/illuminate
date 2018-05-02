@@ -1089,7 +1089,6 @@ void LedArray::drawCircle(float start_na, float end_na)
   // Clear array first (helps eleminate weird patterns)
   clear();
 
-
   float d;
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
@@ -1974,10 +1973,10 @@ void LedArray::setDistanceZ(int argc, char ** argv)
     ; // do nothing, just display current z-distance
   else if (argc == 1)
   {
-    uint16_t new_z = strtoul(argv[0], NULL, 0);
+    uint32_t new_z = strtoul(argv[0], NULL, 0);
     if (new_z > 0)
     {
-      led_array_distance_z = (float)new_z / 100.0;
+      led_array_distance_z = (float)new_z;
       buildNaList(led_array_distance_z);
     }
     else

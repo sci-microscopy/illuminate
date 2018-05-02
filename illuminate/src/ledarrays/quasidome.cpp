@@ -687,7 +687,7 @@ void LedArrayInterface::notImplemented(const char * command_name)
 {
         Serial.print(F("Command "));
         Serial.print(command_name);
-        Serial.print(F(" is not implemented for this device.%s"), SERIAL_LINE_ENDING);
+        Serial.printf(F(" is not implemented for this device.%s"), SERIAL_LINE_ENDING);
 }
 
 uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_index)
@@ -910,7 +910,6 @@ void LedArrayInterface::deviceSetup()
         analogWrite(GSCLK, 1);
 
         // The library does not ininiate SPI for you, so as to prevent issues with other SPI libraries
-        SPI.setMOSI(SPI_MOSI);
         SPI.begin();
         SPI.setClockDivider(SPI_CLOCK_DIV128);
 
