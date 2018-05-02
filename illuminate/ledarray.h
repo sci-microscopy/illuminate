@@ -189,11 +189,11 @@ class LedArray {
     int8_t default_brightness = 63;
 
     // Trigger Input (feedback) Settings
-    float trigger_feedback_timeout_ms = 1000;
-    uint32_t * trigger_pulse_width_list_us;
-    uint32_t * trigger_start_delay_list_us;
-    int * trigger_input_mode_list;
-    int * trigger_output_mode_list;
+    static volatile float trigger_feedback_timeout_ms;
+    static volatile uint32_t * trigger_pulse_width_list_us;
+    static volatile uint32_t * trigger_start_delay_list_us;
+    static volatile int * trigger_input_mode_list;
+    static volatile int * trigger_output_mode_list;
 
     // Default illumination
     uint8_t * led_value;
@@ -203,6 +203,7 @@ class LedArray {
 
     // timer variable
     static volatile uint16_t pattern_index;
+    static volatile uint16_t acquisition_index;
 
 };
 #endif
