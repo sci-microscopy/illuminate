@@ -1648,15 +1648,15 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
 
   // Create interrupt-based intervaltimer object for precise illumination timing
   IntervalTimer itimer;
-  itimer.priority(50);
 
   // Store initial time
-  float elapsed_us_0 = (float) elapsed_us_outer;
+  float elapsed_us_start = (float) elapsed_us_outer;
+  float elapsed_us_trigger;
 
   while (LedArray::frame_index < acquisition_count)
   {
     // Wait until we exceed timing for this frame
-    if ((float) elapsed_us_outer >= (float)LedArray::frame_index * frame_delay_us)
+    if (((float) elapsed_us_outer - elapsed_us_start) >= (float)LedArray::frame_index * frame_delay_us)
     {
       // Determine whether trigger pulses are sent this pattern
       triggers_used_this_pattern = false;
@@ -1690,6 +1690,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
           trigger_spin_up_delay_list[trigger_index] = -0.1;
         }
 
+        // Set trigger state to true by default
         for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
           triggered[trigger_index] = true;
 
@@ -1713,8 +1714,8 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
         }
 
         // Send output trigger pulses before illuminating
-        elapsed_us_0 = (float) elapsed_us_outer;
-        while (((float)elapsed_us_outer - elapsed_us_0) < (float)max_start_delay_us)
+        elapsed_us_trigger = (float) elapsed_us_outer;
+        while (((float)elapsed_us_outer - elapsed_us_trigger) < (float)max_start_delay_us)
         {
           for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
           {
@@ -1726,7 +1727,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
               if (!triggered[trigger_index])
               {
                 // Start triggers LedArray::trigger_start_delay_list_us BEFORE t0, which occurs at the end of this loop
-                if (((float)elapsed_us_outer - elapsed_us_0) > (float)(max_start_delay_us - LedArray::trigger_start_delay_list_us[trigger_index] - LedArray::trigger_pulse_width_list_us[trigger_index])) // check if we're ready to trigger
+                if (((float)elapsed_us_outer - elapsed_us_trigger) > (float)(max_start_delay_us - LedArray::trigger_start_delay_list_us[trigger_index] - LedArray::trigger_pulse_width_list_us[trigger_index])) // check if we're ready to trigger
                 {
                   led_array_interface->sendTriggerPulse(trigger_index, LedArray::trigger_pulse_width_list_us[trigger_index], false);
                   triggered[trigger_index] = true;
@@ -1737,8 +1738,9 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
         }
 
         // Wait for all devices to be in an acquiring state (if input triggers are configured)
-        elapsed_us_0 = (float) elapsed_us_outer;
+        elapsed_us_trigger = (float) elapsed_us_outer;
         trigger_finished_waiting_count = 0;
+        
         while (trigger_finished_waiting_count < led_array_interface->trigger_input_count)
         {
           for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
@@ -1751,7 +1753,7 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
               {
                 if (getTriggerState(trigger_index))
                 {
-                  trigger_spin_up_delay_list[trigger_index] = max((float)elapsed_us_outer - elapsed_us_0, 0.0);
+                  trigger_spin_up_delay_list[trigger_index] = max((float)elapsed_us_outer - elapsed_us_trigger, 0.0);
                   trigger_finished_waiting_count += 1;
                 }
               }
@@ -1766,43 +1768,39 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
             }
           }
         }
-
-        if (debug >= 3)
-        {
-          for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
-          {
-            if (trigger_spin_up_delay_list[trigger_index] >= 0.0)
-            {
-              if (trigger_spin_up_delay_list[trigger_index] > 0.0 && debug >= 2)
-              {
-                Serial.print(F("WARNING (LedArray::runSequenceFast): Trigger "));
-                Serial.print(trigger_index);
-                Serial.print(F(" had excess delay of "));
-                Serial.print(trigger_spin_up_delay_list[trigger_index]);
-                Serial.print(F("us for pattern #"));
-                Serial.print(LedArray::pattern_index );
-                Serial.print(F(", acquisition #"));
-                Serial.print(frame_index);
-                Serial.print(SERIAL_LINE_ENDING);
-              }
-            }
-          }
-        }
       }
 
-      // Run sequence
-      itimer.begin(patternIncrementFast, pattern_delay_us);
+      // If this is the first frame, start the timing counter from when the first trigger pulses are sent. 
+      // This eleminates all issues with the first trigger pulse being longer (e.g. from motion state spin-up)
+      if (LedArray::frame_index == 0)
+        elapsed_us_start = (float) elapsed_us_outer;
 
-      while (LedArray::pattern_index < LedArray::led_sequence.number_of_patterns_assigned) {}
+      // Run sequence
+      itimer.priority(0);
+      itimer.begin(patternIncrementFast, pattern_delay_us);
+      itimer.priority(0);
+
+      if (LedArray::pattern_index > LedArray::led_sequence.number_of_patterns_assigned)
+        return;
+      else
+        while (LedArray::pattern_index <= LedArray::led_sequence.number_of_patterns_assigned) {}
 
       // Stop sequence
       itimer.end();
 
-      // Increment frame index
-      LedArray::frame_index++;
-
       // Reset pattern
       LedArray::pattern_index = 0;
+
+      // Check to ensure we haven't exceeded the time between frames. If we have, return which will cause errors downstream.
+      if (((float) elapsed_us_outer - elapsed_us_start) >= (float)(LedArray::frame_index + 1) * frame_delay_us)
+      {
+        Serial.printf(F("ERROR (LedArray::runSequenceFast) Trigger process time (%f) exceeded frame delay (%f) for frame %d %s"),
+                      ((float) elapsed_us_outer - elapsed_us_start), (float)(LedArray::frame_index + 1) * frame_delay_us, LedArray::frame_index, SERIAL_LINE_ENDING);
+        return;
+      }
+
+      // Increment frame index
+      LedArray::frame_index++;
     }
   }
   Serial.printf(F("Finished fast Sequence %s"), SERIAL_LINE_ENDING);
