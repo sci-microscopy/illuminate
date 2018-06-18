@@ -909,7 +909,7 @@ uint16_t LedArrayInterface::getPartNumber()
         return (pn_read);
 }
 
-void setPartNumber(uint16_t part_number)
+void LedArrayInterface::setPartNumber(uint16_t part_number)
 {
 	byte lower_8bits_pn = part_number & 0xff;
 	byte upper_8bits_pn = (part_number >> 8) & 0xff;

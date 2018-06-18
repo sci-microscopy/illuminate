@@ -281,9 +281,19 @@ uint16_t LedArray::getSerialNumber()
   return led_array_interface->getSerialNumber();
 }
 
+void LedArray::setSerialNumber(uint16_t new_serial_number)
+{
+  led_array_interface->setSerialNumber(new_serial_number);
+}
+
 uint16_t LedArray::getPartNumber()
 {
   return led_array_interface->getPartNumber();
+}
+
+void LedArray::setPartNumber(uint16_t new_part_number)
+{
+  led_array_interface->setPartNumber(new_part_number);
 }
 
 /* A function to reset the device to power-on state */

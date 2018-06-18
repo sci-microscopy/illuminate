@@ -29,7 +29,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 49
+#define COMMAND_COUNT 51
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -88,6 +88,9 @@
 #define CMD_DISCO_IDX 46
 #define CMD_DEMO_IDX 47
 #define CMD_WATER_IDX 48
+
+#define CMD_SET_PN 49
+#define CMD_SET_SN 50
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -157,7 +160,11 @@ const char* command_list[COMMAND_COUNT][4] = {
   // Stored Patterns
   {"disco", "party", "Illuminate a random color pattern of LEDs", "disco,[Number of LEDs in pattern]"},
   {"demo", "runDemo", "Runs a demo routine to show what the array can do.", "demo"},
-  {"water", "waterDrop", "Water drop demo", "water"}
+  {"water", "waterDrop", "Water drop demo", "water"},
+
+  // Set part and serial number in EEPROM
+  {"setsn", "setSerialNumber", "Sets device serial number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING"},
+  {"setpn", "setPartNumber", "Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING"}
 };
 
 #endif

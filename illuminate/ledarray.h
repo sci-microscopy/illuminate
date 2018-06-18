@@ -140,6 +140,8 @@ class LedArray {
     static void patternIncrementFast();
     uint16_t getSerialNumber();
     uint16_t getPartNumber();
+    void setPartNumber(uint16_t part_number);
+    void setSerialNumber(uint16_t serial_number);
     void printMacAddress();
 
     // Device-specific commands
