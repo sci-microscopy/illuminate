@@ -30,16 +30,16 @@
 #include "../TLC5955/TLC5955.h"
 
 // Pin definitions (used internally)
-#define GSCLK 6 // 10 on Arduino Mega
-#define LAT 3   // 44 on Arduino Mega
-#define SPI_MOSI 11
-#define SPI_CLK 13
-#define TRIGGER_OUTPUT_PIN_0 23
-#define TRIGGER_OUTPUT_PIN_1 22
-#define TRIGGER_INPUT_PIN_0 20
-#define TRIGGER_INPUT_PIN_1 19
-#define TRIGGER_OUTPUT_COUNT 2
-#define TRIGGER_INPUT_COUNT 2
+const int GSCLK = 6;
+const int LAT = 3;
+const int SPI_MOSI = 11;
+const int SPI_CLK = 13;
+const int TRIGGER_OUTPUT_PIN_0 = 23;
+const int TRIGGER_INPUT_PIN_0 = 22;
+const int TRIGGER_OUTPUT_PIN_1 = 20;
+const int TRIGGER_INPUT_PIN_1 = 19;
+const int TRIGGER_OUTPUT_COUNT = 2;
+const int TRIGGER_INPUT_COUNT = 2;
 
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "sci-wing";
@@ -81,6 +81,10 @@ const uint8_t LedArrayInterface::device_command_count = 0;
 const char * LedArrayInterface::deviceCommandNamesShort[] = {};
 const char * LedArrayInterface::deviceCommandNamesLong[] = {};
 const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
+
+/**** Part number and Serial number addresses in EEPROM ****/
+uint16_t pn_address = 100;
+uint16_t sn_address = 200;
 
 PROGMEM const int16_t LedArrayInterface::led_positions[793][5] = {
     {0, 90, 0, 0, 6500},
@@ -926,10 +930,26 @@ uint16_t LedArrayInterface::getSerialNumber()
         return (sn_read);
 }
 
+void LedArrayInterface::setSerialNumber(uint16_t serial_number)
+{
+	byte lower_8bits_sn = serial_number & 0xff;
+	byte upper_8bits_sn = (serial_number >> 8) & 0xff;
+	EEPROM.write(sn_address, lower_8bits_sn);
+	EEPROM.write(sn_address + 1, upper_8bits_sn);
+}
+
 uint16_t LedArrayInterface::getPartNumber()
 {
         uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
         return (pn_read);
+}
+
+void setPartNumber(uint16_t part_number)
+{
+	byte lower_8bits_pn = part_number & 0xff;
+	byte upper_8bits_pn = (part_number >> 8) & 0xff;
+	EEPROM.write(pn_address, lower_8bits_pn);
+	EEPROM.write(pn_address + 1, upper_8bits_pn);
 }
 
 // Debug Variables
@@ -1107,6 +1127,7 @@ void LedArrayInterface::deviceReset()
 {
         deviceSetup();
 }
+
 
 void LedArrayInterface::deviceSetup()
 {

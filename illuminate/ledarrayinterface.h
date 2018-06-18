@@ -123,6 +123,8 @@ class LedArrayInterface {
     // Serial and part numbers
     uint16_t getSerialNumber();
     uint16_t getPartNumber();
+    void setPartNumber(uint16_t part_number);
+    void setSerialNumber(uint16_t serial_number);
 };
 
 

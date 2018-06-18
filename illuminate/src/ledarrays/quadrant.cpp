@@ -29,12 +29,12 @@
 #include "../../ledarrayinterface.h"
 
 // Pin definitions (used internally)
-#define TRIGGER_OUTPUT_PIN_0 23
-#define TRIGGER_OUTPUT_PIN_1 20
-#define TRIGGER_INPUT_PIN_0 22
-#define TRIGGER_INPUT_PIN_1 19
-#define TRIGGER_OUTPUT_COUNT 2
-#define TRIGGER_INPUT_COUNT 2
+const int TRIGGER_OUTPUT_PIN_0 = 23;
+const int TRIGGER_INPUT_PIN_0 = 22;
+const int TRIGGER_OUTPUT_PIN_1 = 20;
+const int TRIGGER_INPUT_PIN_1 = 19;
+const int TRIGGER_OUTPUT_COUNT = 2;
+const int TRIGGER_INPUT_COUNT = 2;
 
 #define Q1_PIN 6
 #define Q2_PIN 5
@@ -84,6 +84,10 @@ const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
 int pin_numbers[4] = {Q1_PIN, Q2_PIN, Q3_PIN, Q4_PIN};
 uint8_t led_values[4] = {0, 0, 0, 0};
 
+/**** Part number and Serial number addresses in EEPROM ****/
+uint16_t pn_address = 100;
+uint16_t sn_address = 200;
+
 void LedArrayInterface::setMaxCurrentEnforcement(bool enforce)
 {
   ;
@@ -100,10 +104,26 @@ uint16_t LedArrayInterface::getSerialNumber()
         return (sn_read);
 }
 
+void LedArrayInterface::setSerialNumber(uint16_t serial_number)
+{
+	byte lower_8bits_sn = serial_number & 0xff;
+	byte upper_8bits_sn = (serial_number >> 8) & 0xff;
+	EEPROM.write(sn_address, lower_8bits_sn);
+	EEPROM.write(sn_address + 1, upper_8bits_sn);
+}
+
 uint16_t LedArrayInterface::getPartNumber()
 {
         uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
         return (pn_read);
+}
+
+void setPartNumber(uint16_t part_number)
+{
+	byte lower_8bits_pn = part_number & 0xff;
+	byte upper_8bits_pn = (part_number >> 8) & 0xff;
+	EEPROM.write(pn_address, lower_8bits_pn);
+	EEPROM.write(pn_address + 1, upper_8bits_pn);
 }
 
 void LedArrayInterface::notImplemented(const char * command_name)
