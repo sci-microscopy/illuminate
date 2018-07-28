@@ -29,7 +29,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 51
+#define COMMAND_COUNT 52
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -39,58 +39,59 @@
 #define CMD_AUTOCLEAR_IDX 4
 #define CMD_NA_IDX 5
 #define CMD_SET_COLOR_IDX 6
-#define CMD_SET_ARRAY_DIST 7
+#define CMD_SET_BRIGHTNESS 7
+#define CMD_SET_ARRAY_DIST 8
 
-#define CMD_LED_IDX 8
+#define CMD_LED_IDX 9
 
-#define CMD_CLEAR_IDX 9
-#define CMD_FILL_IDX 10
-#define CMD_BF_IDX 11
-#define CMD_DF_IDX 12
-#define CMD_DPC_IDX 13
-#define CMD_CDPC_IDX 14
-#define CMD_AN_IDX 15
-#define CMD_HALF_ANNULUS 16
-#define CMD_DQ_IDX 17
-#define CMD_CDF_IDX 18
-#define CMD_NAV_DPC_IDX 19
+#define CMD_CLEAR_IDX 10
+#define CMD_FILL_IDX 11
+#define CMD_BF_IDX 12
+#define CMD_DF_IDX 13
+#define CMD_DPC_IDX 14
+#define CMD_CDPC_IDX 15
+#define CMD_AN_IDX 16
+#define CMD_HALF_ANNULUS 17
+#define CMD_DQ_IDX 18
+#define CMD_CDF_IDX 19
+#define CMD_NAV_DPC_IDX 20
 
-#define CMD_SCF_IDX 20
-#define CMD_SCB_IDX 21
+#define CMD_SCF_IDX 21
+#define CMD_SCB_IDX 22
 
-#define CMD_LEN_SEQ_IDX 22
-#define CMD_SET_SEQ_IDX 23
-#define CMD_RUN_SEQ_IDX 24
-#define CMD_RUN_SEQ_FAST_IDX 25
-#define CMD_PRINT_SEQ_IDX 26
-#define CMD_PRINT_SEQ_LENGTH_IDX 27
-#define CMD_STEP_SEQ_IDX 28
-#define CMD_RESET_SEQ_IDX 29
-#define CMD_SET_SEQ_BIT_DEPTH 30
-#define CMD_SET_SEQ_ZEROS 31
+#define CMD_LEN_SEQ_IDX 23
+#define CMD_SET_SEQ_IDX 24
+#define CMD_RUN_SEQ_IDX 25
+#define CMD_RUN_SEQ_FAST_IDX 26
+#define CMD_PRINT_SEQ_IDX 27
+#define CMD_PRINT_SEQ_LENGTH_IDX 28
+#define CMD_STEP_SEQ_IDX 29
+#define CMD_RESET_SEQ_IDX 30
+#define CMD_SET_SEQ_BIT_DEPTH 31
+#define CMD_SET_SEQ_ZEROS 32
 
-#define CMD_TRIG_IDX 32
-#define CMD_TRIG_SETUP_IDX 33
-#define CMD_TRIG_PRINT_IDX 34
-#define CMD_TRIG_TEST_IDX 35
-#define CMD_CHANNEL_IDX 36
-#define CMD_TOGGLE_DEBUG_IDX 37
-#define CMD_PIN_ORDER_IDX 38
-#define CMD_DELAY 39
-#define CMD_SET_MAX_CURRENT 40
-#define CMD_SET_MAX_CURRENT_ENFORCEMENT 41
+#define CMD_TRIG_IDX 33
+#define CMD_TRIG_SETUP_IDX 34
+#define CMD_TRIG_PRINT_IDX 35
+#define CMD_TRIG_TEST_IDX 36
+#define CMD_CHANNEL_IDX 37
+#define CMD_TOGGLE_DEBUG_IDX 38
+#define CMD_PIN_ORDER_IDX 39
+#define CMD_DELAY 40
+#define CMD_SET_MAX_CURRENT 41
+#define CMD_SET_MAX_CURRENT_ENFORCEMENT 42
 
-#define CMD_PRINT_VALS_IDX 42
-#define CMD_PRINT_PARAMS 43
-#define CMD_PRINT_LED_POSITIONS 44
-#define CMD_PRINT_LED_POSITIONS_NA 45
+#define CMD_PRINT_VALS_IDX 43
+#define CMD_PRINT_PARAMS 44
+#define CMD_PRINT_LED_POSITIONS 45
+#define CMD_PRINT_LED_POSITIONS_NA 46
 
-#define CMD_DISCO_IDX 46
-#define CMD_DEMO_IDX 47
-#define CMD_WATER_IDX 48
+#define CMD_DISCO_IDX 47
+#define CMD_DEMO_IDX 48
+#define CMD_WATER_IDX 49
 
-#define CMD_SET_PN 49
-#define CMD_SET_SN 50
+#define CMD_SET_PN 50
+#define CMD_SET_SN 51
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -105,6 +106,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"ac", "autoClear", "Toggle clearing of array between led updates. Can call with or without options.", "ac --or-- ac.[0/1]"},
   {"na", "setNa", "Set na used for bf/df/dpc/cdpc patterns", "na.[na*100]"},
   {"sc", "setColor", "Set LED array color", "sc,[rgbVal] --or-- sc.[rVal].[gVal].[bVal]"},
+  {"sb", "setBrightness", "Set LED array brightness", "sb,[rgbVal] --or-- sb.[rVal].[gVal].[bVal]"},
   {"sad", "setArrayDistance", "Set LED array distance", "sad,[100*dist(mm) --or-- 1000*dist(cm)]"},
 
   // Single (or multiple) LED Display

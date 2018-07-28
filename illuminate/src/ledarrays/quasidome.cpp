@@ -42,9 +42,9 @@ const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
 
 // Device and Software Descriptors
-const char * LedArrayInterface::device_name = "quasi-dome";
+const char * LedArrayInterface::device_name = "Waller Lab Quasi-Dome";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
-const float LedArrayInterface::max_na = 1.0;
+const float LedArrayInterface::max_na = 0.98;
 const int16_t LedArrayInterface::led_count = 581;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 2;

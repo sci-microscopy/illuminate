@@ -41,9 +41,9 @@ const int TRIGGER_OUTPUT_COUNT = 1;
 const int TRIGGER_INPUT_COUNT = 1;
 
 // Device and Software Descriptors
-const char * LedArrayInterface::device_name = "sci-target";
+const char * LedArrayInterface::device_name = "Sci-Round";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
-const float LedArrayInterface::max_na = 1.0;
+const float LedArrayInterface::max_na = 0.65;
 const int16_t LedArrayInterface::led_count = 257;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 1;

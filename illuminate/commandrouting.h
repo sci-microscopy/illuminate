@@ -25,7 +25,7 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef COMMAND_ROUTING_H          // avoid repeated expansion
+#ifndef COMMAND_ROUTING_H
 #define COMMAND_ROUTING_H
 
 #include <SPI.h>
@@ -35,7 +35,6 @@
 #define MAX_COMMAND_LENGTH 20
 #define MAX_ARGUMENT_COUNT_CHAR 1500
 
-#define COMMAND_ROUTING_VERSION 1.11
 #include "commandconstants.h"
 #include "ledarray.h"
 
@@ -53,7 +52,6 @@ class CommandRouter {
   private:
     // Standard element variables
     int debug = 0;
-    const float version = 1.1;
 
     // Serial command holders
     LedArray * led_array;
@@ -168,6 +166,8 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->setNa(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_SET_COLOR_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_COLOR_IDX][1]) == 0))
     led_array->setColor(argc, (char * *) argv);
+ else if ((strcmp(command_header, command_list[CMD_SET_BRIGHTNESS][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_BRIGHTNESS][1]) == 0))
+    led_array->setBrightness(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_SET_ARRAY_DIST][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_ARRAY_DIST][1]) == 0))
     led_array->setDistanceZ(argc, (char * *) argv);
 
@@ -267,6 +267,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->setPartNumber(strtoul((char *) argv[0], NULL, 0));
   else if ((strcmp(command_header, command_list[CMD_SET_PN][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_PN][1]) == 0))
     led_array->setSerialNumber(strtoul((char *) argv[0], NULL, 0));
+  
   else
   {
     // Check if the command is equal to any device-specific commands

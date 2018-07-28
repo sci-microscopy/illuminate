@@ -46,9 +46,9 @@ const int TRIGGER_INPUT_COUNT = 2;
 const bool LED_SWAP_GROUP_1 = true;
 
 // Device and Software Descriptors
-const char * LedArrayInterface::device_name = "sci-big-wing";
+const char * LedArrayInterface::device_name = "Sci-BigWing";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
-const float LedArrayInterface::max_na = 1.0;
+const float LedArrayInterface::max_na = 0.99;
 const int16_t LedArrayInterface::led_count = 1529;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 2;

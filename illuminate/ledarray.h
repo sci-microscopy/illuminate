@@ -57,6 +57,9 @@
 #define INVALID_NA -2000.0    // Represents an invalid NA
 #define DEFAULT_NA 0.25         // 100 * default NA, int
 
+#define LED_BRIGHTNESS_DEFAULT 63
+#define LED_COLOR_DEFAULT 255
+
 class LedArray {
   public:
     // Device setup and demo
@@ -99,6 +102,7 @@ class LedArray {
     void setNa(int argc, char ** argv);
     void setDistanceZ(int argc, char ** argv);
     void setColor(int16_t argc, char ** argv);
+    void setBrightness(int16_t argc, char ** argv);
     void clearNaList();
     void buildNaList(float boardDistance);
     void toggleAutoClear(uint16_t argc, char ** argv);
@@ -168,9 +172,6 @@ class LedArray {
     // LED Positions in NA coordinates
     float * * led_position_list_na;
 
-    // Controller version
-    const float version = 0.2;
-
     // Defualt brightness
     const uint8_t LED_VALUE_DEFAULT = 10;
 
@@ -202,7 +203,9 @@ class LedArray {
     static const int * trigger_input_pin_list;
 
     // Default illumination
-    uint8_t * led_value;
+    uint8_t * led_value; // Current led values for each channel
+    uint8_t * led_color;          // 8-bit color balance
+    uint8_t led_brightness = 10;  // 8-bit brightness
 
     // Sequence stepping index
     uint16_t sequence_number_displayed = 0;
