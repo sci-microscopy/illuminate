@@ -17,7 +17,8 @@ Illuminate was designed to standardize the interface and functionality of LED ar
 ```
 5. open illuminate.ino in arduino, select micro-controller from Tools -> Board, select port from Tools -> Port
 6. Open Serial Monitor (Tools -> Serial Monitor), set line ending to Newline and baud rate to 115200 (default)
-7. Type command (ex: "bf") and press enter to send
+7. Press upload to load code onto Teensy
+8. Type command (ex: "bf") and press enter to send
 
 ## Commands
 Command help can be accessed by typing "?" into the Arduino terminal.
