@@ -906,8 +906,9 @@ void LedArray::scanAllLeds(uint16_t argc, char ** argv)
 
 void LedArray::setBrightness(int16_t argc, char ** argv)
 {
-  if (argc != 1)
-    Serial.printf(F("ERROR (LedArray::setBrightness): Invalid number of arguments."), SERIAL_LINE_ENDING);
+
+  if (argc == 0)
+    ; // pass
   else
   {
     if (strcmp(argv[0], "max") == 0)
@@ -934,8 +935,8 @@ void LedArray::setBrightness(int16_t argc, char ** argv)
   for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
     led_value[color_channel_index] = (uint8_t) (((float) led_color[color_channel_index] / UINT8_MAX) * (float) led_brightness);
 
-  if (debug >= 1)
-    Serial.printf(F("Set LED brightness to %d.%s"), led_brightness, SERIAL_LINE_ENDING);
+  // Print current brightness
+  Serial.printf(F("Current LED brightness is: %d%s"), led_brightness, SERIAL_LINE_ENDING);
 }
 
 /* Allows setting of current color buffer, which is respected by most other commands */
@@ -2102,10 +2103,7 @@ void LedArray::setup()
 
   // Populate led_color and led_value
   for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-  {
-    led_color[color_channel_index] = LED_COLOR_DEFAULT ; // TODO: make this respect bit depth
-    led_value[color_channel_index] = (uint8_t) (((float)led_color[color_channel_index] / (float) UINT8_MAX) * (float)led_brightness);
-  }
+    led_color[color_channel_index] = (uint8_t)(round((float)UINT8_MAX / led_array_interface->color_channel_count)) ; // TODO: make this respect bit depth
 
   // Reset sequence
   LedArray::led_sequence.deallocate();
