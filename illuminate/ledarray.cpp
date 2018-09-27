@@ -1041,14 +1041,6 @@ void LedArray::setColor(int16_t argc, char ** argv)
       return;
     }
 
-    // Normalize all colors to a mean value of 255
-    uint16_t color_total = 0;
-    for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-      color_total += (uint16_t)led_color[color_channel_index];
-
-    for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-      led_color[color_channel_index] = (uint8_t) (255.0 * (float)led_color[color_channel_index] / (float)color_total) ;
-
     // Set LED vlaue based on color and brightness
     for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
       led_value[color_channel_index] = (uint8_t) (((float) led_color[color_channel_index] / UINT8_MAX) * (float) led_brightness);
