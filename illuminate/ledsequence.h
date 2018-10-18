@@ -111,9 +111,9 @@ struct LedSequence
 
       if (led_count > 0)
       {
+        // Initialize the array for this pattern (only if 8-bit)
         if (bit_depth == 8)
-          // Initialize the array for this pattern (only if 8-bit)
-          values[number_of_patterns_assigned - 1] = new uint8_t[led_count * (uint16_t)color_channel_count];
+          values[number_of_patterns_assigned - 1] = new uint8_t[led_count];
 
         // Initialize the led number list for this pattern
         led_list[number_of_patterns_assigned - 1] = new uint16_t[led_count];

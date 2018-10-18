@@ -140,11 +140,13 @@ int CommandRouter::getArgumentBitDepth(char * command_header)
     return (-1);
 }
 
-/* This function is used to dictate the pitch of led numbers in a command stream. Very value at this pitch will be stored as a uint16_t instead of the default datatype */
+/* This function is used to dictate the pitch of led numbers in a command stream. 
+Every value at this pitch will be stored as a uint16_t instead of the default datatype */
 int CommandRouter::getArgumentLedNumberPitch(char * command_header)
 {
   if ((strcmp(command_header, command_list[CMD_SET_SEQ_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_SEQ_IDX][1]) == 0))
-    return (led_array->getColorChannelCount() + 1);
+//    return (led_array->getColorChannelCount() + 1);
+      return(2);
   else
     return (-1);
 }

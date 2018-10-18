@@ -10,7 +10,7 @@
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
       Neither the name of the <organization> nor the
-      names of its contributors may be used to endorse or promote products
+      names of its contributors may be used to endorse or promote seproducts
       derived from this software without specific prior written permission.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -1348,13 +1348,28 @@ void LedArray::setSequenceValue(uint16_t argc, void ** led_values, int16_t * led
   // Determine number of arguments to process
   int16_t led_argc = led_numbers[0];
 
-  if (led_argc > 0 && (argc == (led_argc * led_array_interface->color_channel_count))) // Color (or white if one channel)
+  // Assign LED indicies and values
+  uint8_t * values = ((uint8_t *) led_values);
+
+  // Debug led values and numbers
+  if (debug >= 2)
+  {
+    for (uint8_t led_number_index=0; led_number_index < led_numbers[0]; led_number_index++)
+    {
+      Serial.print(F("Found LED # "));
+      Serial.print(led_numbers[led_number_index + 1]);
+      Serial.printf(F(" with value: %d %s"), values[led_number_index], SERIAL_LINE_ENDING);
+    }
+  }
+
+  // Check number of arguments
+  if (led_argc > 0 && (argc == (led_argc))) // Color (or white if one channel) led_array_interface->color_channel_count
   {
     // Switch to new led pattern
     if (LedArray::led_sequence.incriment(pattern_led_count) && (pattern_led_count > 0))
     {
-      // Assign LED indicies and values
-      uint8_t * values = ((uint8_t *) led_values);
+
+      // Loop over argument indicies
       for (int led_argument_index = 0; led_argument_index < led_argc; led_argument_index++)
       {
         // If the led number is -1, append all LEDs to the sequence
@@ -1372,7 +1387,7 @@ void LedArray::setSequenceValue(uint16_t argc, void ** led_values, int16_t * led
         {
           // Append this LED to the sequence
           if (LedArray::led_sequence.bit_depth == 8)
-            LedArray::led_sequence.append(led_numbers[led_argument_index + 1], values[led_argument_index * led_array_interface->color_channel_count]);
+            LedArray::led_sequence.append(led_numbers[led_argument_index + 1], values[led_argument_index]);
           else if (LedArray::led_sequence.bit_depth == 1)
             LedArray::led_sequence.append(led_numbers[led_argument_index + 1], true);
         }
@@ -1540,7 +1555,7 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
             led_array_interface->setLed(led_number, color_channel_index, led_value[color_channel_index]);
         else
           for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-            led_array_interface->setLed(led_number, color_channel_index, LedArray::led_sequence.values[pattern_index][led_idx]);
+            led_array_interface->setLed(led_number, color_channel_index, uint8_t(round(float(led_value[color_channel_index]) * float(LedArray::led_sequence.values[pattern_index][led_idx]) / 255.0)));
       }
 
       // Check if led_count is zero - if so, clear the array
