@@ -31,7 +31,7 @@
 
 // Pin definitions (used internally)
 const int GSCLK = 6;
-const int LAT = 3;
+const int LAT = 2;
 const int SPI_MOSI = 11;
 const int SPI_CLK = 13;
 const int TRIGGER_OUTPUT_PIN_0 = 23;
