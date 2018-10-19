@@ -107,7 +107,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"na", "setNa", "Set na used for bf/df/dpc/cdpc patterns", "na.[na*100]"},
   {"sc", "setColor", "Set LED array color", "sc,[rgbVal] --or-- sc.[rVal].[gVal].[bVal]"},
   {"sb", "setBrightness", "Set LED array brightness", "sb,[rgbVal] --or-- sb.[rVal].[gVal].[bVal]"},
-  {"sad", "setArrayDistance", "Set LED array distance", "sad,[100*dist(mm) --or-- 1000*dist(cm)]"},
+  {"sad", "setArrayDistance", "Set LED array distance", "sad,[dist (mm)]"},
 
   // Single (or multiple) LED Display
   {"l", "led", "Turn on a single LED (or multiple LEDs in a list)", "ll.[led #].[led #], ..."},
