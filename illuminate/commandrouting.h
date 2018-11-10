@@ -140,13 +140,13 @@ int CommandRouter::getArgumentBitDepth(char * command_header)
     return (-1);
 }
 
-/* This function is used to dictate the pitch of led numbers in a command stream. 
-Every value at this pitch will be stored as a uint16_t instead of the default datatype */
+/* This function is used to dictate the pitch of led numbers in a command stream.
+  Every value at this pitch will be stored as a uint16_t instead of the default datatype */
 int CommandRouter::getArgumentLedNumberPitch(char * command_header)
 {
   if ((strcmp(command_header, command_list[CMD_SET_SEQ_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_SEQ_IDX][1]) == 0))
-//    return (led_array->getColorChannelCount() + 1);
-      return(2);
+    //    return (led_array->getColorChannelCount() + 1);
+    return (2);
   else
     return (-1);
 }
@@ -168,7 +168,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->setNa(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_SET_COLOR_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_COLOR_IDX][1]) == 0))
     led_array->setColor(argc, (char * *) argv);
- else if ((strcmp(command_header, command_list[CMD_SET_BRIGHTNESS][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_BRIGHTNESS][1]) == 0))
+  else if ((strcmp(command_header, command_list[CMD_SET_BRIGHTNESS][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_BRIGHTNESS][1]) == 0))
     led_array->setBrightness(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_SET_ARRAY_DIST][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_ARRAY_DIST][1]) == 0))
     led_array->setDistanceZ(argc, (char * *) argv);
@@ -208,6 +208,10 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->setSequenceValue(argc, argv, argument_led_number_list);
   else if ((strcmp(command_header, command_list[CMD_RUN_SEQ_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_RUN_SEQ_IDX][1]) == 0))
     led_array->runSequence(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_RUN_SEQ_DPC_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_RUN_SEQ_DPC_IDX][1]) == 0))
+    led_array->runSequenceDpc(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_RUN_SEQ_FPM_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_RUN_SEQ_FPM_IDX][1]) == 0))
+    led_array->runSequenceFpm(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_RUN_SEQ_FAST_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_RUN_SEQ_FAST_IDX][1]) == 0))
     led_array->runSequenceFast(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_PRINT_SEQ_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_SEQ_IDX][1]) == 0))
@@ -269,7 +273,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->setPartNumber(strtoul((char *) argv[0], NULL, 0));
   else if ((strcmp(command_header, command_list[CMD_SET_PN][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_PN][1]) == 0))
     led_array->setSerialNumber(strtoul((char *) argv[0], NULL, 0));
-  
+
   else
   {
     // Check if the command is equal to any device-specific commands

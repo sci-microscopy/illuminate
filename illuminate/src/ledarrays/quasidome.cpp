@@ -35,7 +35,7 @@ const int LAT = 2;
 const int SPI_MOSI = 11;
 const int SPI_CLK = 13;
 const int TRIGGER_OUTPUT_PIN_0 = 23;
-const int TRIGGER_INPUT_PIN_0 = 22;
+const int TRIGGER_INPUT_PIN_0 = 21;
 const int TRIGGER_OUTPUT_PIN_1 = 20;
 const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 2;
@@ -64,7 +64,7 @@ bool LedArrayInterface::trigger_input_state[] = {false, false};
 int LedArrayInterface::debug = 0;
 
 const uint8_t TLC5955::_tlc_count = 37;          // Change to reflect number of TLC chips
-float TLC5955::max_current_amps = 2.0;      // Maximum current output, amps
+float TLC5955::max_current_amps = 8.0;      // Maximum current output, amps
 bool TLC5955::enforce_max_current = true;   // Whether to enforce max current limit
 
 // Define dot correction, pin rgb order, and grayscale data arrays in program memory

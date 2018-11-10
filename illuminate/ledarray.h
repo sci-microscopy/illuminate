@@ -92,7 +92,7 @@ class LedArray {
     // Triggering
     bool getTriggerState(int trigger_index);
     void printTriggerSettings();
-    void waitForTriggerState(int trigger_index, bool state);
+    bool waitForTriggerState(int trigger_index, bool state);
     void triggerInputTest(uint16_t channel);
     void triggerSetup(int argc, char ** argv);
     void sendTriggerPulse(int trigger_index, bool show_output);
@@ -112,6 +112,8 @@ class LedArray {
     // Sequencing
     int getSequenceBitDepth();
     void runSequence(uint16_t argc, char ** argv);
+    void runSequenceDpc(uint16_t argc, char ** argv);
+    void runSequenceFpm(uint16_t argc, char ** argv);
     void runSequenceFast(uint16_t argc, char ** argv);
     void stepSequence(uint16_t argc, char ** argv);
     void setSequenceValue(uint16_t argc, void ** led_values, int16_t * led_numbers);

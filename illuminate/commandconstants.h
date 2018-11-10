@@ -29,7 +29,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 52
+#define COMMAND_COUNT 54
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -93,12 +93,15 @@
 #define CMD_SET_PN 50
 #define CMD_SET_SN 51
 
+#define CMD_RUN_SEQ_DPC_IDX 52
+#define CMD_RUN_SEQ_FPM_IDX 53
+
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
 
   // High-level Commands
   {"?", "help", "Display help info", "?"},
-  {"ab", "about", "Displays information about this LED Array", "about"},
+  {"info", "about", "Displays information about this LED Array", "about"},
   {"reboot", "reset", "Runs setup routine again, for resetting LED array", "reboot"},
   {"ver", "version", "Display controller version number"},
 
@@ -166,7 +169,12 @@ const char* command_list[COMMAND_COUNT][4] = {
 
   // Set part and serial number in EEPROM
   {"setsn", "setSerialNumber", "Sets device serial number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING"},
-  {"setpn", "setPartNumber", "Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING"}
+  {"setpn", "setPartNumber", "Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING"},
+
+  // Run case-specific sequences
+  {"rdpc",  "runDpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rdpc,[Delay between each pattern in ms].[Number of acquisitions].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
+  {"rfpm",  "runFpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rfpm,[Delay between each pattern in ms].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
+ 
 };
 
 #endif

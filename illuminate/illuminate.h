@@ -28,7 +28,7 @@
 #ifndef ILLUMINATE_H
 #define ILLUMINATE_H
 
-#define VERSION 1.14
+#define VERSION 1.15
 
 // This file allows the user to define which LED array interface is used. This should be set before compilation.
 // The value these are set to does not matter - only that they are defined.
