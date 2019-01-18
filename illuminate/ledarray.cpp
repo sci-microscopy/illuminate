@@ -1626,18 +1626,20 @@ void LedArray::patternIncrementFast()
   // Display pattern
   if (LedArray::pattern_index <  LedArray::led_sequence.number_of_patterns_assigned && LedArray::led_sequence.led_counts[LedArray::pattern_index] > 0)
   {
-    digitalWriteFast(5, true);
-    digitalWriteFast(6, true);
-    digitalWriteFast(9, true);
-    digitalWriteFast(10, true);
+    digitalWriteFast(3, true);
+    //    digitalWriteFast(5, true);
+    //    digitalWriteFast(6, true);
+    //    digitalWriteFast(9, true);
+    //    digitalWriteFast(10, true);
   }
   else
   {
     // Clear array
-    digitalWriteFast(5, false);
-    digitalWriteFast(6, false);
-    digitalWriteFast(9, false);
-    digitalWriteFast(10, false);
+    digitalWriteFast(3, true);
+    //    digitalWriteFast(5, false);
+    //    digitalWriteFast(6, false);
+    //    digitalWriteFast(9, false);
+    //    digitalWriteFast(10, false);
   }
   LedArray::pattern_index++;
   interrupts();
@@ -1837,7 +1839,10 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
           }
           if (((float)elapsed_us_outer - elapsed_us_trigger) > 5000000)
           {
-            Serial.println(F("ERROR (LedArray::runSequenceFast): Dropping out output trigger loop"));
+            Serial.print(F("ERROR (LedArray::runSequenceFast): Dropping out output trigger loop. "));
+            for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
+              Serial.printf(" | Trigger %d has triggered state %d", trigger_index, (int)triggered[trigger_index]);
+            Serial.printf("%s", SERIAL_LINE_ENDING);
             return;
           }
         }
@@ -1862,6 +1867,12 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
                   trigger_finished_waiting_count += 1;
                 }
               }
+              else
+              {
+                trigger_spin_up_delay_list[trigger_index] = 0.0;
+                trigger_finished_waiting_count += 1;
+              }
+
             }
             else
             {
@@ -1874,7 +1885,10 @@ void LedArray::runSequenceFast(uint16_t argc, char ** argv)
           }
           if (((float)elapsed_us_outer - elapsed_us_trigger) > 5000000)
           {
-            Serial.println(F("ERROR (LedArray::runSequenceFast): Dropping out of acquiring state wait loop"));
+            Serial.print(F("ERROR (LedArray::runSequenceFast): Dropping out of acquiring state wait loop. "));
+            for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
+              Serial.printf(" | Trigger %d has input triggered state %d", trigger_index, (int)triggered[trigger_index]);
+            Serial.printf("%s", SERIAL_LINE_ENDING);
             return;
           }
         }
