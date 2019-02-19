@@ -2,6 +2,7 @@
   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
   All rights reserved.
 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
       Redistributions of source code must retain the above copyright
@@ -9,8 +10,8 @@
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the <organization> nor the
-      names of its contributors may be used to endorse or promote seproducts
+      Neither the name of the UC Berkley nor the
+      names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -19,7 +20,7 @@
   DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  LOSS OF USE, DATA , OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -69,6 +70,7 @@ void LedArray::deviceCommand(int device_command_index, int argc, char * *argv)
     Serial.printf("ERROR (LedArray::deviceCommand) Invalid number of arguments (%d) %s", argc, SERIAL_LINE_ENDING);
     return;
   }
+
 
   if (auto_clear_flag)
     led_array_interface->clear();
@@ -343,7 +345,7 @@ void LedArray::waterDrop()
 
   uint8_t value;
   float na;
-  uint8_t max_led_value = 32;
+  uint8_t max_led_value = 16;
 
   uint8_t phase_counter = 0;
   while (Serial.available() == 0)
@@ -941,7 +943,7 @@ void LedArray::setBrightness(int16_t argc, char ** argv)
 
   // Set LED vlaue based on color and brightness
   for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-    led_value[color_channel_index] = (uint8_t) (((float) led_color[color_channel_index] / UINT8_MAX) * (float) led_brightness);
+    led_value[color_channel_index] = (uint8_t) ceil((float) led_color[color_channel_index] / (float) UINT8_MAX * (float) led_brightness);
 
   // Print current brightness
   Serial.printf(F("Current LED brightness is: %d%s"), led_brightness, SERIAL_LINE_ENDING);
@@ -2471,6 +2473,7 @@ void LedArray::setup()
     delete[] led_color;
   }
 
+
   // Read device mac address once
   read_mac();
 
@@ -2526,10 +2529,11 @@ void LedArray::setup()
   buildNaList(led_array_distance_z);
 
   // Define default NA
-  objective_na = DEFAULT_NA;
+  objective_na = led_array_interface->default_na;
 
   // Indicate that setup has run
   initial_setup = false;
+
 }
 
 void LedArray::demo()
@@ -2627,6 +2631,7 @@ void LedArray::demo()
       }
     }
 
+
     for ( int16_t led_index = led_array_interface->led_count - 1; led_index >= 0; led_index--)
     {
       led_array_interface->setLed(-1, -1, (uint8_t)0);
@@ -2640,6 +2645,7 @@ void LedArray::demo()
         return;
       }
     }
+
 
     delay(100);
   }
