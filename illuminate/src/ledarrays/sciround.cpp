@@ -29,7 +29,7 @@
  #include "../../ledarrayinterface.h"
  #include "../TLC5955/TLC5955.h"
  #include <EEPROM.h>
- 
+
 // Pin definitions (used internally)
 const int GSCLK = 6;
 const int LAT = 3;
@@ -44,6 +44,7 @@ const int TRIGGER_INPUT_COUNT = 1;
 const char * LedArrayInterface::device_name = "Sci-Round";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
 const float LedArrayInterface::max_na = 0.65;
+const float LedArrayInterface::default_na = 0.4;
 const int16_t LedArrayInterface::led_count = 257;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 1;
@@ -604,23 +605,8 @@ void LedArrayInterface::setPartNumber(uint16_t part_number)
 
 void LedArrayInterface::deviceSetup()
 {
-        // Now set the GSCK to an output and a 50% PWM duty-cycle
-        // For simplicity all three grayscale clocks are tied to the same pin
-        pinMode(GSCLK, OUTPUT);
-        pinMode(LAT, OUTPUT);
-
-        // Adjust PWM timer for maximum GSCLK frequency (5 MHz)
-        analogWriteFrequency(GSCLK, gsclk_frequency);
-        analogWriteResolution(1);
-        analogWrite(GSCLK, 1);
-
-        // The library does not ininiate SPI for you, so as to prevent issues with other SPI libraries
-        SPI.setMOSI(SPI_MOSI);
-        SPI.begin();
-        SPI.setClockDivider(SPI_CLOCK_DIV4);
-
-        // Instantiate TLC5955
-        tlc.init(LAT, SPI_MOSI, SPI_CLK);
+        // Initialize TLC5955
+        tlc.init(LAT, SPI_MOSI, SPI_CLK, GSCLK);
 
         // We must set dot correction values, so set them all to the brightest adjustment
         tlc.setAllDcData(127);
@@ -733,6 +719,26 @@ uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_in
                 Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
                 return (0);
         }
+}
+
+void LedArrayInterface::setGsclkFreq(uint32_t gsclk_frequency)
+{
+  tlc.setGsclkFreq(gsclk_frequency);
+}
+
+uint32_t LedArrayInterface::getGsclkFreq()
+{
+  return tlc.getGsclkFreq();
+}
+
+void LedArrayInterface::setBaudRate(uint32_t new_baud_rate)
+{
+  tlc.setSpiBaudRate(new_baud_rate);
+}
+
+uint32_t LedArrayInterface::getBaudRate()
+{
+  return tlc.getSpiBaudRate();
 }
 
 #endif

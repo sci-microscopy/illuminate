@@ -130,6 +130,10 @@ class LedArrayInterface {
     uint16_t getPartNumber();
     void setPartNumber(uint16_t part_number);
     void setSerialNumber(uint16_t serial_number);
+    void setBaudRate(uint32_t new_baud_rate);
+    uint32_t getBaudRate();
+    void setGsclkFreq(uint32_t new_gsclk_freq);
+    uint32_t getGsclkFreq();
 };
 
 

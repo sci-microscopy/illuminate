@@ -2645,10 +2645,33 @@ void LedArray::demo()
         return;
       }
     }
-
-
     delay(100);
   }
+}
+
+void LedArray::setBaudRate(uint16_t argc, char ** argv)
+{
+  if (argc > 0)
+  {
+    uint32_t new_baud_rate = (strtoul((char *) argv[0], NULL, 0));
+    led_array_interface->setBaudRate(new_baud_rate);
+  }
+  Serial.printf(F("Current serial baud rate is %.3f MHz %s"), (double)led_array_interface->getBaudRate() / 1000000.0, SERIAL_LINE_ENDING);
+}
+
+void LedArray::setGsclkFreq(uint16_t argc, char ** argv)
+{
+  if (argc > 0)
+  {
+    uint32_t new_gsclk_frequency = (strtoul((char *) argv[0], NULL, 0));
+    led_array_interface->setGsclkFreq(new_gsclk_frequency);
+  }
+  Serial.printf(F("Current grayscale clock frequency is %.3f MHz %s"), (double)led_array_interface->getGsclkFreq() / 1000000.0, SERIAL_LINE_ENDING);
+}
+
+void LedArray::setCommandMode(const char * mode)
+{
+  notImplemented("setCommandMode");
 }
 
 void LedArray::notImplemented(const char * command_name)

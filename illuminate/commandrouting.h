@@ -271,10 +271,21 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->demo();
   else if ((strcmp(command_header, command_list[CMD_WATER_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_WATER_IDX][1]) == 0))
     led_array->waterDrop();
+
   else if ((strcmp(command_header, command_list[CMD_SET_SN][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_SN][1]) == 0))
     led_array->setPartNumber(strtoul((char *) argv[0], NULL, 0));
   else if ((strcmp(command_header, command_list[CMD_SET_PN][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_PN][1]) == 0))
     led_array->setSerialNumber(strtoul((char *) argv[0], NULL, 0));
+
+  else if ((strcmp(command_header, command_list[CMD_SET_BAUD_RATE][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_BAUD_RATE][1]) == 0))
+    led_array->setBaudRate(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_SET_GSCLK_FREQ][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_GSCLK_FREQ][1]) == 0))
+    led_array->setGsclkFreq(argc, (char * *) argv);
+
+  else if ((strcmp(command_header, command_list[CMD_SET_HUMAN][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_HUMAN][1]) == 0))
+    led_array->setCommandMode("human");
+  else if ((strcmp(command_header, command_list[CMD_SET_MACHINE][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_MACHINE][1]) == 0))
+    led_array->setCommandMode("machine");
 
   else
   {

@@ -31,7 +31,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 54
+#define COMMAND_COUNT 58
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -97,6 +97,12 @@
 
 #define CMD_RUN_SEQ_DPC_IDX 52
 #define CMD_RUN_SEQ_FPM_IDX 53
+
+#define CMD_SET_BAUD_RATE 54
+#define CMD_SET_GSCLK_FREQ 55
+
+#define CMD_SET_HUMAN 56
+#define CMD_SET_MACHINE 57
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -176,6 +182,13 @@ const char* command_list[COMMAND_COUNT][4] = {
   // Run case-specific sequences
   {"rdpc",  "runDpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rdpc,[Delay between each pattern in ms].[Number of acquisitions].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
   {"rfpm",  "runFpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rfpm,[Delay between each pattern in ms].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
+
+  // Functions to set baud rate and gsclk frequency (for TLC5955 based boards)
+  {"sbr",  "setBaudRate", "Sets SPI baud rate for TLC5955 Chips in Hz (baud)", "sbr.1000000"},
+  {"sgs",  "setGsclkFreq", "Sets GSCLK frequency in Hz", "sgs.1000000"},
+
+  {"human", "setModeHuman", "Sets command mode to human-readable", "human"},
+  {"machine", "setModeMachine", "Sets command mode to machine-readable", "machine"}
 
 };
 

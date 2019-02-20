@@ -149,6 +149,9 @@ class LedArray {
     void setPartNumber(uint16_t part_number);
     void setSerialNumber(uint16_t serial_number);
     void printMacAddress();
+    void setBaudRate(uint16_t argc, char ** argv);
+    void setGsclkFreq(uint16_t argc, char ** argv);
+    void setCommandMode(const char * mode);
 
     // Device-specific commands
     uint8_t getDeviceCommandCount();
