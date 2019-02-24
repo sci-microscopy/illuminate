@@ -78,14 +78,18 @@ TLC5955 tlc;                            // TLC5955 object
 uint32_t gsclk_frequency = 2000000;     // Grayscale clock speed
 
 /**** Device-specific commands ****/
-const uint8_t LedArrayInterface::device_command_count = 0;
-const char * LedArrayInterface::deviceCommandNamesShort[] = {};
-const char * LedArrayInterface::deviceCommandNamesLong[] = {};
-const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
+const uint8_t LedArrayInterface::device_command_count = 1;
+const char * LedArrayInterface::deviceCommandNamesShort[] = {"c"};
+const char * LedArrayInterface::deviceCommandNamesLong[] = {"center"};
+const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,5}}; // Number of commands, number of LEDs in each command.
 
 /**** Part number and Serial number addresses in EEPROM ****/
 uint16_t pn_address = 100;
 uint16_t sn_address = 200;
+
+PROGMEM const int16_t center_led_list[1][5] = {
+  {0, 1, 2, 3, 4}
+};
 
 PROGMEM const int16_t LedArrayInterface::led_positions[793][5] = {
     {0, 90, 0, 0, 6500},
@@ -1231,12 +1235,10 @@ uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_in
 
                 if ((pattern_index < pattern_count) && (led_index < leds_per_pattern))
                 {
-                        //      if (device_command_index == 0)
-                        //        return (uint16_t)pgm_read_word(&(hole_led_list[pattern_index][led_index]));
-                        //      else if (device_command_index == 1)
-                        //        return (uint16_t)pgm_read_word(&(uv_led_list[pattern_index][led_index]));
-                        //      else
-                        return 0;
+                     if (device_command_index == 0)
+                       return (uint16_t)pgm_read_word(&(center_led_list[pattern_index][led_index]));
+                     else
+                       return 0;
 
                 }
                 else

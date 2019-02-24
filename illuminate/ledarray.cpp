@@ -54,7 +54,7 @@ const char * LedArray::getDeviceCommandNameLong(int device_command_index)
 
 void LedArray::deviceCommand(int device_command_index, int argc, char * *argv)
 {
-  // Get pattern sizes
+  // Get pattern sizes (stored as a 32-bit integer with first 16 as leds per pattern pattern and second as pattern count
   uint32_t concatenated = led_array_interface->getDeviceCommandLedListSize(device_command_index);
   uint16_t pattern_count  = (uint16_t)(concatenated >> 16);
   uint16_t leds_per_pattern = (uint16_t)concatenated;

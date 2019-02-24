@@ -78,14 +78,18 @@ TLC5955 tlc; // TLC5955 object
 uint32_t gsclk_frequency = 5000000;
 
 /**** Device-specific commands ****/
-const uint8_t LedArrayInterface::device_command_count = 0;
-const char * LedArrayInterface::deviceCommandNamesShort[] = {};
-const char * LedArrayInterface::deviceCommandNamesLong[] = {};
-const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
+const uint8_t LedArrayInterface::device_command_count = 1;
+const char * LedArrayInterface::deviceCommandNamesShort[] = {"c"};
+const char * LedArrayInterface::deviceCommandNamesLong[] = {"center"};
+const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,5}}; // Number of commands, number of LEDs in each command.
 
 /**** Part number and Serial number addresses in EEPROM ****/
 uint16_t pn_address = 100;
 uint16_t sn_address = 200;
+
+PROGMEM const int16_t center_led_list[1][5] = {
+  {0, 1, 2, 3, 4}
+};
 
 // FORMAT: hole number, channel, 100*x, 100*y, 100*z
 PROGMEM const int16_t LedArrayInterface::led_positions[][5] = {

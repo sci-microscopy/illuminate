@@ -82,23 +82,18 @@ uint32_t gsclk_frequency = 4000000;     // Grayscale clock speed
 uint32_t spi_baud_rate   = 2500000;
 
 /**** Device-specific commands ****/
-// const uint8_t LedArrayInterface::device_command_count = 0;
-// const char * LedArrayInterface::deviceCommandNamesShort[] = {};
-// const char * LedArrayInterface::deviceCommandNamesLong[] = {};
-// const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
-// // const uint16_t ** LedArrayInterface::device_command_pattern_list = {{0,1,2}, {3,4,5}};
-
-// const uint16_t pattern_1[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
-// const uint16_t pattern_2[] = {100,101};
-const uint16_t * LedArrayInterface::device_command_pattern_list[] = {};
-const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
-const char * LedArrayInterface::deviceCommandNamesShort[] = {};
-const char * LedArrayInterface::deviceCommandNamesLong[] = {};
-const uint8_t LedArrayInterface::device_command_count = 0;
+const uint8_t LedArrayInterface::device_command_count = 1;
+const char * LedArrayInterface::deviceCommandNamesShort[] = {"c"};
+const char * LedArrayInterface::deviceCommandNamesLong[] = {"center"};
+const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,5}}; // Number of commands, number of LEDs in each command.
 
 /**** Part number and Serial number addresses in EEPROM ****/
 uint16_t pn_address = 100;
 uint16_t sn_address = 200;
+
+PROGMEM const int16_t center_led_list[1][5] = {
+  {0, 1, 2, 3, 4}
+};
 
 PROGMEM const int16_t LedArrayInterface::led_positions[720][5] = {
     {0, 26, 1046, -1440, 6500},
@@ -1100,7 +1095,37 @@ void LedArrayInterface::deviceSetup()
 
         // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
         // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT
-        tlc.setFunctionData(true, false, true, true, false);
+
+        // DSPRPT
+        // Auto display repeat mode enable bit
+        // 0 = Disabled, 1 = Enabled
+        // When this bit is 0, the auto display repeat function is disabled. Each constant-current output is turned on and off for one display period.
+        // When this bit is 1, each output repeats the PWM control every 65,536 GSCLKs.
+
+        // TMGRST
+        // Display timing reset mode enable bit
+        // 0 = Disabled, 1 = Enabled
+        // When this bit is 0, the GS counter is not reset and the outputs are not forced off even when a LAT rising edge is input for a GS data write.
+        // When this bit is 1, the GS counter is reset to 0 and all outputs are forced off at the LAT rising edge for a GS data write. Afterwards, PWM control resumes from the next GSCLK rising edge
+
+        // RFRESH
+        // Auto data refresh mode enable bit
+        // 0 = Disabled, 1 = Enabled
+        // When this bit is 0, the auto data refresh function is disabled. The data in the common shift register are copied to the GS data latch at the next LAT rising edge for a GS data write. DC data in the control data latch are copied to the DC data latch at the same time.
+        // When this bit is 1, the auto data refresh function is enabled. The data in the common shift register are copied to the GS data latch at the 65,536th GSCLK after the LAT rising edge for a GS data write. DC data in the control data latch are copied to the DC data latch at the same time.
+
+        // ESPWM
+        // ES-PWM mode enable bit
+        // 0 = Disabled, 1 = Enabled
+        // When this bit is 0, the conventional PWM control mode is selected. If the TLC5955 is used for multiplexing a drive, the conventional PWM mode should be selected to prevent excess on or off switching.
+        // When this bit is 1, ES-PWM control mode is selected.
+
+        // LSDVLT
+        // LSD detection voltage selection bit
+        // LED short detection (LSD) detects a fault caused by a shorted LED by comparing the OUTXn voltage to the LSD detection threshold voltage. The threshold voltage is selected by this bit.
+        // When this bit is 0, the LSD voltage is VCC × 70%. When this bit is 1, the LSD voltage is VCC × 90%.
+
+        tlc.setFunctionData(true, true, true, true, false);
 
         // Set LED current levels (7-bit, max is 127)
         int currentR = 127;
