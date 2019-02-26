@@ -54,7 +54,6 @@ const int LedArrayInterface::color_channel_count = 3;
 const char LedArrayInterface::color_channel_names[] = {'r', 'g', 'b'};
 const float LedArrayInterface::color_channel_center_wavelengths[] = {0.48, 0.525, 0.625};
 const int LedArrayInterface::bit_depth = 16;
-const int16_t LedArrayInterface::tlc_chip_count = 100;
 const bool LedArrayInterface::supports_fast_sequence = false;
 const float LedArrayInterface::led_array_distance_z_default = 50.0;
 
@@ -91,7 +90,10 @@ PROGMEM const int16_t center_led_list[1][5] = {
   {0, 1, 2, 3, 4}
 };
 
+// Initialize dynamic LED position list (NA)
+float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 
+// Define LED positions in cartesian coordinates (LED#, channel, x * 100mm, y * 100mm, z * 100mm)
 PROGMEM const int16_t LedArrayInterface::led_positions[1529][5] = {
         {0, 90, 0, 0, 6500},
         {1, 150, 417, 0, 6500},

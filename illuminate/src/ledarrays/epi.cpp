@@ -58,9 +58,9 @@ const int LedArrayInterface::color_channel_count = 3;
 const char LedArrayInterface::color_channel_names[] = {'r', 'g', 'b'};
 const float LedArrayInterface::color_channel_center_wavelengths[] = {0.48, 0.525, 0.625};
 const int LedArrayInterface::bit_depth = 16;
-const int16_t LedArrayInterface::tlc_chip_count = 50;
 const bool LedArrayInterface::supports_fast_sequence = false;
 const float LedArrayInterface::led_array_distance_z_default = 50.0;
+float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 int LedArrayInterface::debug = 0;
 
 const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0};
@@ -1218,9 +1218,6 @@ uint32_t LedArrayInterface::getDeviceCommandLedListSize(int device_command_index
 
 uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_index, uint16_t pattern_index, uint16_t led_index)
 {
-  Serial.println("=====");
-  Serial.println(led_index);
-
         if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
         {
                 uint32_t concatenated = getDeviceCommandLedListSize(device_command_index);
@@ -1229,10 +1226,11 @@ uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_in
 
                 if ((pattern_index < pattern_count) && (led_index < leds_per_pattern))
                 {
-                  Serial.println(pattern_index);
+                     if (device_command_index == 0)
+                       return (uint16_t)pgm_read_word(&(center_led_list[pattern_index][led_index]));
+                     else
+                       return 0;
 
-                  Serial.println(led_index);
-                  return device_command_pattern_list[pattern_index][led_index];
                 }
                 else
                 {
@@ -1246,7 +1244,6 @@ uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_in
                 return (0);
         }
 }
-
 void LedArrayInterface::setBaudRate(uint32_t new_baud_rate)
 {
   tlc.setSpiBaudRate(new_baud_rate);

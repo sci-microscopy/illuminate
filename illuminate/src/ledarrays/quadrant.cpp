@@ -57,6 +57,7 @@ const int LedArrayInterface::bit_depth = 8;
 const int16_t LedArrayInterface::tlc_chip_count = 0;
 const bool LedArrayInterface::supports_fast_sequence = true;
 const float LedArrayInterface::led_array_distance_z_default = 50.0;
+float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 
 // Set up trigger pins
 const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, TRIGGER_OUTPUT_PIN_1};

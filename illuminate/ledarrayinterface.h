@@ -117,6 +117,7 @@ class LedArrayInterface {
     // LED positions
     static const int16_t PROGMEM led_positions[][5];
     static const int16_t PROGMEM arbitrary_led_list[][1];
+    static float led_position_list_na[][2];
 
     // Device-specific commands
     uint8_t getDeviceCommandCount();

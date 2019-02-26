@@ -103,7 +103,6 @@ class LedArray {
     void setDistanceZ(int argc, char ** argv);
     void setColor(int16_t argc, char ** argv);
     void setBrightness(int16_t argc, char ** argv);
-    void clearNaList();
     void buildNaList(float boardDistance);
     void toggleAutoClear(uint16_t argc, char ** argv);
     void setMaxCurrentEnforcement(int argc, char ** argv);
@@ -173,9 +172,6 @@ class LedArray {
 
     const char * DPC_BOTTOM1 = "b";
     const char * DPC_BOTTOM2 = "bottom";
-
-    // LED Positions in NA coordinates
-    float * * led_position_list_na;
 
     // Defualt brightness
     const uint8_t LED_VALUE_DEFAULT = 10;

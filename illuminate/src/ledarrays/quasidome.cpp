@@ -54,9 +54,9 @@ const int LedArrayInterface::color_channel_count = 3;
 const char LedArrayInterface::color_channel_names[] = {'r', 'g', 'b'};
 const float LedArrayInterface::color_channel_center_wavelengths[] = {0.48, 0.525, 0.625};
 const int LedArrayInterface::bit_depth = 16;
-const int16_t LedArrayInterface::tlc_chip_count = 38;
 const bool LedArrayInterface::supports_fast_sequence = false;
 const float LedArrayInterface::led_array_distance_z_default = 60.0;
+float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 
 const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, TRIGGER_OUTPUT_PIN_1};
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
@@ -83,13 +83,14 @@ const char * LedArrayInterface::deviceCommandNamesShort[] = {"c"};
 const char * LedArrayInterface::deviceCommandNamesLong[] = {"center"};
 const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,5}}; // Number of commands, number of LEDs in each command.
 
-/**** Part number and Serial number addresses in EEPROM ****/
-uint16_t pn_address = 100;
-uint16_t sn_address = 200;
-
 PROGMEM const int16_t center_led_list[1][5] = {
   {0, 1, 2, 3, 4}
 };
+
+
+/**** Part number and Serial number addresses in EEPROM ****/
+uint16_t pn_address = 100;
+uint16_t sn_address = 200;
 
 // FORMAT: hole number, channel, 100*x, 100*y, 100*z
 PROGMEM const int16_t LedArrayInterface::led_positions[][5] = {

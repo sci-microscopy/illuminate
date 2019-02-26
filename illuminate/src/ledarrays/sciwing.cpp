@@ -54,15 +54,15 @@ const int LedArrayInterface::color_channel_count = 3;
 const char LedArrayInterface::color_channel_names[] = {'r', 'g', 'b'};
 const float LedArrayInterface::color_channel_center_wavelengths[] = {0.48, 0.525, 0.625};
 const int LedArrayInterface::bit_depth = 16;
-const int16_t LedArrayInterface::tlc_chip_count = 52;
 const bool LedArrayInterface::supports_fast_sequence = false;
 const float LedArrayInterface::led_array_distance_z_default = 50.0;
-
+int LedArrayInterface::debug = 0;
 const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, TRIGGER_OUTPUT_PIN_1};
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
 bool LedArrayInterface::trigger_input_state[] = {false, false};
+float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 
-const uint8_t TLC5955::_tlc_count = 52;    // Change to reflect number of TLC chips
+const uint8_t TLC5955::_tlc_count = 100;    // Change to reflect number of TLC chips
 float TLC5955::max_current_amps = 8.0;      // Maximum current output, amps
 bool TLC5955::enforce_max_current = true;   // Whether to enforce max current limit
 
@@ -70,8 +70,6 @@ bool TLC5955::enforce_max_current = true;   // Whether to enforce max current li
 uint8_t TLC5955::_dc_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 uint8_t TLC5955::_rgb_order[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
-
-int LedArrayInterface::debug = 0;
 
 /**** Device-specific variables ****/
 TLC5955 tlc;                            // TLC5955 object
@@ -91,6 +89,7 @@ PROGMEM const int16_t center_led_list[1][5] = {
   {0, 1, 2, 3, 4}
 };
 
+// Define LED positions in cartesian coordinates (LED#, channel, x * 100mm, y * 100mm, z * 100mm)
 PROGMEM const int16_t LedArrayInterface::led_positions[793][5] = {
     {0, 90, 0, 0, 6500},
     {1, 150, 417, 0, 6500},

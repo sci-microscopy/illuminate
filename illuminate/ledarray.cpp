@@ -115,7 +115,7 @@ void LedArray::printLedPositions(bool print_na)
   if (print_na)
   {
     buildNaList(led_array_distance_z);
-    Serial.printf(F("{\n    \"led_position_list_na\" : {%s"), SERIAL_LINE_ENDING);
+    Serial.printf(F("{\n    \"LedArrayInterface::led_position_list_na\" : {%s"), SERIAL_LINE_ENDING);
   }
   else
     Serial.printf(F("{\n    \"led_position_list_cartesian\" : {%s"), SERIAL_LINE_ENDING);
@@ -126,8 +126,8 @@ void LedArray::printLedPositions(bool print_na)
 
     if (print_na)
     {
-      na_x = led_position_list_na[led_number][0];
-      na_y = led_position_list_na[led_number][1];
+      na_x = LedArrayInterface::led_position_list_na[led_number][0];
+      na_y = LedArrayInterface::led_position_list_na[led_number][1];
 
       Serial.printf(F("        \"%d\" : ["), led_number);
       Serial.printf(F("%01.03f, "), na_x);
@@ -339,8 +339,8 @@ void LedArray::waterDrop()
   // Clear the array
   led_array_interface->clear();
 
-  float na_period = led_position_list_na[led_array_interface->led_count - 1][0] * led_position_list_na[led_array_interface->led_count - 1][0];
-  na_period += led_position_list_na[led_array_interface->led_count - 1][1] * led_position_list_na[led_array_interface->led_count - 1][1];
+  float na_period = LedArrayInterface::led_position_list_na[led_array_interface->led_count - 1][0] * LedArrayInterface::led_position_list_na[led_array_interface->led_count - 1][0];
+  na_period += LedArrayInterface::led_position_list_na[led_array_interface->led_count - 1][1] * LedArrayInterface::led_position_list_na[led_array_interface->led_count - 1][1];
   na_period = sqrt(na_period) / 2.0;
 
   uint8_t value;
@@ -354,7 +354,7 @@ void LedArray::waterDrop()
     led_array_interface->setLed(-1, -1, false);
     for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
     {
-      na = sqrt(led_position_list_na[led_index][0] * led_position_list_na[led_index][0] + led_position_list_na[led_index][1] * led_position_list_na[led_index][1]);
+      na = sqrt(LedArrayInterface::led_position_list_na[led_index][0] * LedArrayInterface::led_position_list_na[led_index][0] + LedArrayInterface::led_position_list_na[led_index][1] * LedArrayInterface::led_position_list_na[led_index][1]);
       value = (uint8_t)round((1.0 + sin(((na / na_period) + ((float)phase_counter / 100.0)) * 2.0 * 3.14)) * max_led_value);
       for (int color_channel_index = 0; color_channel_index <  led_array_interface->color_channel_count; color_channel_index++)
         led_array_interface->setLed(led_index, color_channel_index, value);
@@ -370,36 +370,16 @@ void LedArray::waterDrop()
   led_array_interface->clear();
 }
 
-/* A function to clear the calculated NA positions of each LED */
-void LedArray::clearNaList()
-{
-  for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
-    delete[] led_position_list_na[led_index];
-  delete[] led_position_list_na;
-}
-
 /* A function to calculate the NA of each LED given the XYZ position and an offset */
 void LedArray::buildNaList(float new_board_distance)
 {
-  float Na_x, Na_y, Na_d, yz, xz, x, y, z, z0;
-
-  // Delete previous na list
-  if (!initial_setup)
-  {
-    for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
-      delete[] led_position_list_na[led_index];
-    delete[] led_position_list_na;
-  }
-
-  // Initialize new position list
-  led_position_list_na = new float * [led_array_interface->led_count];
+  float Na_x, Na_y, yz, xz, x, y, z, z0;
 
   if (new_board_distance > 0)
     led_array_distance_z = new_board_distance;
 
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
-    led_position_list_na[led_index] = new float[3];
     if ((int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][1])) >= 0)
     {
       x =  float((int16_t) pgm_read_word(&(LedArrayInterface::led_positions[led_index][2]))) / 100.0;
@@ -411,17 +391,14 @@ void LedArray::buildNaList(float new_board_distance)
       xz = sqrt(x * x + z * z);
       Na_x = sin(atan(x / yz));
       Na_y = sin(atan(y / xz));
-      Na_d = sqrt(Na_x * Na_x + Na_y * Na_y);
 
-      led_position_list_na[led_index][0] = Na_x;
-      led_position_list_na[led_index][1] = Na_y;
-      led_position_list_na[led_index][2] = Na_d;
+      LedArrayInterface::led_position_list_na[led_index][0] = Na_x;
+      LedArrayInterface::led_position_list_na[led_index][1] = Na_y;
     }
     else
     {
-      led_position_list_na[led_index][0] = INVALID_NA; // invalid NA
-      led_position_list_na[led_index][1] = INVALID_NA; // invalid NA
-      led_position_list_na[led_index][2] = INVALID_NA; // invalid NA
+      LedArrayInterface::led_position_list_na[led_index][0] = INVALID_NA; // invalid NA
+      LedArrayInterface::led_position_list_na[led_index][1] = INVALID_NA; // invalid NA
     }
   }
   if (debug)
@@ -1083,9 +1060,9 @@ void LedArray::drawQuadrant(int quadrant_number, float start_na, float end_na, b
 
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
-    float x = led_position_list_na[led_index][0];
-    float y = led_position_list_na[led_index][1];
-    float d = led_position_list_na[led_index][2];
+    float x = LedArrayInterface::led_position_list_na[led_index][0];
+    float y = LedArrayInterface::led_position_list_na[led_index][1];
+    float d = sqrt(x * x + y * y);
 
     if (!include_center)
     {
@@ -1125,9 +1102,9 @@ void LedArray::drawHalfCircle(int8_t half_circle_type, float start_na, float end
   float x, y, d;
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
-    x = led_position_list_na[led_index][0];
-    y = led_position_list_na[led_index][1];
-    d = led_position_list_na[led_index][2];
+    x = LedArrayInterface::led_position_list_na[led_index][0];
+    y = LedArrayInterface::led_position_list_na[led_index][1];
+    d = sqrt(x * x + y * y);
 
     if (d > (start_na) && (d <= (end_na)))
     {
@@ -1160,7 +1137,7 @@ void LedArray::drawCircle(float start_na, float end_na)
   float d;
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
-    d = led_position_list_na[led_index][2];
+    d = sqrt(LedArrayInterface::led_position_list_na[led_index][0] * LedArrayInterface::led_position_list_na[led_index][0] + LedArrayInterface::led_position_list_na[led_index][1] * LedArrayInterface::led_position_list_na[led_index][1]);
     if (d >= (start_na) && (d <= (end_na)))
     {
       for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
@@ -1186,7 +1163,7 @@ void LedArray::scanLedRange(uint16_t delay_ms, float start_na, float end_na, boo
   int16_t led_index = 0;
   while (led_index < (int16_t)led_array_interface->led_count && !Serial.available())
   {
-    d = led_position_list_na[led_index][2];
+    d = sqrt(LedArrayInterface::led_position_list_na[led_index][0] * LedArrayInterface::led_position_list_na[led_index][0] + LedArrayInterface::led_position_list_na[led_index][1] * LedArrayInterface::led_position_list_na[led_index][1]);
 
     if (d >= start_na && d <= end_na)
     {
@@ -2305,7 +2282,7 @@ void LedArray::runSequenceFpm(uint16_t argc, char ** argv)
   float d;
   for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
-    d = led_position_list_na[led_index][2];
+    d = sqrt(LedArrayInterface::led_position_list_na[led_index][0] * LedArrayInterface::led_position_list_na[led_index][0] + LedArrayInterface::led_position_list_na[led_index][1] * LedArrayInterface::led_position_list_na[led_index][1]);
 
     if (d <= maximum_na)
       max_led_index = led_index;
