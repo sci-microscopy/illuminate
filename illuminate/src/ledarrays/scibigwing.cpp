@@ -1902,6 +1902,20 @@ void LedArrayInterface::deviceSetup()
         // Set RGB pin order
         tlc.setRgbPinOrder(0, 1, 2);
 
+        // SN-specific pin corrections
+        if (getSerialNumber() == 17)
+        {
+                tlc.setRgbPinOrderSingle(141, 2, 1, 0);
+                tlc.setRgbPinOrderSingle(1209, 2, 1, 0);
+                tlc.setRgbPinOrderSingle(1251, 2, 1, 0);
+        }
+
+        // swap green and red for custom led connection
+        tlc.setRgbPinOrderSingle(459, 1, 0, 2); // led 879
+        tlc.setRgbPinOrderSingle(1131, 1, 0, 2); // led 881
+        tlc.setRgbPinOrderSingle(795, 1, 0, 2); // led 882
+        tlc.setRgbPinOrderSingle(1467, 1, 0, 2); // led 883
+
         // Update the GS register
         clear();
 

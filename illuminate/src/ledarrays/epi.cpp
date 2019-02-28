@@ -83,16 +83,16 @@ uint32_t spi_baud_rate   = 2500000;
 
 /**** Device-specific commands ****/
 const uint8_t LedArrayInterface::device_command_count = 1;
-const char * LedArrayInterface::deviceCommandNamesShort[] = {"c"};
-const char * LedArrayInterface::deviceCommandNamesLong[] = {"center"};
-const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,5}}; // Number of commands, number of LEDs in each command.
+const char * LedArrayInterface::deviceCommandNamesShort[] = {"h"};
+const char * LedArrayInterface::deviceCommandNamesLong[] = {"hole"};
+const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,20}}; // Number of commands, number of LEDs in each command.
 
 /**** Part number and Serial number addresses in EEPROM ****/
 uint16_t pn_address = 100;
 uint16_t sn_address = 200;
 
-PROGMEM const int16_t center_led_list[1][5] = {
-  {0, 1, 2, 3, 4}
+PROGMEM const int16_t center_led_list[1][20] = {
+  {0, 1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19}
 };
 
 PROGMEM const int16_t LedArrayInterface::led_positions[720][5] = {

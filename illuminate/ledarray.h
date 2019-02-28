@@ -158,6 +158,10 @@ class LedArray {
     const char * getDeviceCommandNameLong(int device_command_index);
     void deviceCommand(int device_command_index, int argc, char * *argv);
 
+    // Demo mode
+    void setDemoMode(bool mode);
+    bool getDemoMode();
+
   private:
 
     /* DPC Commands */
@@ -215,5 +219,7 @@ class LedArray {
     static volatile uint16_t pattern_index;
     static volatile uint16_t frame_index;
 
+    // EEPROM demo mode address
+    uint16_t demo_mode_address = 300;
 };
 #endif

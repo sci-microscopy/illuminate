@@ -288,6 +288,16 @@ void LedArray::setSerialNumber(uint16_t new_serial_number)
   led_array_interface->setSerialNumber(new_serial_number);
 }
 
+void LedArray::setDemoMode(bool mode)
+{
+  EEPROM.write(demo_mode_address, (byte) mode);
+}
+
+bool LedArray::getDemoMode()
+{
+  return (bool) EEPROM.read(demo_mode_address);
+}
+
 uint16_t LedArray::getPartNumber()
 {
   return led_array_interface->getPartNumber();
@@ -2511,28 +2521,21 @@ void LedArray::setup()
   // Indicate that setup has run
   initial_setup = false;
 
+  // Run demo mode if EEPROM indicates we should
+  if (getDemoMode())
+    demo();
+  
+
 }
 
 void LedArray::demo()
 {
+  // Set demo mode flag in eeprom
+  setDemoMode(true);
+
+  // Run until key received
   while (!Serial.available())
   {
-
-    //    // Demo fill array
-    //    for (int color_channel_index_outer = 0; color_channel_index_outer < led_array_interface->color_channel_count; color_channel_index_outer++)
-    //    {
-    //      for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-    //        led_value[color_channel_index] = 0;
-    //
-    //      led_value[color_channel_index_outer] = 10;
-    //      led_array_interface->clear();
-    //
-    //      for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-    //        led_array_interface->setLed(-1, color_channel_index_outer, led_value[color_channel_index_outer]);
-    //
-    //      led_array_interface->update();
-    //      delay(250);
-    //    }
 
     // Demo Brightfield patterns
     for (int color_channel_index_outer = 0; color_channel_index_outer < led_array_interface->color_channel_count; color_channel_index_outer++)
@@ -2624,6 +2627,9 @@ void LedArray::demo()
     }
     delay(100);
   }
+
+  // Reset demo mode flag
+  setDemoMode(false);
 }
 
 void LedArray::setBaudRate(uint16_t argc, char ** argv)
