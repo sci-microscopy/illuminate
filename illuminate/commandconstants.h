@@ -2,6 +2,7 @@
   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
   All rights reserved.
 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
       Redistributions of source code must retain the above copyright
@@ -9,7 +10,7 @@
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the <organization> nor the
+      Neither the name of the UC Berkley nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
@@ -19,17 +20,18 @@
   DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  LOSS OF USE, DATA , OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+
 #ifndef COMMAND_CONSTANTS_H
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 54
+#define COMMAND_COUNT 58
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -95,6 +97,12 @@
 
 #define CMD_RUN_SEQ_DPC_IDX 52
 #define CMD_RUN_SEQ_FPM_IDX 53
+
+#define CMD_SET_BAUD_RATE 54
+#define CMD_SET_GSCLK_FREQ 55
+
+#define CMD_SET_HUMAN 56
+#define CMD_SET_MACHINE 57
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -174,7 +182,14 @@ const char* command_list[COMMAND_COUNT][4] = {
   // Run case-specific sequences
   {"rdpc",  "runDpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rdpc,[Delay between each pattern in ms].[Number of acquisitions].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
   {"rfpm",  "runFpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rfpm,[Delay between each pattern in ms].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
- 
+
+  // Functions to set baud rate and gsclk frequency (for TLC5955 based boards)
+  {"sbr",  "setBaudRate", "Sets SPI baud rate for TLC5955 Chips in Hz (baud)", "sbr.1000000"},
+  {"sgs",  "setGsclkFreq", "Sets GSCLK frequency in Hz", "sgs.1000000"},
+
+  {"human", "setModeHuman", "Sets command mode to human-readable", "human"},
+  {"machine", "setModeMachine", "Sets command mode to machine-readable", "machine"}
+
 };
 
 #endif

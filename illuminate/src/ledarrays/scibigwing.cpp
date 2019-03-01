@@ -1,4 +1,3 @@
-
 /*
    Copyright (c) 2018, Zachary Phillips (UC Berkeley)
    All rights reserved.
@@ -25,10 +24,10 @@
    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- #include "../../illuminate.h"
- #ifdef USE_SCI_BIG_WING_ARRAY
- #include "../../ledarrayinterface.h"
- #include "../TLC5955/TLC5955.h"
+#include "../../illuminate.h"
+#ifdef USE_SCI_BIG_WING_ARRAY
+#include "../../ledarrayinterface.h"
+#include "../TLC5955/TLC5955.h"
 
 // Pin definitions (used internally)
 const int GSCLK = 6;
@@ -42,14 +41,12 @@ const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
 
-// LED pin swap
-const bool LED_SWAP_GROUP_1 = true;
-
 // Device and Software Descriptors
-const char * LedArrayInterface::device_name = "Sci-BigWing";
+const char * LedArrayInterface::device_name = "Sci-Big-Wing";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
-const float LedArrayInterface::max_na = 0.99;
+const float LedArrayInterface::max_na = 1.0;
 const int16_t LedArrayInterface::led_count = 1529;
+const float LedArrayInterface::default_na = 0.4;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 2;
 const int LedArrayInterface::trigger_input_count = 2;
@@ -57,10 +54,8 @@ const int LedArrayInterface::color_channel_count = 3;
 const char LedArrayInterface::color_channel_names[] = {'r', 'g', 'b'};
 const float LedArrayInterface::color_channel_center_wavelengths[] = {0.48, 0.525, 0.625};
 const int LedArrayInterface::bit_depth = 16;
-const int16_t LedArrayInterface::tlc_chip_count = 100;
 const bool LedArrayInterface::supports_fast_sequence = false;
 const float LedArrayInterface::led_array_distance_z_default = 50.0;
-int LedArrayInterface::debug = 0;
 
 const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, TRIGGER_OUTPUT_PIN_1};
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
@@ -75,20 +70,30 @@ uint8_t TLC5955::_dc_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::
 uint8_t TLC5955::_rgb_order[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 
+int LedArrayInterface::debug = 0;
+
 /**** Device-specific variables ****/
 TLC5955 tlc;                            // TLC5955 object
-uint32_t gsclk_frequency = 3000000;     // Grayscale clock speed
+uint32_t gsclk_frequency = 2000000;     // Grayscale clock speed
 
 /**** Device-specific commands ****/
-const uint8_t LedArrayInterface::device_command_count = 0;
-const char * LedArrayInterface::deviceCommandNamesShort[] = {};
-const char * LedArrayInterface::deviceCommandNamesLong[] = {};
-const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
+const uint8_t LedArrayInterface::device_command_count = 1;
+const char * LedArrayInterface::deviceCommandNamesShort[] = {"c"};
+const char * LedArrayInterface::deviceCommandNamesLong[] = {"center"};
+const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,5}}; // Number of commands, number of LEDs in each command.
 
 /**** Part number and Serial number addresses in EEPROM ****/
 uint16_t pn_address = 100;
 uint16_t sn_address = 200;
 
+PROGMEM const int16_t center_led_list[1][5] = {
+  {0, 1, 2, 3, 4}
+};
+
+// Initialize dynamic LED position list (NA)
+float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
+
+// Define LED positions in cartesian coordinates (LED#, channel, x * 100mm, y * 100mm, z * 100mm)
 PROGMEM const int16_t LedArrayInterface::led_positions[1529][5] = {
         {0, 90, 0, 0, 6500},
         {1, 150, 417, 0, 6500},
@@ -1621,11 +1626,6 @@ PROGMEM const int16_t LedArrayInterface::led_positions[1529][5] = {
         {1528, 561, -1522, 6531, 1432},
 };
 
-void LedArrayInterface::setPinOrder(int16_t led_number, int16_t color_channel_index, uint8_t position)
-{
-        tlc.setPinOrderSingle(led_number, color_channel_index, position);
-}
-
 void LedArrayInterface::setMaxCurrentEnforcement(bool enforce)
 {
         TLC5955::enforce_max_current = enforce;
@@ -1635,6 +1635,11 @@ void LedArrayInterface::setMaxCurrentLimit(float limit)
 {
         if (limit > 0)
                 TLC5955::max_current_amps = limit;
+}
+
+void LedArrayInterface::setPinOrder(int16_t led_number, int16_t color_channel_index, uint8_t position)
+{
+        tlc.setPinOrderSingle(led_number, color_channel_index, position);
 }
 
 void LedArrayInterface::notImplemented(const char * command_name)
@@ -1661,6 +1666,34 @@ uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_i
 void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, bool value)
 {
         notImplemented("setLedFast");
+}
+
+uint16_t LedArrayInterface::getSerialNumber()
+{
+        uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
+        return (sn_read);
+}
+
+void LedArrayInterface::setSerialNumber(uint16_t serial_number)
+{
+	byte lower_8bits_sn = serial_number & 0xff;
+	byte upper_8bits_sn = (serial_number >> 8) & 0xff;
+	EEPROM.write(sn_address, lower_8bits_sn);
+	EEPROM.write(sn_address + 1, upper_8bits_sn);
+}
+
+uint16_t LedArrayInterface::getPartNumber()
+{
+        uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
+        return (pn_read);
+}
+
+void LedArrayInterface::setPartNumber(uint16_t part_number)
+{
+	byte lower_8bits_pn = part_number & 0xff;
+	byte upper_8bits_pn = (part_number >> 8) & 0xff;
+	EEPROM.write(pn_address, lower_8bits_pn);
+	EEPROM.write(pn_address + 1, upper_8bits_pn);
 }
 
 // Debug Variables
@@ -1728,7 +1761,6 @@ int LedArrayInterface::sendTriggerPulse(int trigger_index, uint16_t delay_us, bo
                 return (-1);
         }
 }
-
 void LedArrayInterface::update()
 {
         tlc.updateLeds();
@@ -1840,63 +1872,23 @@ void LedArrayInterface::deviceReset()
         deviceSetup();
 }
 
-uint16_t LedArrayInterface::getSerialNumber()
-{
-        uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
-        return (sn_read);
-}
-
-void LedArrayInterface::setSerialNumber(uint16_t serial_number)
-{
-	byte lower_8bits_sn = serial_number & 0xff;
-	byte upper_8bits_sn = (serial_number >> 8) & 0xff;
-	EEPROM.write(sn_address, lower_8bits_sn);
-	EEPROM.write(sn_address + 1, upper_8bits_sn);
-}
-
-uint16_t LedArrayInterface::getPartNumber()
-{
-        uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
-        return (pn_read);
-}
-
-void LedArrayInterface::setPartNumber(uint16_t part_number)
-{
-	byte lower_8bits_pn = part_number & 0xff;
-	byte upper_8bits_pn = (part_number >> 8) & 0xff;
-	EEPROM.write(pn_address, lower_8bits_pn);
-	EEPROM.write(pn_address + 1, upper_8bits_pn);
-}
 
 void LedArrayInterface::deviceSetup()
 {
-        // Now set the GSCK to an output and a 50% PWM duty-cycle
-        // For simplicity all three grayscale clocks are tied to the same pin
-        pinMode(GSCLK, OUTPUT);
-        pinMode(LAT, OUTPUT);
-
-        // Adjust PWM timer for maximum GSCLK frequency
-        analogWriteFrequency(GSCLK, gsclk_frequency);
-        analogWriteResolution(1);
-        analogWrite(GSCLK, 1);
-
-        // The library does not ininiate SPI for you, so as to prevent issues with other SPI libraries
-        SPI.setMOSI(SPI_MOSI);
-        SPI.begin();
-
-        tlc.init(LAT, SPI_MOSI, SPI_CLK);
+        // Initialize TLC5955
+        tlc.init(LAT, SPI_MOSI, SPI_CLK, GSCLK);
 
         // We must set dot correction values, so set them all to the brightest adjustment
         tlc.setAllDcData(127);
 
         // Set Max Current Values (see TLC5955 datasheet)
-        tlc.setMaxCurrent(2, 2, 2); // Go up to 7
+        tlc.setMaxCurrent(3, 3, 3); // Go up to 7
 
         // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
         // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT
-        tlc.setFunctionData(true, true, true, true, true);
+        tlc.setFunctionData(true, true, true, true, true); // WORKS with fast update
 
-        // Set LED current levels (7-bit, max is 127)
+        // Set all LED current levels to max (127)
         int currentR = 127;
         int currentB = 127;
         int currentG = 127;
@@ -1904,6 +1896,7 @@ void LedArrayInterface::deviceSetup()
 
         // Update vontrol register
         tlc.updateControl();
+        clear();
         tlc.updateControl();
 
         // Set RGB pin order
@@ -1923,7 +1916,7 @@ void LedArrayInterface::deviceSetup()
         tlc.setRgbPinOrderSingle(795, 1, 0, 2); // led 882
         tlc.setRgbPinOrderSingle(1467, 1, 0, 2); // led 883
 
-        // Clear the array
+        // Update the GS register
         clear();
 
         // Output trigger Pins
@@ -1995,12 +1988,10 @@ uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_in
 
                 if ((pattern_index < pattern_count) && (led_index < leds_per_pattern))
                 {
-                        //      if (device_command_index == 0)
-                        //        return (uint16_t)pgm_read_word(&(hole_led_list[pattern_index][led_index]));
-                        //      else if (device_command_index == 1)
-                        //        return (uint16_t)pgm_read_word(&(uv_led_list[pattern_index][led_index]));
-                        //      else
-                        return 0;
+                     if (device_command_index == 0)
+                       return (uint16_t)pgm_read_word(&(center_led_list[pattern_index][led_index]));
+                     else
+                       return 0;
 
                 }
                 else
@@ -2015,4 +2006,25 @@ uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_in
                 return (0);
         }
 }
+
+void LedArrayInterface::setGsclkFreq(uint32_t gsclk_frequency)
+{
+  tlc.setGsclkFreq(gsclk_frequency);
+}
+
+uint32_t LedArrayInterface::getGsclkFreq()
+{
+  return tlc.getGsclkFreq();
+}
+
+void LedArrayInterface::setBaudRate(uint32_t new_baud_rate)
+{
+  tlc.setSpiBaudRate(new_baud_rate);
+}
+
+uint32_t LedArrayInterface::getBaudRate()
+{
+  return tlc.getSpiBaudRate();
+}
+
 #endif

@@ -45,6 +45,7 @@ const int TRIGGER_INPUT_COUNT = 2;
 const char * LedArrayInterface::device_name = "Waller Lab Quasi-Dome";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
 const float LedArrayInterface::max_na = 0.98;
+const float LedArrayInterface::default_na = 0.4;
 const int16_t LedArrayInterface::led_count = 581;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 2;
@@ -53,9 +54,9 @@ const int LedArrayInterface::color_channel_count = 3;
 const char LedArrayInterface::color_channel_names[] = {'r', 'g', 'b'};
 const float LedArrayInterface::color_channel_center_wavelengths[] = {0.48, 0.525, 0.625};
 const int LedArrayInterface::bit_depth = 16;
-const int16_t LedArrayInterface::tlc_chip_count = 38;
 const bool LedArrayInterface::supports_fast_sequence = false;
 const float LedArrayInterface::led_array_distance_z_default = 60.0;
+float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 
 const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, TRIGGER_OUTPUT_PIN_1};
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
@@ -77,10 +78,15 @@ TLC5955 tlc; // TLC5955 object
 uint32_t gsclk_frequency = 5000000;
 
 /**** Device-specific commands ****/
-const uint8_t LedArrayInterface::device_command_count = 0;
-const char * LedArrayInterface::deviceCommandNamesShort[] = {};
-const char * LedArrayInterface::deviceCommandNamesLong[] = {};
-const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
+const uint8_t LedArrayInterface::device_command_count = 1;
+const char * LedArrayInterface::deviceCommandNamesShort[] = {"c"};
+const char * LedArrayInterface::deviceCommandNamesLong[] = {"center"};
+const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,5}}; // Number of commands, number of LEDs in each command.
+
+PROGMEM const int16_t center_led_list[1][5] = {
+  {0, 1, 2, 3, 4}
+};
+
 
 /**** Part number and Serial number addresses in EEPROM ****/
 uint16_t pn_address = 100;
@@ -919,21 +925,8 @@ void LedArrayInterface::setPartNumber(uint16_t part_number)
 
 void LedArrayInterface::deviceSetup()
 {
-        // Now set the GSCK to an output and a 50% PWM duty-cycle
-        // For simplicity all three grayscale clocks are tied to the same pin
-        pinMode(GSCLK, OUTPUT);
-        pinMode(LAT, OUTPUT);
-
-        // Adjust PWM timer for maximum GSCLK frequency
-        analogWriteFrequency(GSCLK, gsclk_frequency);
-        analogWriteResolution(1);
-        analogWrite(GSCLK, 1);
-
-        // The library does not ininiate SPI for you, so as to prevent issues with other SPI libraries
-        SPI.begin();
-        SPI.setClockDivider(SPI_CLOCK_DIV128);
-
-        tlc.init(LAT, SPI_MOSI, SPI_CLK);
+        // Initialize TLC5955
+        tlc.init(LAT, SPI_MOSI, SPI_CLK, GSCLK);
 
         // We must set dot correction values, so set them all to the brightest adjustment
         tlc.setAllDcData(127);
@@ -1179,6 +1172,26 @@ uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_in
                 Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
                 return (0);
         }
+}
+
+void LedArrayInterface::setGsclkFreq(uint32_t gsclk_frequency)
+{
+  tlc.setGsclkFreq(gsclk_frequency);
+}
+
+uint32_t LedArrayInterface::getGsclkFreq()
+{
+  return tlc.getGsclkFreq();
+}
+
+void LedArrayInterface::setBaudRate(uint32_t new_baud_rate)
+{
+  tlc.setSpiBaudRate(new_baud_rate);
+}
+
+uint32_t LedArrayInterface::getBaudRate()
+{
+  return tlc.getSpiBaudRate();
 }
 
 #endif

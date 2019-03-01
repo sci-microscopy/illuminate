@@ -2,6 +2,7 @@
   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
   All rights reserved.
 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
       Redistributions of source code must retain the above copyright
@@ -9,7 +10,7 @@
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the <organization> nor the
+      Neither the name of the UC Berkley nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
@@ -19,7 +20,7 @@
   DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  LOSS OF USE, DATA , OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -57,8 +58,7 @@
 #define INVALID_NA -2000.0    // Represents an invalid NA
 #define DEFAULT_NA 0.25         // 100 * default NA, int
 
-#define LED_BRIGHTNESS_DEFAULT 63
-#define LED_COLOR_DEFAULT 255
+#define LED_BRIGHTNESS_DEFAULT 255
 
 class LedArray {
   public:
@@ -103,7 +103,6 @@ class LedArray {
     void setDistanceZ(int argc, char ** argv);
     void setColor(int16_t argc, char ** argv);
     void setBrightness(int16_t argc, char ** argv);
-    void clearNaList();
     void buildNaList(float boardDistance);
     void toggleAutoClear(uint16_t argc, char ** argv);
     void setMaxCurrentEnforcement(int argc, char ** argv);
@@ -149,12 +148,19 @@ class LedArray {
     void setPartNumber(uint16_t part_number);
     void setSerialNumber(uint16_t serial_number);
     void printMacAddress();
+    void setBaudRate(uint16_t argc, char ** argv);
+    void setGsclkFreq(uint16_t argc, char ** argv);
+    void setCommandMode(const char * mode);
 
     // Device-specific commands
     uint8_t getDeviceCommandCount();
     const char * getDeviceCommandNameShort(int device_command_index);
     const char * getDeviceCommandNameLong(int device_command_index);
     void deviceCommand(int device_command_index, int argc, char * *argv);
+
+    // Demo mode
+    void setDemoMode(bool mode);
+    bool getDemoMode();
 
   private:
 
@@ -170,9 +176,6 @@ class LedArray {
 
     const char * DPC_BOTTOM1 = "b";
     const char * DPC_BOTTOM2 = "bottom";
-
-    // LED Positions in NA coordinates
-    float * * led_position_list_na;
 
     // Defualt brightness
     const uint8_t LED_VALUE_DEFAULT = 10;
@@ -216,6 +219,7 @@ class LedArray {
     static volatile uint16_t pattern_index;
     static volatile uint16_t frame_index;
 
+    // EEPROM demo mode address
+    uint16_t demo_mode_address = 300;
 };
 #endif
-

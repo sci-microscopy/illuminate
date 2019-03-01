@@ -2,6 +2,7 @@
   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
   All rights reserved.
 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
       Redistributions of source code must retain the above copyright
@@ -9,7 +10,7 @@
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the <organization> nor the
+      Neither the name of the UC Berkley nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
@@ -19,11 +20,12 @@
   DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  LOSS OF USE, DATA , OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 
 #ifndef COMMAND_ROUTING_H
 #define COMMAND_ROUTING_H
@@ -269,10 +271,21 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->demo();
   else if ((strcmp(command_header, command_list[CMD_WATER_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_WATER_IDX][1]) == 0))
     led_array->waterDrop();
+
   else if ((strcmp(command_header, command_list[CMD_SET_SN][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_SN][1]) == 0))
     led_array->setPartNumber(strtoul((char *) argv[0], NULL, 0));
   else if ((strcmp(command_header, command_list[CMD_SET_PN][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_PN][1]) == 0))
     led_array->setSerialNumber(strtoul((char *) argv[0], NULL, 0));
+
+  else if ((strcmp(command_header, command_list[CMD_SET_BAUD_RATE][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_BAUD_RATE][1]) == 0))
+    led_array->setBaudRate(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_SET_GSCLK_FREQ][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_GSCLK_FREQ][1]) == 0))
+    led_array->setGsclkFreq(argc, (char * *) argv);
+
+  else if ((strcmp(command_header, command_list[CMD_SET_HUMAN][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_HUMAN][1]) == 0))
+    led_array->setCommandMode("human");
+  else if ((strcmp(command_header, command_list[CMD_SET_MACHINE][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_MACHINE][1]) == 0))
+    led_array->setCommandMode("machine");
 
   else
   {

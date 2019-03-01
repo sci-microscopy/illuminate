@@ -47,6 +47,7 @@ const char * LedArrayInterface::device_hardware_revision = "1.0";
 const float LedArrayInterface::max_na = 1.0;
 const int16_t LedArrayInterface::led_count = 4;
 const uint16_t LedArrayInterface::center_led = 0;
+const float LedArrayInterface::default_na = 0.4;
 const int LedArrayInterface::trigger_output_count = 2;
 const int LedArrayInterface::trigger_input_count = 2;
 const int LedArrayInterface::color_channel_count = 1;
@@ -56,6 +57,7 @@ const int LedArrayInterface::bit_depth = 8;
 const int16_t LedArrayInterface::tlc_chip_count = 0;
 const bool LedArrayInterface::supports_fast_sequence = true;
 const float LedArrayInterface::led_array_distance_z_default = 50.0;
+float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 
 // Set up trigger pins
 const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, TRIGGER_OUTPUT_PIN_1};
@@ -508,6 +510,26 @@ uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_in
                 Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
                 return (0);
         }
+}
+
+void LedArrayInterface::setGsclkFreq(uint32_t gsclk_frequency)
+{
+  notImplemented("This LED array does not have a GSCLK.");
+}
+
+uint32_t LedArrayInterface::getGsclkFreq()
+{
+  return 0;
+}
+
+void LedArrayInterface::setBaudRate(uint32_t new_baud_rate)
+{
+  notImplemented("This LED array does not have a TLC chip.");
+}
+
+uint32_t LedArrayInterface::getBaudRate()
+{
+  return 0;
 }
 
 #endif
