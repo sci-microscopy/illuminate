@@ -64,6 +64,9 @@
 #define MAX_RESPONSE_LENGTH_SHORT 100
 #define MAX_RESPONSE_LENGTH_LONG 100
 
+// Bit depth to use
+#define USE_8_BIT_VALUES 1
+
 class LedArray {
   public:
     // Device setup and demo
@@ -129,8 +132,8 @@ class LedArray {
     void setSequenceZeros(uint16_t argc, char ** argv);
 
     // Printing system state and information
-    void printLedPositions(bool print_na);
-    void printCurrentLedValues();
+    void printLedPositions(uint16_t argc, char * *argv, bool print_na);
+    void printCurrentLedValues(uint16_t argc, char * *argv);
     void printAbout();
     void printSystemParams();
     void printVersion();
@@ -173,6 +176,9 @@ class LedArray {
     // Short and long responses
     char output_buffer_short[MAX_RESPONSE_LENGTH_SHORT];
     char output_buffer_long[MAX_RESPONSE_LENGTH_LONG];
+
+    // Error codes
+    void error(int16_t error_code, const char * calling_function);
 
   private:
 

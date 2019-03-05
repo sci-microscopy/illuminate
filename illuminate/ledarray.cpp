@@ -107,21 +107,33 @@ void LedArray::deviceCommand(int device_command_index, int argc, char * *argv)
 }
 
 /* A function to print current LED positions (xyz) */
-void LedArray::printLedPositions(bool print_na)
+void LedArray::printLedPositions(uint16_t argc, char * *argv, bool print_na)
 {
-  // TODO: Format this like a json
+  // Parse arguments
+  uint16_t start_index = 0;
+  uint16_t end_index = led_array_interface->led_count;
+  if (argc == 1)
+    start_index = strtoul(argv[0], NULL, 0);
+  else if (argc == 2)
+  {
+    start_index = strtoul(argv[0], NULL, 0);
+    end_index = strtoul(argv[1], NULL, 0);
+  }
+
+  // Initialize working variables
   int16_t led_number;
   float na_x, na_y, x, y, z;
 
   if (print_na)
   {
     buildNaList(led_array_distance_z);
-    Serial.printf(F("{\n    \"LedArrayInterface::led_position_list_na\" : {%s"), SERIAL_LINE_ENDING);
+    Serial.printf(F("{\n    \"led_position_list_na\" : {%s"), SERIAL_LINE_ENDING);
   }
   else
     Serial.printf(F("{\n    \"led_position_list_cartesian\" : {%s"), SERIAL_LINE_ENDING);
 
-  for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
+
+  for (uint16_t led_index = start_index; led_index < end_index; led_index++)
   {
     led_number = (int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][0]));
 
@@ -157,11 +169,22 @@ void LedArray::printLedPositions(bool print_na)
 }
 
 /* A function to print current LED values */
-void LedArray::printCurrentLedValues()
+void LedArray::printCurrentLedValues(uint16_t argc, char * *argv)
 {
-  uint16_t led_number;
+  // Parse arguments
+  uint16_t start_index = 0;
+  uint16_t end_index = led_array_interface->led_count;
+  if (argc == 1)
+    start_index = strtoul(argv[0], NULL, 0);
+  else if (argc == 2)
+  {
+    start_index = strtoul(argv[0], NULL, 0);
+    end_index = strtoul(argv[1], NULL, 0);
+  }
+  
+  int16_t led_number;
   Serial.printf(F("{\n    \"led_values\" : {%s"), SERIAL_LINE_ENDING);
-  for (uint16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
+  for (uint16_t led_index = start_index; led_index < end_index; led_index++)
   {
     led_number = (int16_t)pgm_read_word(&(LedArrayInterface::led_positions[led_index][0]));
 
@@ -169,7 +192,12 @@ void LedArray::printCurrentLedValues()
     for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
     {
       if (led_array_interface->bit_depth == 16)
-        Serial.printf(F("%lu"), led_array_interface->getLedValue(led_number, color_channel_index));
+      {
+        if (USE_8_BIT_VALUES)
+          Serial.printf(F("%u"), (uint8_t) round(255.0 * ((float)led_array_interface->getLedValue(led_number, color_channel_index) / 65535.0)));
+        else
+          Serial.printf(F("%lu"), led_array_interface->getLedValue(led_number, color_channel_index));
+      }
       else if (led_array_interface->bit_depth == 8)
         Serial.printf(F("%u"), led_array_interface->getLedValue(led_number, color_channel_index));
       else if (led_array_interface->bit_depth == 1)
@@ -1308,13 +1336,17 @@ void LedArray::setSequenceLength(uint16_t new_seq_length, bool quiet)
 
 void LedArray::setSequenceBitDepth(uint8_t bit_depth, bool quiet)
 {
+  // Set the sequence bit depth
   LedArray::led_sequence.setBitDepth(bit_depth);
 
+  // Print bit depth
   if (!quiet)
   {
-    Serial.print(F("Sequence bit depth is now: "));
-    Serial.print(LedArray::led_sequence.bit_depth);
-    Serial.print(SERIAL_LINE_ENDING);
+    // Print current NA
+    clearOutputBuffers();
+    sprintf(output_buffer_short, "BD.%d", LedArray::led_sequence.bit_depth);
+    sprintf(output_buffer_long, "Sequence bit depth is now: %d.", LedArray::led_sequence.bit_depth);
+    print(output_buffer_short, output_buffer_long);
   }
 }
 
@@ -1429,10 +1461,12 @@ void LedArray::printSequence()
 
 void LedArray::printSequenceLength()
 {
-  Serial.print(LedArray::led_sequence.length);
-  Serial.print(SERIAL_LINE_ENDING);
+  // Print current NA
+  clearOutputBuffers();
+  sprintf(output_buffer_short, "SL.%d", LedArray::led_sequence.length);
+  sprintf(output_buffer_long, "Sequence length is: %d.", LedArray::led_sequence.length);
+  print(output_buffer_short, output_buffer_long);
 }
-
 
 /* Reset stored sequence */
 void LedArray::resetSequence()
@@ -1443,7 +1477,7 @@ void LedArray::resetSequence()
 void LedArray::runSequence(uint16_t argc, char ** argv)
 {
   if (debug)
-    Serial.printf(F("Starting sequence.%s"), SERIAL_LINE_ENDING);
+    print("START", "Starting Sequence...");
 
   /* Format for argv:
      0: delay between acquisitions, us/ms
@@ -1465,7 +1499,7 @@ void LedArray::runSequence(uint16_t argc, char ** argv)
 
   // Print Argument syntax if no arguments are provided
   if (argc == 0)
-    Serial.printf(F("ERROR (LedArray::runSequence): Wrong number of arguments. Syntax: rseq.[frame dt,ms],[# acquisitions],[trigger output mode 0], [trigger input mode 0], ...%s"), SERIAL_LINE_ENDING);
+    error(ERROR_CODE_ARGS_RUN_SEQUENCE, "LedArray::runSequence");
 
   for (int argc_index = 0; argc_index < argc; argc_index++)
   {
@@ -2470,7 +2504,7 @@ void LedArray::setDebug(uint16_t new_debug_level)
   // User feedback
   Serial.printf(F("(LedArray::setDebug): Set debug level to %d \n"), debug);
 
-    print("AC.1", "Auto clear bit is now 1 (The LED array will clear before and after each new command)");
+  print("AC.1", "Auto clear bit is now 1 (The LED array will clear before and after each new command)");
 
   // Set debug level for interface
   led_array_interface->setDebug((int) (new_debug_level % 10));
@@ -2741,3 +2775,15 @@ void LedArray::clearOutputBuffers()
   memset(&output_buffer_short, ' ', sizeof(output_buffer_short));
   memset(&output_buffer_long, ' ', sizeof(output_buffer_long));
 }
+
+void LedArray::error(int16_t error_code, const char * calling_function)
+{
+  if (error_code < ERROR_CODE_COUNT)
+  {
+    if (command_mode == COMMAND_MODE_SHORT)
+      Serial.printf("ERROR.%s%s", calling_function, error_code_list[error_code][0], SERIAL_LINE_ENDING);
+    else
+      Serial.printf("ERROR (%s): %s%s", calling_function, error_code_list[error_code][1], SERIAL_LINE_ENDING);
+  }
+}
+

@@ -245,7 +245,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
 
 
   else if ((strcmp(command_header, command_list[CMD_PRINT_VALS_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_VALS_IDX][1]) == 0))
-    led_array->printCurrentLedValues();
+    led_array->printCurrentLedValues(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_CHANNEL_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_CHANNEL_IDX][1]) == 0))
     led_array->drawChannel(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_TOGGLE_DEBUG_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_TOGGLE_DEBUG_IDX][1]) == 0))
@@ -253,9 +253,9 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_PIN_ORDER_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_PIN_ORDER_IDX][1]) == 0))
     led_array->setPinOrder(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS][1]) == 0))
-    led_array->printLedPositions(false);
+    led_array->printLedPositions(argc, (char * *) argv, false);
   else if ((strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS_NA][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_LED_POSITIONS_NA][1]) == 0))
-    led_array->printLedPositions(true);
+    led_array->printLedPositions(argc, (char * *) argv, true);
   else if ((strcmp(command_header, command_list[CMD_DELAY][0]) == 0) || (strcmp(command_header, command_list[CMD_DELAY][1]) == 0))
     delay(strtoul((char *) argv[0], NULL, 0));
   else if ((strcmp(command_header, command_list[CMD_SET_MAX_CURRENT][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_MAX_CURRENT][1]) == 0))
