@@ -41,6 +41,11 @@ const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
 
+// EEPROM Addresses
+#define DEMO_MODE_ADDRESS 50
+#define PN_ADDRESS 100
+#define SN_ADDRESS 200
+
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "Waller Lab Quasi-Dome";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
@@ -86,11 +91,6 @@ const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,5
 PROGMEM const int16_t center_led_list[1][5] = {
   {0, 1, 2, 3, 4}
 };
-
-
-/**** Part number and Serial number addresses in EEPROM ****/
-uint16_t pn_address = 100;
-uint16_t sn_address = 200;
 
 // FORMAT: hole number, channel, 100*x, 100*y, 100*z
 PROGMEM const int16_t LedArrayInterface::led_positions[][5] = {
@@ -905,8 +905,19 @@ void LedArrayInterface::setSerialNumber(uint16_t serial_number)
 {
 	byte lower_8bits_sn = serial_number & 0xff;
 	byte upper_8bits_sn = (serial_number >> 8) & 0xff;
-	EEPROM.write(sn_address, lower_8bits_sn);
-	EEPROM.write(sn_address + 1, upper_8bits_sn);
+	EEPROM.write(SN_ADDRESS, lower_8bits_sn);
+	EEPROM.write(SN_ADDRESS + 1, upper_8bits_sn);
+}
+
+int8_t LedArrayInterface::getDemoMode()
+{
+  int8_t demo_mode_read = EEPROM.read(DEMO_MODE_ADDRESS);
+  return (demo_mode_read);
+}
+
+void LedArrayInterface::setDemoMode(int8_t demo_mode)
+{
+	EEPROM.write(DEMO_MODE_ADDRESS, demo_mode);
 }
 
 uint16_t LedArrayInterface::getPartNumber()
@@ -919,8 +930,8 @@ void LedArrayInterface::setPartNumber(uint16_t part_number)
 {
 	byte lower_8bits_pn = part_number & 0xff;
 	byte upper_8bits_pn = (part_number >> 8) & 0xff;
-	EEPROM.write(pn_address, lower_8bits_pn);
-	EEPROM.write(pn_address + 1, upper_8bits_pn);
+	EEPROM.write(PN_ADDRESS, lower_8bits_pn);
+	EEPROM.write(PN_ADDRESS + 1, upper_8bits_pn);
 }
 
 void LedArrayInterface::deviceSetup()

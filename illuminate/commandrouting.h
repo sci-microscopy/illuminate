@@ -173,7 +173,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_SET_BRIGHTNESS][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_BRIGHTNESS][1]) == 0))
     led_array->setBrightness(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_SET_ARRAY_DIST][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_ARRAY_DIST][1]) == 0))
-    led_array->setDistanceZ(argc, (char * *) argv);
+    led_array->setArrayDistance(argc, (char * *) argv);
 
   else if ((strcmp(command_header, command_list[CMD_LED_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_LED_IDX][1]) == 0))
     led_array->drawLedList(argc, (char * *)argv);

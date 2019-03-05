@@ -27,6 +27,7 @@
 */
 
 #include "ledarray.h"
+#include "errorcodes.h"
 
 volatile uint16_t LedArray::pattern_index = 0;
 volatile uint16_t LedArray::frame_index = 0;
@@ -252,6 +253,8 @@ void LedArray::printSystemParams()
   Serial.print(led_array_interface->getPartNumber());
   Serial.print(F(",\n    \"mac_address\" : \""));
   printMacAddress();
+  Serial.print(F(",\n    \"interface_version\" : "));
+  Serial.print(VERSION);
   Serial.print(F("\""));
   // Terminate JSON
   Serial.printf("\n}", SERIAL_LINE_ENDING);
@@ -288,14 +291,14 @@ void LedArray::setSerialNumber(uint16_t new_serial_number)
   led_array_interface->setSerialNumber(new_serial_number);
 }
 
-void LedArray::setDemoMode(bool mode)
+void LedArray::setDemoMode(int8_t mode)
 {
-  EEPROM.write(demo_mode_address, (byte) mode);
+  led_array_interface->setDemoMode(mode);
 }
 
-bool LedArray::getDemoMode()
+int8_t LedArray::getDemoMode()
 {
-  return (bool) EEPROM.read(demo_mode_address);
+  return led_array_interface->getDemoMode();
 }
 
 uint16_t LedArray::getPartNumber()
@@ -451,9 +454,11 @@ void LedArray::setNa(int argc, char ** argv)
   else
     Serial.printf(F("ERROR (LedArray::setNa): wrong number of arguments.%s"), SERIAL_LINE_ENDING);
 
-  Serial.print(F("Current NA is: "));
-  Serial.print(objective_na);
-  Serial.print(SERIAL_LINE_ENDING);
+  // Print current NA
+  clearOutputBuffers();
+  sprintf(output_buffer_short, "NA.%d", (uint8_t)round(objective_na * 100));
+  sprintf(output_buffer_long, "Current NA is 0.%d.", (uint8_t)round(objective_na * 100));
+  print(output_buffer_short, output_buffer_long);
 }
 
 void LedArray::printTriggerSettings()
@@ -1042,15 +1047,26 @@ void LedArray::setColor(int16_t argc, char ** argv)
     for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
       led_value[color_channel_index] = (uint8_t) (((float) led_color[color_channel_index] / UINT8_MAX) * (float) led_brightness);
 
-    // Print current colors regardless of input
-    Serial.print(F("Current color value: "));
-    for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
+
+    // Print current color value
+
+    // Print current NA
+    clearOutputBuffers();
+
+    if (led_array_interface->color_channel_count == 1)
     {
-      Serial.print(led_color[color_channel_index]);
-      if (color_channel_index < (led_array_interface->color_channel_count - 1))
-        Serial.print(',');
+      sprintf(output_buffer_short, "CO.%d", led_color[0]);
+      sprintf(output_buffer_long, "Current color value is %d.", led_color[0]);
+      print(output_buffer_short, output_buffer_long);
     }
-    Serial.print(SERIAL_LINE_ENDING);
+    else if (led_array_interface->color_channel_count == 3)
+    {
+      sprintf(output_buffer_short, "CO.%d.%d.%d", led_color[0], led_color[1], led_color[2]);
+      sprintf(output_buffer_long, "Current color value is %d.%d.%d", led_color[0], led_color[1], led_color[2]);
+      print(output_buffer_short, output_buffer_long);
+    }
+    else
+      Serial.printf(F("ERROR (LedArray::setColor): Invalid color channel count (%d) %s"), led_array_interface->color_channel_count , SERIAL_LINE_ENDING);
   }
   else
   {
@@ -2403,7 +2419,7 @@ void LedArray::runSequenceFpm(uint16_t argc, char ** argv)
 }
 
 /* A function to set the distance from the sample to the LED array. Used for calculating the NA of each LED.*/
-void LedArray::setDistanceZ(int argc, char ** argv)
+void LedArray::setArrayDistance(int argc, char ** argv)
 {
   if (argc == 0)
     ; // do nothing, just display current z-distance
@@ -2421,9 +2437,11 @@ void LedArray::setDistanceZ(int argc, char ** argv)
   else
     Serial.printf(F("ERROR (LedArray::setDistanceZ): wrong number of arguments.%s"), SERIAL_LINE_ENDING);
 
-  Serial.print(F("Current array to sample distance (z) is: "));
-  Serial.print(led_array_distance_z);
-  Serial.printf(F("mm%s"), SERIAL_LINE_ENDING);
+  // Print current Array Distance
+  clearOutputBuffers();
+  sprintf(output_buffer_short, "DZ.%d", (uint8_t)round(led_array_distance_z));
+  sprintf(output_buffer_long, "Current array distance from sample is %dmm.", (uint8_t)round(led_array_distance_z));
+  print(output_buffer_short, output_buffer_long);
 }
 
 void LedArray::toggleAutoClear(uint16_t argc, char ** argv)
@@ -2434,9 +2452,9 @@ void LedArray::toggleAutoClear(uint16_t argc, char ** argv)
     auto_clear_flag = (bool)atoi(argv[0]);
 
   if (auto_clear_flag)
-    Serial.printf(F("Auto clear bit is now 1 (The LED array will clear before and after each new command) %s"), SERIAL_LINE_ENDING);
+    print("AC.1", "Auto clear bit is now 1 (The LED array will clear before and after each new command)");
   else
-    Serial.printf(F("Auto clear bit is now 0 (The LED array will NOT clear before and after each new command) %s"), SERIAL_LINE_ENDING);
+    print("AC.0", "Auto clear bit is now 0 (The LED array will NOT clear before and after each new command)");
 }
 
 void LedArray::setDebug(uint16_t new_debug_level)
@@ -2451,6 +2469,8 @@ void LedArray::setDebug(uint16_t new_debug_level)
 
   // User feedback
   Serial.printf(F("(LedArray::setDebug): Set debug level to %d \n"), debug);
+
+    print("AC.1", "Auto clear bit is now 1 (The LED array will clear before and after each new command)");
 
   // Set debug level for interface
   led_array_interface->setDebug((int) (new_debug_level % 10));
@@ -2538,17 +2558,17 @@ void LedArray::setup()
   // Run demo mode if EEPROM indicates we should
   if (getDemoMode())
     demo();
-  
+
 
 }
 
 void LedArray::demo()
 {
-  // Set demo mode flag in eeprom
+  // Set demo mode flag
   setDemoMode(true);
 
   // Run until key received
-  while (!Serial.available())
+  while (getDemoMode())
   {
 
     // Demo Brightfield patterns
@@ -2563,8 +2583,10 @@ void LedArray::demo()
       led_array_interface->update();
       delay(250);
 
+      // Break loop if key is pressed
       if (Serial.available())
       {
+        setDemoMode(false);
         clear();
         return;
       }
@@ -2582,8 +2604,10 @@ void LedArray::demo()
       led_array_interface->update();
       delay(250);
 
+      // Break loop if key is pressed
       if (Serial.available())
       {
+        setDemoMode(false);
         clear();
         return;
       }
@@ -2602,8 +2626,11 @@ void LedArray::demo()
         drawHalfCircle(dpc_index, 0, objective_na);
         led_array_interface->update();
         delay(250);
+
+        // Break loop if key is pressed
         if (Serial.available())
         {
+          setDemoMode(false);
           clear();
           return;
         }
@@ -2618,8 +2645,10 @@ void LedArray::demo()
       led_array_interface->update();
       delay(1);
 
+      // Break loop if key is pressed
       if (Serial.available())
       {
+        setDemoMode(false);
         clear();
         return;
       }
@@ -2633,17 +2662,16 @@ void LedArray::demo()
       led_array_interface->update();
       delay(1);
 
+      // Break loop if key is pressed
       if (Serial.available())
       {
+        setDemoMode(false);
         clear();
         return;
       }
     }
     delay(100);
   }
-
-  // Reset demo mode flag
-  setDemoMode(false);
 }
 
 void LedArray::setBaudRate(uint16_t argc, char ** argv)
@@ -2663,23 +2691,53 @@ void LedArray::setGsclkFreq(uint16_t argc, char ** argv)
     uint32_t new_gsclk_frequency = (strtoul((char *) argv[0], NULL, 0));
     led_array_interface->setGsclkFreq(new_gsclk_frequency);
   }
+
   Serial.printf(F("Current grayscale clock frequency is %.3f MHz %s"), (double)led_array_interface->getGsclkFreq() / 1000000.0, SERIAL_LINE_ENDING);
 }
 
 void LedArray::setCommandMode(const char * mode)
 {
-  notImplemented("setCommandMode");
+  if (!strcmp(mode, "short") || !strcmp(mode, "machine"))
+  {
+    command_mode = COMMAND_MODE_SHORT;
+    print("Command output set to machine-readable", "Command output set to machine-readable");
+  }
+  else
+  {
+    command_mode = COMMAND_MODE_LONG;
+    print("Command output set to human-readable", "Command output set to human-readable");
+  }
 }
 
 void LedArray::notImplemented(const char * command_name)
 {
-  Serial.print(F("Command "));
-  Serial.print(command_name);
-  Serial.print(F(" is not implemented for this device."));
-  Serial.print(SERIAL_LINE_ENDING);
+  // Long form
+  char buf_long[100];
+  sprintf(buf_long, "ERROR: Command %s is not implemented for this device.", command_name);
+
+  // Short form
+  char buf_short[100];
+  sprintf(buf_short, "ERR: %d", ERROR_CODE_NOT_IMPLEMENTED);
+
+  // Print
+  print(buf_short, buf_long);
 }
 
 int LedArray::getColorChannelCount()
 {
   return led_array_interface->color_channel_count;
+}
+
+void LedArray::print(const char * short_output, const char * long_output)
+{
+  if (command_mode == COMMAND_MODE_SHORT)
+    Serial.printf("%s%s", short_output, SERIAL_LINE_ENDING);
+  else
+    Serial.printf("%s%s", long_output, SERIAL_LINE_ENDING);
+}
+
+void LedArray::clearOutputBuffers()
+{
+  memset(&output_buffer_short, ' ', sizeof(output_buffer_short));
+  memset(&output_buffer_long, ' ', sizeof(output_buffer_long));
 }

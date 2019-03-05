@@ -26,29 +26,21 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ILLUMINATE_H
-#define ILLUMINATE_H
 
-#define VERSION 1.16
+#ifndef ERROR_CODES_H
+#define ERROR_CODES_H
 
-// This file allows the user to define which LED array interface is used. This should be set before compilation.
-// The value these are set to does not matter - only that they are defined.
-//#define USE_QUADRANT_ARRAY
-//#define USE_LASER
-#define USE_QUASI_DOME_ARRAY
-//#define USE_SCI_ROUND_ARRAY
-//#define USE_SCI_WING_ARRAY
-//#define USE_SCI_EPI_ARRAY
-//#define USE_SCI_BIG_WING_ARRAY
-//#define USE_SCI_C001
+// List of command indicies in below array
+#define ERROR_CODE_COUNT 1
 
-// Serial line ending
-static const char SERIAL_LINE_ENDING[] = "\n";
+#define ERROR_CODE_NOT_IMPLEMENTED 0
 
-// Serial command termiator
-static const char SERIAL_COMMAND_TERMINATOR[] = "-==-";
 
-// Serial delimeter
-static const char SERIAL_DELIMITER[] = ".";
+// Syntax is: {short code, long error description}
+const char* error_code_list[ERROR_CODE_COUNT][2] = {
+
+  // High-level Errors
+  {"NI", "Command not implemented."}
+};
 
 #endif

@@ -33,10 +33,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-// Serial and part number addresses in EEPROM
-#define PN_ADDRESS 100
-#define SN_ADDRESS 200
-
 class LedArrayInterface {
   public:
     void deviceSetup();
@@ -135,6 +131,10 @@ class LedArrayInterface {
     uint32_t getBaudRate();
     void setGsclkFreq(uint32_t new_gsclk_freq);
     uint32_t getGsclkFreq();
+
+    // Demo Mode
+    void setDemoMode(int8_t mode);
+    int8_t getDemoMode();
 };
 
 

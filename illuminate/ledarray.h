@@ -46,10 +46,6 @@
 #define TRIGGER_DELAY_DEFAULT 0
 #define MAX_TRIGGER_WAIT_TIME_S 5.0
 
-// Annulus constants
-#define ANNULUS_START_OFFSET 0.03
-#define ANNULUS_END_OFFSET 0.1
-
 // Misc constants
 #define PVALS_USE_UINT8 1     // Whether to return uint8 for pvals instead of 16-bit (Default is on)
 #define MIN_SEQUENCE_DELAY 5  // Min deblur pattern delay in ms (set by hardware)
@@ -59,6 +55,14 @@
 #define DEFAULT_NA 0.25         // 100 * default NA, int
 
 #define LED_BRIGHTNESS_DEFAULT 255
+
+// Command mode constants
+#define COMMAND_MODE_LONG 1
+#define COMMAND_MODE_SHORT 0
+
+// Response Lengths
+#define MAX_RESPONSE_LENGTH_SHORT 100
+#define MAX_RESPONSE_LENGTH_LONG 100
 
 class LedArray {
   public:
@@ -100,7 +104,7 @@ class LedArray {
 
     // Setting system parameters
     void setNa(int argc, char ** argv);
-    void setDistanceZ(int argc, char ** argv);
+    void setArrayDistance(int argc, char ** argv);
     void setColor(int16_t argc, char ** argv);
     void setBrightness(int16_t argc, char ** argv);
     void buildNaList(float boardDistance);
@@ -159,8 +163,16 @@ class LedArray {
     void deviceCommand(int device_command_index, int argc, char * *argv);
 
     // Demo mode
-    void setDemoMode(bool mode);
-    bool getDemoMode();
+    void setDemoMode(int8_t mode);
+    int8_t getDemoMode();
+
+    // Printing
+    void print(const char * short_command, const char * long_command);
+    void clearOutputBuffers();
+
+    // Short and long responses
+    char output_buffer_short[MAX_RESPONSE_LENGTH_SHORT];
+    char output_buffer_long[MAX_RESPONSE_LENGTH_LONG];
 
   private:
 
@@ -219,7 +231,7 @@ class LedArray {
     static volatile uint16_t pattern_index;
     static volatile uint16_t frame_index;
 
-    // EEPROM demo mode address
-    uint16_t demo_mode_address = 300;
+    // Command mode
+    bool command_mode = COMMAND_MODE_LONG;
 };
 #endif
