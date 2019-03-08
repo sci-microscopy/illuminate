@@ -42,6 +42,11 @@ const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 1;
 const int TRIGGER_INPUT_COUNT = 1;
 
+// EEPROM Addresses
+#define DEMO_MODE_ADDRESS 50
+#define PN_ADDRESS 100
+#define SN_ADDRESS 200
+
 // LED pin swap
 const bool LED_SWAP_GROUP_1 = true;
 
@@ -1254,5 +1259,15 @@ uint32_t LedArrayInterface::getBaudRate()
   return tlc.getSpiBaudRate();
 }
 
+int8_t LedArrayInterface::getDemoMode()
+{
+  int8_t demo_mode_read = EEPROM.read(DEMO_MODE_ADDRESS);
+  return (demo_mode_read);
+}
+
+void LedArrayInterface::setDemoMode(int8_t demo_mode)
+{
+	EEPROM.write(DEMO_MODE_ADDRESS, demo_mode);
+}
 
 #endif
