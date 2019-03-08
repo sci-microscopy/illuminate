@@ -144,7 +144,7 @@ void LedArray::printLedPositions(uint16_t argc, char * *argv, bool print_na)
 
       Serial.printf(F("        \"%d\" : ["), led_number);
       Serial.printf(F("%01.03f, "), na_x);
-      if (led_index != led_array_interface->led_count - 1)
+      if (led_index != end_index - 1)
         Serial.printf(F("%01.03f],\n"), na_y);
       else
         Serial.printf(F("%01.03f]\n"), na_y);
@@ -159,7 +159,7 @@ void LedArray::printLedPositions(uint16_t argc, char * *argv, bool print_na)
       Serial.printf(F("        \"%d\" : ["), led_number);
       Serial.printf(F("%02.02f, "), x);
       Serial.printf(F("%02.02f, "), y);
-      if (led_index != led_array_interface->led_count - 1)
+      if (led_index != end_index - 1)
         Serial.printf(F("%02.02f],\n"), z);
       else
         Serial.printf(F("%02.02f]\n"), z);
@@ -181,7 +181,7 @@ void LedArray::printCurrentLedValues(uint16_t argc, char * *argv)
     start_index = strtoul(argv[0], NULL, 0);
     end_index = strtoul(argv[1], NULL, 0);
   }
-  
+
   int16_t led_number;
   Serial.printf(F("{\n    \"led_values\" : {%s"), SERIAL_LINE_ENDING);
   for (uint16_t led_index = start_index; led_index < end_index; led_index++)
@@ -277,13 +277,16 @@ void LedArray::printSystemParams()
   Serial.print(led_array_interface->bit_depth);
   Serial.print(F(",\n    \"serial_number\" : "));
   Serial.print(led_array_interface->getSerialNumber());
+  Serial.print(F(",\n    \"color_channel_count\" : "));
+  Serial.print(led_array_interface->color_channel_count);
   Serial.print(F(",\n    \"part_number\" : "));
   Serial.print(led_array_interface->getPartNumber());
   Serial.print(F(",\n    \"mac_address\" : \""));
   printMacAddress();
+  Serial.print(F("\""));
   Serial.print(F(",\n    \"interface_version\" : "));
   Serial.print(VERSION);
-  Serial.print(F("\""));
+
   // Terminate JSON
   Serial.printf("\n}", SERIAL_LINE_ENDING);
 }
