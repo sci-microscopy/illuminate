@@ -1052,8 +1052,8 @@ void LedArrayInterface::setSerialNumber(uint16_t serial_number)
 {
 	byte lower_8bits_sn = serial_number & 0xff;
 	byte upper_8bits_sn = (serial_number >> 8) & 0xff;
-	EEPROM.write(sn_address, lower_8bits_sn);
-	EEPROM.write(sn_address + 1, upper_8bits_sn);
+	EEPROM.write(SN_ADDRESS, lower_8bits_sn);
+	EEPROM.write(SN_ADDRESS + 1, upper_8bits_sn);
 }
 
 uint16_t LedArrayInterface::getPartNumber()
@@ -1066,9 +1066,10 @@ void LedArrayInterface::setPartNumber(uint16_t part_number)
 {
 	byte lower_8bits_pn = part_number & 0xff;
 	byte upper_8bits_pn = (part_number >> 8) & 0xff;
-	EEPROM.write(pn_address, lower_8bits_pn);
-	EEPROM.write(pn_address + 1, upper_8bits_pn);
+	EEPROM.write(PN_ADDRESS, lower_8bits_pn);
+	EEPROM.write(PN_ADDRESS + 1, upper_8bits_pn);
 }
+
 
 void LedArrayInterface::setGsclkFreq(uint32_t gsclk_frequency)
 {

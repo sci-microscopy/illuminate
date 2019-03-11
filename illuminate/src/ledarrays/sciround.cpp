@@ -40,6 +40,11 @@ const int TRIGGER_INPUT_PIN_0 = 21;
 const int TRIGGER_OUTPUT_COUNT = 1;
 const int TRIGGER_INPUT_COUNT = 1;
 
+// EEPROM Addresses
+#define DEMO_MODE_ADDRESS 50
+#define PN_ADDRESS 100
+#define SN_ADDRESS 200
+
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "Sci-Round";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
@@ -581,30 +586,30 @@ void LedArrayInterface::deviceReset()
 
 uint16_t LedArrayInterface::getSerialNumber()
 {
-        uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
-        return (sn_read);
+  uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
+  return (sn_read);
 }
 
 void LedArrayInterface::setSerialNumber(uint16_t serial_number)
 {
 	byte lower_8bits_sn = serial_number & 0xff;
 	byte upper_8bits_sn = (serial_number >> 8) & 0xff;
-	EEPROM.write(sn_address, lower_8bits_sn);
-	EEPROM.write(sn_address + 1, upper_8bits_sn);
+	EEPROM.write(SN_ADDRESS, lower_8bits_sn);
+	EEPROM.write(SN_ADDRESS + 1, upper_8bits_sn);
 }
 
 uint16_t LedArrayInterface::getPartNumber()
 {
-        uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
-        return (pn_read);
+  uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
+  return (pn_read);
 }
 
 void LedArrayInterface::setPartNumber(uint16_t part_number)
 {
 	byte lower_8bits_pn = part_number & 0xff;
 	byte upper_8bits_pn = (part_number >> 8) & 0xff;
-	EEPROM.write(pn_address, lower_8bits_pn);
-	EEPROM.write(pn_address + 1, upper_8bits_pn);
+	EEPROM.write(PN_ADDRESS, lower_8bits_pn);
+	EEPROM.write(PN_ADDRESS + 1, upper_8bits_pn);
 }
 
 void LedArrayInterface::deviceSetup()
@@ -743,6 +748,17 @@ void LedArrayInterface::setBaudRate(uint32_t new_baud_rate)
 uint32_t LedArrayInterface::getBaudRate()
 {
   return tlc.getSpiBaudRate();
+}
+
+int8_t LedArrayInterface::getDemoMode()
+{
+  int8_t demo_mode_read = EEPROM.read(DEMO_MODE_ADDRESS);
+  return (demo_mode_read);
+}
+
+void LedArrayInterface::setDemoMode(int8_t demo_mode)
+{
+	EEPROM.write(DEMO_MODE_ADDRESS, demo_mode);
 }
 
 #endif
