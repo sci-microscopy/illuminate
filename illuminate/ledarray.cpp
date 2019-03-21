@@ -969,7 +969,10 @@ void LedArray::setBrightness(int16_t argc, char ** argv)
     led_value[color_channel_index] = (uint8_t) ceil((float) led_color[color_channel_index] / (float) UINT8_MAX * (float) led_brightness);
 
   // Print current brightness
-  Serial.printf(F("Current LED brightness is: %d%s"), led_brightness, SERIAL_LINE_ENDING);
+  clearOutputBuffers();
+  sprintf(output_buffer_short, "SB.%d", led_brightness);
+  sprintf(output_buffer_long, "Current brightness value is %d.", led_color[0]);
+  print(output_buffer_short, output_buffer_long);
 }
 
 /* Allows setting of current color buffer, which is respected by most other commands */
@@ -1080,8 +1083,6 @@ void LedArray::setColor(int16_t argc, char ** argv)
 
 
     // Print current color value
-
-    // Print current NA
     clearOutputBuffers();
 
     if (led_array_interface->color_channel_count == 1)
