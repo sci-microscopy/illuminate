@@ -36,9 +36,15 @@ const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
 
+// EEPROM Addresses
+#define DEMO_MODE_ADDRESS 50
+#define PN_ADDRESS 100
+#define SN_ADDRESS 200
+
+// Quadrant pins
 #define Q1_PIN 6
-#define Q2_PIN 5
-#define Q3_PIN 9
+#define Q2_PIN 9
+#define Q3_PIN 5
 #define Q4_PIN 10
 
 // Device and Software Descriptors
@@ -264,6 +270,17 @@ void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, 
     else
       Serial.println(F("ERROR (LedArrayInterface::setLedFast, single led): Invalid LED number."));
   }
+}
+
+int8_t LedArrayInterface::getDemoMode()
+{
+  int8_t demo_mode_read = EEPROM.read(DEMO_MODE_ADDRESS);
+  return (demo_mode_read);
+}
+
+void LedArrayInterface::setDemoMode(int8_t demo_mode)
+{
+	EEPROM.write(DEMO_MODE_ADDRESS, demo_mode);
 }
 
 int LedArrayInterface::setTriggerState(int trigger_index, bool state)

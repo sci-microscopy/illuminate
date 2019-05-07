@@ -238,11 +238,8 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   }
   else if ((strcmp(command_header, command_list[CMD_TRIG_SETUP_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIG_SETUP_IDX][1]) == 0))
     led_array->triggerSetup(argc, (char * *) argv);
-  else if ((strcmp(command_header, command_list[CMD_TRIG_PRINT_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIG_PRINT_IDX][1]) == 0))
-    led_array->printTriggerSettings();
   else if ((strcmp(command_header, command_list[CMD_TRIG_TEST_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIG_TEST_IDX][1]) == 0))
     led_array->triggerInputTest(strtoul((char *) argv[0], NULL, 0));
-
 
   else if ((strcmp(command_header, command_list[CMD_PRINT_VALS_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_VALS_IDX][1]) == 0))
     led_array->printCurrentLedValues(argc, (char * *) argv);

@@ -74,35 +74,34 @@
 
 #define CMD_TRIG_IDX 33
 #define CMD_TRIG_SETUP_IDX 34
-#define CMD_TRIG_PRINT_IDX 35
-#define CMD_TRIG_TEST_IDX 36
-#define CMD_CHANNEL_IDX 37
-#define CMD_TOGGLE_DEBUG_IDX 38
-#define CMD_PIN_ORDER_IDX 39
-#define CMD_DELAY 40
-#define CMD_SET_MAX_CURRENT 41
-#define CMD_SET_MAX_CURRENT_ENFORCEMENT 42
+#define CMD_TRIG_TEST_IDX 35
+#define CMD_CHANNEL_IDX 36
+#define CMD_TOGGLE_DEBUG_IDX 37
+#define CMD_PIN_ORDER_IDX 38
+#define CMD_DELAY 39
+#define CMD_SET_MAX_CURRENT 40
+#define CMD_SET_MAX_CURRENT_ENFORCEMENT 41
 
-#define CMD_PRINT_VALS_IDX 43
-#define CMD_PRINT_PARAMS 44
-#define CMD_PRINT_LED_POSITIONS 45
-#define CMD_PRINT_LED_POSITIONS_NA 46
+#define CMD_PRINT_VALS_IDX 42
+#define CMD_PRINT_PARAMS 43
+#define CMD_PRINT_LED_POSITIONS 44
+#define CMD_PRINT_LED_POSITIONS_NA 45
 
-#define CMD_DISCO_IDX 47
-#define CMD_DEMO_IDX 48
-#define CMD_WATER_IDX 49
+#define CMD_DISCO_IDX 46
+#define CMD_DEMO_IDX 47
+#define CMD_WATER_IDX 48
 
-#define CMD_SET_PN 50
-#define CMD_SET_SN 51
+#define CMD_SET_PN 49
+#define CMD_SET_SN 50
 
-#define CMD_RUN_SEQ_DPC_IDX 52
-#define CMD_RUN_SEQ_FPM_IDX 53
+#define CMD_RUN_SEQ_DPC_IDX 51
+#define CMD_RUN_SEQ_FPM_IDX 52
 
-#define CMD_SET_BAUD_RATE 54
-#define CMD_SET_GSCLK_FREQ 55
+#define CMD_SET_BAUD_RATE 53
+#define CMD_SET_GSCLK_FREQ 54
 
-#define CMD_SET_HUMAN 56
-#define CMD_SET_MACHINE 57
+#define CMD_SET_HUMAN 55
+#define CMD_SET_MACHINE 56
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -155,7 +154,6 @@ const char* command_list[COMMAND_COUNT][4] = {
   // Debugging, Low-level Access, etc.
   {"tr", "trig", "Output TTL trigger pulse to camera", "tr.[trigger index]"},
   {"trs", "trigSetup", "Set up hardware (TTL) triggering", "trs.[trigger index].[trigger pin index].['trigger delay between H and L pulses]"},
-  {"ptr", "trigPrint", "Prints information about the current i/o trigger setting", "ptr"},
   {"trt", "trigTest", "Waits for trigger pulses on the defined channel", "trt.[trigger input index]"},
   {"ch", "drawChannel", "Draw LED by hardware channel (use for debugging)", "dc.[led#]"},
   {"dbg", "debug", "Toggle debug flag. Can call with or without options.", "dbg.[command router debug].[LED array (generic) debug].[LED interface debug] --or-- dbg (toggles all between level 1 or 0)"},

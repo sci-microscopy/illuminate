@@ -98,7 +98,6 @@ class LedArray {
 
     // Triggering
     bool getTriggerState(int trigger_index);
-    void printTriggerSettings();
     bool waitForTriggerState(int trigger_index, bool state);
     void triggerInputTest(uint16_t channel);
     void triggerSetup(int argc, char ** argv);

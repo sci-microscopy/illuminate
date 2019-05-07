@@ -83,6 +83,8 @@ struct LedSequence
       // Allocate new arrays with new bit depth (and same length as before)
       allocate(length);
     }
+    else if (new_bit_depth == 0)
+      Serial.printf(F("SSBD.%d %s"), bit_depth, SERIAL_LINE_ENDING);
     else
       Serial.printf(F("ERROR - invalid bit depth! (allowed values are 1 or 8) %s"), SERIAL_LINE_ENDING);
   }

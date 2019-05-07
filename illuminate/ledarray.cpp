@@ -492,33 +492,6 @@ void LedArray::setNa(int argc, char ** argv)
   print(output_buffer_short, output_buffer_long);
 }
 
-void LedArray::printTriggerSettings()
-{
-  // Input Pins
-  for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
-  {
-    Serial.print("Trigger input pin index ");
-    Serial.print(trigger_index);
-    Serial.print(F(" uses Pin #"));
-    Serial.print(LedArrayInterface::trigger_input_pin_list[trigger_index]);
-    Serial.print(SERIAL_LINE_ENDING);
-  }
-
-  // Output Pins
-  for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
-  {
-    Serial.print(F("Trigger output pin index "));
-    Serial.print(trigger_index);
-    Serial.print(F(" uses Pin #"));
-    Serial.print(LedArrayInterface::trigger_output_pin_list[trigger_index]);
-    Serial.print(F(" with pulse width "));
-    Serial.print(LedArray::trigger_pulse_width_list_us[trigger_index]);
-    Serial.print(F("us. Start delay is "));
-    Serial.print(LedArray::trigger_start_delay_list_us[trigger_index]);
-    Serial.printf(F("us.%s"), SERIAL_LINE_ENDING);
-  }
-}
-
 /* A function to draw a DPC navigator pattern */
 void LedArray::drawNavDpc()
 {
@@ -779,8 +752,7 @@ void LedArray::triggerSetup(int argc, char ** argv)
   uint32_t trigger_pulse_width_us = 0;
   uint32_t trigger_start_delay_ms = 0;
 
-  if (argc >= 2)
-  {
+  if ((argc == 2) || (argc == 3)) {
     trigger_index = atoi(argv[0]);
     trigger_pulse_width_us = strtoul(argv[1], NULL, 0);
     if (argc >= 3)
@@ -802,6 +774,63 @@ void LedArray::triggerSetup(int argc, char ** argv)
       Serial.print(LedArray::trigger_start_delay_list_us[trigger_index]);
       Serial.printf(F("us. %s"), SERIAL_LINE_ENDING);
     }
+  }
+  else if (argc == 0)
+  {
+
+    // Print trigger settings
+    // Input Pins
+    for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
+    {
+      Serial.print("Trigger input pin index ");
+      Serial.print(trigger_index);
+      Serial.print(F(" uses Pin #"));
+      Serial.print(LedArrayInterface::trigger_input_pin_list[trigger_index]);
+      Serial.print(SERIAL_LINE_ENDING);
+    }
+
+    // Output Pins
+    for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
+    {
+      Serial.print(F("Trigger output pin index "));
+      Serial.print(trigger_index);
+      Serial.print(F(" uses Pin #"));
+      Serial.print(LedArrayInterface::trigger_output_pin_list[trigger_index]);
+      Serial.print(F(" with pulse width "));
+      Serial.print(LedArray::trigger_pulse_width_list_us[trigger_index]);
+      Serial.print(F("us. Start delay is "));
+      Serial.print(LedArray::trigger_start_delay_list_us[trigger_index]);
+      Serial.printf(F("us.%s"), SERIAL_LINE_ENDING);
+    }
+
+    Serial.printf(F("{%s \"triggers\": {%s"), SERIAL_LINE_ENDING, SERIAL_LINE_ENDING);
+    Serial.printf(F("    \"input\": [%s"), SERIAL_LINE_ENDING);
+    for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
+    {
+      Serial.printf("        {\"channel\": %d, \"pin\": %d}",
+                    trigger_index,
+                    LedArrayInterface::trigger_input_pin_list[trigger_index]);
+
+      if (trigger_index < (led_array_interface->trigger_input_count - 1))
+        Serial.printf(",%s", SERIAL_LINE_ENDING);
+      else
+        Serial.printf("%s", SERIAL_LINE_ENDING);
+    }
+    Serial.printf(F("    ],%s    \"output\": [%s"), SERIAL_LINE_ENDING, SERIAL_LINE_ENDING);
+    for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
+    {
+      Serial.printf("        {\"channel\": %d, \"pin\": %d, \"pulse_width_us\": %d, \"start_delay_us\": %d}",
+                    trigger_index,
+                    LedArrayInterface::trigger_output_pin_list[trigger_index],
+                    LedArray::trigger_pulse_width_list_us[trigger_index],
+                    LedArray::trigger_start_delay_list_us[trigger_index]);
+
+      if (trigger_index < (led_array_interface->trigger_input_count - 1))
+        Serial.printf(",%s", SERIAL_LINE_ENDING);
+      else
+        Serial.printf("%s", SERIAL_LINE_ENDING);
+    }
+    Serial.printf(F("    ]%s }%s}%s"), SERIAL_LINE_ENDING, SERIAL_LINE_ENDING, SERIAL_LINE_ENDING);
   }
   else
     Serial.printf(F("ERROR: Invalid number of arguments for setTriggerPulse! %s"), SERIAL_LINE_ENDING);
@@ -1669,20 +1698,21 @@ void LedArray::patternIncrementFast()
   // Display pattern
   if (LedArray::pattern_index <  LedArray::led_sequence.number_of_patterns_assigned && LedArray::led_sequence.led_counts[LedArray::pattern_index] > 0)
   {
+    // Clear array for all LED pins
     digitalWriteFast(3, true);
-    //    digitalWriteFast(5, true);
-    //    digitalWriteFast(6, true);
-    //    digitalWriteFast(9, true);
-    //    digitalWriteFast(10, true);
+    digitalWriteFast(5, true);
+    digitalWriteFast(6, true);
+    digitalWriteFast(9, true);
+    digitalWriteFast(10, true);
   }
   else
   {
-    // Clear array
-    digitalWriteFast(3, true);
-    //    digitalWriteFast(5, false);
-    //    digitalWriteFast(6, false);
-    //    digitalWriteFast(9, false);
-    //    digitalWriteFast(10, false);
+    // Clear array for all LED pins
+    digitalWriteFast(3, false);
+    digitalWriteFast(5, false);
+    digitalWriteFast(6, false);
+    digitalWriteFast(9, false);
+    digitalWriteFast(10, false);
   }
   LedArray::pattern_index++;
   interrupts();
