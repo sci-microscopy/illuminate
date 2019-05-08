@@ -69,6 +69,10 @@
 
 class LedArray {
   public:
+
+      // LED array control object
+    static LedArrayInterface * led_array_interface;
+    
     // Device setup and demo
     void reset();   // Reset the Array
     void demo();    // Run a demo which tests the functions below
@@ -196,9 +200,6 @@ class LedArray {
 
     // Defualt brightness
     const uint8_t LED_VALUE_DEFAULT = 10;
-
-    // LED array control object
-    LedArrayInterface * led_array_interface;
 
     // LED sequence object for storage and retreival
     static LedSequence led_sequence;

@@ -65,6 +65,10 @@ const bool LedArrayInterface::supports_fast_sequence = true;
 const float LedArrayInterface::led_array_distance_z_default = 50.0;
 float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 
+// Fast pins
+volatile const int fast_pin_list[] = {Q1_PIN, Q2_PIN, Q3_PIN, Q4_PIN};
+volatile const int fast_pin_count = 4;
+
 // Set up trigger pins
 const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, TRIGGER_OUTPUT_PIN_1};
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
@@ -82,15 +86,15 @@ const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {};
 
 // FORMAT: LED number, channel, 100*x, 100*y, 100*z
 const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
-  {0, 0, 1, 1, 4000,},
-  {1, 1, -1, 1, 4000,},
-  {2, 2, 1, -1, 4000,},
-  {3, 3, -1, -1, 4000,}
+  {1, 0, 1, 1, 4000,},
+  {2, 1, -1, 1, 4000,},
+  {3, 2, 1, -1, 4000,},
+  {4, 3, -1, -1, 4000,}
 };
 
 /* Device-specific variables */
-int pin_numbers[4] = {Q1_PIN, Q2_PIN, Q3_PIN, Q4_PIN};
-uint8_t led_values[4] = {0, 0, 0, 0};
+int pin_numbers[LedArrayInterface::led_count] = {Q1_PIN, Q2_PIN, Q3_PIN, Q4_PIN};
+uint8_t led_values[LedArrayInterface::led_count] = {0, 0, 0, 0};
 
 /**** Part number and Serial number addresses in EEPROM ****/
 uint16_t pn_address = 100;
@@ -347,14 +351,13 @@ void LedArrayInterface::update()
   digital_mode = false;
 
   // Send illuminaiton values
-  for (uint16_t led_index = 0; led_index < 4; led_index++)
+  for (uint16_t led_index = 0; led_index < led_count; led_index++)
   {
     // Get channel number
     int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
 
     // Update
     digitalWriteFast(pin_numbers[channel_number], led_values[led_index]);
-//    analogWrite(pin_numbers[channel_number], led_values[led_index]);
   }
 }
 
@@ -362,9 +365,6 @@ void LedArrayInterface::clear()
 {
   digital_mode = false; // ensure pin mode gets configured
   setLedFast(-1, -1, false);
-  //  for (uint16_t led_index = 0; led_index < 4; led_index++)
-  //    setLed(led_index, 0, false);
-  //  update();
 }
 
 void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_index, uint8_t value)
@@ -422,11 +422,10 @@ void LedArrayInterface::deviceSetup()
 {
   // Now set the GSCK to an output and a 50% PWM duty-cycle
   // For simplicity all three grayscale clocks are tied to the same pin
-  for (uint16_t led_index = 0; led_index < 4; led_index++)
+  for (uint16_t led_index = 0; led_index < led_count; led_index++)
   {
     int16_t channel = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
     pinMode(pin_numbers[channel], OUTPUT);
-    Serial.println(pin_numbers[channel]);
   }
 
   pinMode(5, OUTPUT);
