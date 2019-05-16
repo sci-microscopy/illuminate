@@ -71,7 +71,7 @@ class LedArray {
   public:
 
       // LED array control object
-    static LedArrayInterface * led_array_interface;
+    LedArrayInterface * led_array_interface;
     
     // Device setup and demo
     void reset();   // Reset the Array

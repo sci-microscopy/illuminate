@@ -15,19 +15,18 @@ Illuminate was designed to standardize the interface and functionality of LED ar
   git submodule init
   git submodule update
 ```
-5. open illuminate.ino in arduino, select micro-controller from Tools -> Board, select port from Tools -> Port
-6. Open Serial Monitor (Tools -> Serial Monitor), set line ending to Newline and baud rate to 115200 (default)
-7. Press upload to load code onto Teensy
-8. Type command (ex: "bf") and press enter to send
+5. open illuminate.ino in Arduino software
+6. Ensure correct device is selected in the illuminate.h file by uncommenting the appropriate ``#define`` line
+7. elect micro-controller from Tools -> Board, select port from Tools -> Port
+8. Open Serial Monitor (Tools -> Serial Monitor), set line ending to Newline and baud rate to 115200 (default)
+9. Press upload to load code onto Teensy
+10. Type command (ex: "bf") and press enter to send
 
 ## Commands
 Command help can be accessed by typing "?" into the Arduino terminal.
 
 ## Interfaces
-All commands are sent over a serial (COM) port. This allows interfacing from any program or program language on most systems, as well as through Micro-Manager or other microscopy platforms.
-
-#### Interface Repositories
-- (more to come)
+All commands are sent over a serial (COM) port. This allows interfacing from any program or program language on most systems, as well as through Micro-Manager or other microscopy platforms. There is also a controller library located [here](http://www.github.com/zfphil/illuminate_controller)
 
 ## Devices
 This project is designed for led arrays which are controlled by a Teensy 3.2 micro-controller. Additional micro-controllers should be easy to support if pins are configured correctly.
@@ -45,7 +44,7 @@ This project is designed for led arrays which are controlled by a Teensy 3.2 mic
 New devices are created by adding a new .cpp file to the root directory of the project and providing functions for the LedArrayInterface class. Static variables within this class must also be defined in the cpp file (including LED positions, trigger ports, etc.).
 
 ## License
-Illuminate is licensed under the BSD 3-clause license
+BSD 3-clause
 
 ## Contributions
 Pull requests will be reviewed as received!
