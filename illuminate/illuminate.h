@@ -41,7 +41,6 @@
 //#define USE_SCI_EPI_ARRAY
 //#define USE_SCI_BIG_WING_ARRAY
 //#define USE_SCI_C001
-//#define USE_C_006_RAMONA
 
 // Serial line ending
 static const char SERIAL_LINE_ENDING[] = "\n";
