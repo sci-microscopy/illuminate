@@ -54,7 +54,7 @@
 #define INVALID_NA -2000.0    // Represents an invalid NA
 #define DEFAULT_NA 0.25         // 100 * default NA, int
 
-#define LED_BRIGHTNESS_DEFAULT 255
+#define LED_BRIGHTNESS_DEFAULT 50
 
 // Command mode constants
 #define COMMAND_MODE_LONG 1

@@ -993,7 +993,7 @@ void LedArray::setBrightness(int16_t argc, char ** argv)
       led_brightness = (uint8_t) ((float)UINT8_MAX / 4.0);
     }
     else
-      led_brightness = atol(argv[0]);
+      led_brightness = (uint8_t) strtoul(argv[0], NULL, 0);
   }
 
   // Set LED vlaue based on color and brightness
@@ -1002,8 +1002,8 @@ void LedArray::setBrightness(int16_t argc, char ** argv)
 
   // Print current brightness
   clearOutputBuffers();
-  sprintf(output_buffer_short, "SB.%d", led_brightness);
-  sprintf(output_buffer_long, "Current brightness value is %d.", led_color[0]);
+  sprintf(output_buffer_short, "SB.%u", led_brightness);
+  sprintf(output_buffer_long, "Current brightness value is %u.", led_brightness);
   print(output_buffer_short, output_buffer_long);
 }
 
@@ -2824,4 +2824,3 @@ void LedArray::error(int16_t error_code, const char * calling_function)
       Serial.printf("ERROR (%s): %s%s", calling_function, error_code_list[error_code][1], SERIAL_LINE_ENDING);
   }
 }
-

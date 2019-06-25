@@ -31,7 +31,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 58
+#define COMMAND_COUNT 57
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -148,7 +148,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"pseql", "printSeqLength", "Prints sequence length to the terminal", "pseql"},
   {"sseq",  "stepSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "sseq.[trigger output mode for index 0].[trigger output mode for index 1],"},
   {"reseq", "resetSeq", "Resets sequence index to start", "reseq"},
-  {"ssbd", "setSeqBitDepth", "Sets bit depth of sequence values (1, 8, or 16)", "ssbd.1 --or-- ssbd.8 --or-- ssbd.16"},
+  {"ssbd", "setSeqBitDepth", "Sets bit depth of sequence values (1, 8, or 16)", "ssbd.1 --or-- ssbd.8 --or-- ssbd.16."},
   {"ssz", "setSeqZeros", "Sets a range of the sequence entries to zero, starting at the current sequence index", "ssz.10"},
 
   // Debugging, Low-level Access, etc.
@@ -169,7 +169,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"pledposna", "printLedPositionsNa", "Prints the positions of each LED in NA coordinates (NA_x, NA_y, NA_distance", "pledposna"},
 
   // Stored Patterns
-  {"disco", "party", "Illuminate a random color pattern of LEDs", "disco,[Number of LEDs in pattern]"},
+  {"disco", "party", "Illuminate a random color pattern of LEDs", "disco.[Number of LEDs in pattern]"},
   {"demo", "runDemo", "Runs a demo routine to show what the array can do.", "demo"},
   {"water", "waterDrop", "Water drop demo", "water"},
 
