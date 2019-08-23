@@ -455,9 +455,12 @@ void LedArray::buildNaList(float new_board_distance)
 /* A function to fill the LED array with the color specified by led_value */
 void LedArray::fillArray()
 {
-
-  // Draw an infinite circle
-  drawCircle(0.0, 1.0);
+  // Turn on all LEDs
+  for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
+  {
+    for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
+      led_array_interface->setLed(led_index, color_channel_index, led_value[color_channel_index]);
+  }
 
   // Update array
   led_array_interface->update();
@@ -1228,7 +1231,7 @@ void LedArray::drawCircle(float start_na, float end_na)
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
     d = sqrt(LedArrayInterface::led_position_list_na[led_index][0] * LedArrayInterface::led_position_list_na[led_index][0] + LedArrayInterface::led_position_list_na[led_index][1] * LedArrayInterface::led_position_list_na[led_index][1]);
-    if (d >= (start_na) && (d <= (end_na)))
+    if ((d >= start_na) && (d <= end_na))
     {
       for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
         led_array_interface->setLed(led_index, color_channel_index, led_value[color_channel_index]);
