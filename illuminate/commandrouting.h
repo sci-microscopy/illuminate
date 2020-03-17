@@ -528,7 +528,7 @@ void CommandRouter::processSerialStream()
                 argument_list_uint16 = new uint16_t[argument_max_led_count];
 
               // Initialize LED number list
-              argument_led_number_list = new int16_t [argument_max_led_count];
+              argument_led_number_list = new int16_t [argument_max_led_count+1];
             }
             else
             { // Case where user types ssl.0 (no leds on)
