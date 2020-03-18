@@ -2104,8 +2104,13 @@ void LedArray::stepSequence(uint16_t argc, char ** argv)
   for (uint16_t led_idx = 0; led_idx < LedArray::led_sequence.led_counts[LedArray::pattern_index]; led_idx++)
   {
     led_number = LedArray::led_sequence.led_list[LedArray::pattern_index][led_idx];
-    for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-      led_array_interface->setLed(led_number, color_channel_index, LedArray::led_sequence.values[LedArray::pattern_index][led_idx]);
+    
+    if (LedArray::led_sequence.bit_depth == 1)
+      for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
+        led_array_interface->setLed(led_number, color_channel_index, led_value[color_channel_index]);
+    else
+      for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
+        led_array_interface->setLed(led_number, color_channel_index, LedArray::led_sequence.values[LedArray::pattern_index][led_idx]);
   }
 
   // Update pattern
