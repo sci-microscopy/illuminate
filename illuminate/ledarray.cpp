@@ -39,6 +39,14 @@ volatile int * LedArray::trigger_input_mode_list;
 volatile int * LedArray::trigger_output_mode_list;
 LedSequence LedArray::led_sequence;
 
+bool LedArray::is_led_power_good()
+{
+  if ((led_array_interface->getSourceVoltage() > led_array_interface->min_source_voltage))
+    return true;
+  else
+    return false;
+}
+
 uint8_t LedArray::getDeviceCommandCount()
 {
   return led_array_interface->getDeviceCommandCount();
@@ -239,7 +247,6 @@ void LedArray::printAbout()
   Serial.printf("%04d", getPartNumber());
   Serial.print(F(" | Teensy MAC address: "));
   printMacAddress();
-
   Serial.printf(F("\n  For help, type ? %s"), SERIAL_LINE_ENDING);
   Serial.printf("====================================================================================================%s", SERIAL_LINE_ENDING);
 }
@@ -292,6 +299,15 @@ void LedArray::printSystemParams()
 
   // Terminate JSON
   Serial.printf("\n}", SERIAL_LINE_ENDING);
+}
+
+void LedArray::printSourceVoltage()
+{
+  // Print current voltage
+  clearOutputBuffers();
+  sprintf(output_buffer_short, "PWR.%.2f", led_array_interface->getSourceVoltage());
+  sprintf(output_buffer_long, "Current Voltage: %.2fV", led_array_interface->getSourceVoltage());
+  print(output_buffer_short, output_buffer_long);
 }
 
 void LedArray::setMaxCurrentLimit(int argc, char ** argv)
@@ -2601,9 +2617,14 @@ void LedArray::setup()
   led_value = new uint8_t[led_array_interface->color_channel_count];
   led_color = new uint8_t[led_array_interface->color_channel_count];
 
+
   // Populate led_color and led_value
   for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
     led_color[color_channel_index] = (uint8_t)(round((float)UINT8_MAX / led_array_interface->color_channel_count)) ; // TODO: make this respect bit depth
+
+  // Configure voltage sense pin
+  if (led_array_interface->power_sense_pin >= 0)
+    pinMode(led_array_interface->power_sense_pin, INPUT_PULLUP);
 
   // Reset sequence
   LedArray::led_sequence.deallocate();

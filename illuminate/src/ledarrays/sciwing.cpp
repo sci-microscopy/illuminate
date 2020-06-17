@@ -40,6 +40,8 @@ const int TRIGGER_OUTPUT_PIN_1 = 20;
 const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
+const int POWER_SENSE_PIN = 23;
+const float MIN_SOURCE_VOLTAGE = 2.5;
 
 // EEPROM Addresses
 #define DEMO_MODE_ADDRESS 50
@@ -66,6 +68,8 @@ const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, 
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
 bool LedArrayInterface::trigger_input_state[] = {false, false};
 float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
+const int LedArrayInterface::power_sense_pin = POWER_SENSE_PIN;
+const float LedArrayInterface::min_source_voltage = MIN_SOURCE_VOLTAGE;
 
 const uint8_t TLC5955::_tlc_count = 100;    // Change to reflect number of TLC chips
 float TLC5955::max_current_amps = 8.0;      // Maximum current output, amps
@@ -1283,6 +1287,14 @@ void LedArrayInterface::setBaudRate(uint32_t new_baud_rate)
 uint32_t LedArrayInterface::getBaudRate()
 {
   return tlc.getSpiBaudRate();
+}
+
+float LedArrayInterface::getSourceVoltage()
+{
+  if (power_sense_pin >= 0)
+    return ((float)analogRead(power_sense_pin)) / 1024.0 * 3.3;
+  else
+    return -1.0;
 }
 
 #endif

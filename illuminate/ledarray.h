@@ -72,7 +72,7 @@ class LedArray {
 
       // LED array control object
     LedArrayInterface * led_array_interface;
-    
+
     // Device setup and demo
     void reset();   // Reset the Array
     void demo();    // Run a demo which tests the functions below
@@ -161,6 +161,8 @@ class LedArray {
     void setBaudRate(uint16_t argc, char ** argv);
     void setGsclkFreq(uint16_t argc, char ** argv);
     void setCommandMode(const char * mode);
+    void printSourceVoltage();
+    bool is_led_power_good();
 
     // Device-specific commands
     uint8_t getDeviceCommandCount();

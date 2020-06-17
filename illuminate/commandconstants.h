@@ -31,7 +31,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 57
+#define COMMAND_COUNT 58
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -102,6 +102,8 @@
 
 #define CMD_SET_HUMAN 55
 #define CMD_SET_MACHINE 56
+
+#define CMD_PRINT_SOURCE_VOLTAGE 57
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -186,7 +188,9 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"sgs",  "setGsclkFreq", "Sets GSCLK frequency in Hz", "sgs.1000000"},
 
   {"human", "setModeHuman", "Sets command mode to human-readable", "human"},
-  {"machine", "setModeMachine", "Sets command mode to machine-readable", "machine"}
+  {"machine", "setModeMachine", "Sets command mode to machine-readable", "machine"},
+
+  {"vol", "sourceVoltage", "Gets the current power source value in volts", "power"}
 
 };
 

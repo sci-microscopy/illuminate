@@ -101,6 +101,8 @@ class LedArrayInterface {
     static const uint8_t device_command_count;
     static const uint16_t device_command_pattern_dimensions[][2];
     static const uint16_t *device_command_pattern_list[];
+    static const int power_sense_pin;
+    static const float min_source_voltage;
 
     // Debug flag
     static int debug;
@@ -127,10 +129,13 @@ class LedArrayInterface {
     uint16_t getPartNumber();
     void setPartNumber(uint16_t part_number);
     void setSerialNumber(uint16_t serial_number);
+
+    // Hardware-related functions
     void setBaudRate(uint32_t new_baud_rate);
     uint32_t getBaudRate();
     void setGsclkFreq(uint32_t new_gsclk_freq);
     uint32_t getGsclkFreq();
+    float getSourceVoltage();
 
     // Demo Mode
     void setDemoMode(int8_t mode);
