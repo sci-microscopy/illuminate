@@ -1,7 +1,0 @@
-#ifndef ERROR_CODES_H
-#define ERROR_CODES_H
-
-#define ERROR_CODE_POWER_DISCONNECTED "WRN01"
-
-
-#endif
