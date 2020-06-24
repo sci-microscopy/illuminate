@@ -28,7 +28,11 @@
 #ifdef USE_SCI_WING_ARRAY
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"
+#define SOURCE_SENSING 1
+
+#ifdef SOURCE_SENSING
 #include "../TeensyComparator/TeensyComparator.h"
+#endif
 
 // Pin definitions (used internally)
 const int GSCLK = 6;
@@ -85,10 +89,12 @@ uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][T
 TLC5955 tlc;                            // TLC5955 object
 uint32_t gsclk_frequency = 2000000;     // Grayscale clock speed
 
+bool _source_state = true;
+#ifdef SOURCE_SENSING
 // Power source sensing variables
 elapsedMillis _time_elapsed_debounce;
 uint32_t _warning_delay_ms = 10;
-bool _source_state = true;
+#endif
 
 /**** Device-specific commands ****/
 const uint8_t LedArrayInterface::device_command_count = 1;
@@ -1157,6 +1163,7 @@ void LedArrayInterface::deviceReset()
         deviceSetup();
 }
 
+#ifdef SOURCE_SENSING
 void LedArrayInterface::sourceChangeIsr()
 {
   noInterrupts();
@@ -1178,6 +1185,9 @@ void LedArrayInterface::sourceChangeIsr()
   }
   interrupts();
 }
+#else
+void LedArrayInterface::sourceChangeIsr(){}
+#endif
 
 void LedArrayInterface::deviceSetup()
 {
@@ -1221,15 +1231,16 @@ void LedArrayInterface::deviceSetup()
         // Input trigger Pins
         for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
                 pinMode(trigger_input_pin_list[trigger_index], INPUT);
-
-                TeensyComparator1.set_pin(0, 5);
-              TeensyComparator1.set_interrupt(sourceChangeIsr, CHANGE);
+        #ifdef SOURCE_SENSING
+        TeensyComparator1.set_pin(0, 5);
+        TeensyComparator1.set_interrupt(sourceChangeIsr, CHANGE);
+        #endif
 
 }
 
 int16_t LedArrayInterface::isPowerSourcePluggedIn()
 {
-  return TeensyComparator1.state();
+  return _source_state;
 }
 
 uint8_t LedArrayInterface::getDeviceCommandCount()
