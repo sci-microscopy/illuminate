@@ -34,14 +34,14 @@
 #include "commandrouting.h"
 #include "ledarray.h"
 
-// Initialize objects`
+// Initialize objects
 LedArrayInterface led_array_interface;
 LedArray led_array;
 CommandRouter cmd;
 
 // This command runs once at power-on
-void setup() {
-
+void setup() 
+{
   // Initialize serial interface
   Serial.begin(SERIAL_BAUD_RATE);
 

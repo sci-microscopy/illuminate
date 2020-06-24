@@ -29,6 +29,7 @@
  #include "../../ledarrayinterface.h"
  #include "../TLC5955/TLC5955.h"
  #include <EEPROM.h>
+ #include "../TeensyComparator/TeensyComparator.h"
 
 // Pin definitions (used internally)
 const int GSCLK = 6;
@@ -44,6 +45,9 @@ const int TRIGGER_INPUT_COUNT = 1;
 #define DEMO_MODE_ADDRESS 50
 #define PN_ADDRESS 100
 #define SN_ADDRESS 200
+
+elapsedMillis time_elapsed;
+uint32_t _source_warning_delay_ms = 200;
 
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "Sci-Round";
@@ -640,6 +644,10 @@ void LedArrayInterface::deviceSetup()
         tlc.setAllLed(0);
         tlc.updateLeds();
 
+        // Initialize analog comparator for voltage monitor
+        TeensyComparator1.set_pin(0, 5);
+        TeensyComparator1.set_interrupt(sourceUnpluggedIsr, CHANGE);
+
         // Output trigger Pins
         for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
         {
@@ -651,6 +659,27 @@ void LedArrayInterface::deviceSetup()
         for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
                 pinMode(LedArrayInterface::trigger_input_pin_list[trigger_index], INPUT);
 
+}
+
+int16_t LedArrayInterface::isPowerSourcePluggedIn()
+{
+  return TeensyComparator1.state();
+}
+
+void LedArrayInterface::sourceUnpluggedIsr()
+{
+  noInterrupts();
+  if (time_elapsed > _source_warning_delay_ms)
+  {
+
+    // Print warning if source has been disconnected
+    if ((!TeensyComparator1.state()))
+      Serial.printf("[%s] WARNING: Power is disconnected! LED array will not illuminate.\n", "WN01", SERIAL_LINE_ENDING);
+
+    // Reset timer
+    time_elapsed = 0;
+  }
+  interrupts();
 }
 
 uint8_t LedArrayInterface::getDeviceCommandCount()

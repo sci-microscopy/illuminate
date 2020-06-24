@@ -161,8 +161,6 @@ class LedArray {
     void setBaudRate(uint16_t argc, char ** argv);
     void setGsclkFreq(uint16_t argc, char ** argv);
     void setCommandMode(const char * mode);
-    void printSourceVoltage();
-    bool is_led_power_good();
 
     // Device-specific commands
     uint8_t getDeviceCommandCount();
@@ -184,6 +182,9 @@ class LedArray {
 
     // Error codes
     void error(int16_t error_code, const char * calling_function);
+
+    // Source voltage sensing
+    void isPowerSourcePluggedIn();
 
   private:
 

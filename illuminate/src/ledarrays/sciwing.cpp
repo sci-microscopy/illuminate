@@ -28,6 +28,7 @@
 #ifdef USE_SCI_WING_ARRAY
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"
+#include "../TeensyComparator/TeensyComparator.h"
 
 // Pin definitions (used internally)
 const int GSCLK = 6;
@@ -83,6 +84,11 @@ uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][T
 /**** Device-specific variables ****/
 TLC5955 tlc;                            // TLC5955 object
 uint32_t gsclk_frequency = 2000000;     // Grayscale clock speed
+
+// Power source sensing variables
+elapsedMillis _time_elapsed_debounce;
+uint32_t _warning_delay_ms = 10;
+bool _source_state = true;
 
 /**** Device-specific commands ****/
 const uint8_t LedArrayInterface::device_command_count = 1;
@@ -1039,13 +1045,16 @@ int LedArrayInterface::sendTriggerPulse(int trigger_index, uint16_t delay_us, bo
 }
 void LedArrayInterface::update()
 {
+      if (isPowerSourcePluggedIn())
         tlc.updateLeds();
+      else
+        Serial.printf(F("ERROR: Power source is disconnected!%s"), SERIAL_LINE_ENDING);
 }
 
 void LedArrayInterface::clear()
 {
         tlc.setAllLed(0);
-        tlc.updateLeds();
+        update();
 }
 
 void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel_number, uint16_t value)
@@ -1148,6 +1157,27 @@ void LedArrayInterface::deviceReset()
         deviceSetup();
 }
 
+void LedArrayInterface::sourceChangeIsr()
+{
+  noInterrupts();
+
+  if (_time_elapsed_debounce > _warning_delay_ms)
+  {
+    bool new_source_state = TeensyComparator1.state();
+    if (_source_state && !new_source_state)
+    {
+      Serial.printf("[%s] WARNING: Power is disconnected! LED array will not illuminate.\n", "WRN01");
+      _time_elapsed_debounce = 0; // Reset timer
+    }
+    else if (!_source_state && new_source_state)
+    {
+      Serial.printf("Power connected.\n");
+      _time_elapsed_debounce = 0; // Reset timer
+    }
+    _source_state = new_source_state;
+  }
+  interrupts();
+}
 
 void LedArrayInterface::deviceSetup()
 {
@@ -1192,6 +1222,14 @@ void LedArrayInterface::deviceSetup()
         for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
                 pinMode(trigger_input_pin_list[trigger_index], INPUT);
 
+                TeensyComparator1.set_pin(0, 5);
+              TeensyComparator1.set_interrupt(sourceChangeIsr, CHANGE);
+
+}
+
+int16_t LedArrayInterface::isPowerSourcePluggedIn()
+{
+  return TeensyComparator1.state();
 }
 
 uint8_t LedArrayInterface::getDeviceCommandCount()

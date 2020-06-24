@@ -12,7 +12,7 @@
       documentation and/or other materials provided with the distribution.
       Neither the name of the UC Berkley nor the
       names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+      derived from this software without specific prior written permission.s
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -39,13 +39,6 @@ volatile int * LedArray::trigger_input_mode_list;
 volatile int * LedArray::trigger_output_mode_list;
 LedSequence LedArray::led_sequence;
 
-bool LedArray::is_led_power_good()
-{
-  if ((led_array_interface->getSourceVoltage() > led_array_interface->min_source_voltage))
-    return true;
-  else
-    return false;
-}
 
 uint8_t LedArray::getDeviceCommandCount()
 {
@@ -299,15 +292,6 @@ void LedArray::printSystemParams()
 
   // Terminate JSON
   Serial.printf("\n}", SERIAL_LINE_ENDING);
-}
-
-void LedArray::printSourceVoltage()
-{
-  // Print current voltage
-  clearOutputBuffers();
-  sprintf(output_buffer_short, "PWR.%.2f", led_array_interface->getSourceVoltage());
-  sprintf(output_buffer_long, "Current Voltage: %.2fV", led_array_interface->getSourceVoltage());
-  print(output_buffer_short, output_buffer_long);
 }
 
 void LedArray::setMaxCurrentLimit(int argc, char ** argv)
@@ -2120,7 +2104,7 @@ void LedArray::stepSequence(uint16_t argc, char ** argv)
   for (uint16_t led_idx = 0; led_idx < LedArray::led_sequence.led_counts[LedArray::pattern_index]; led_idx++)
   {
     led_number = LedArray::led_sequence.led_list[LedArray::pattern_index][led_idx];
-    
+
     if (LedArray::led_sequence.bit_depth == 1)
       for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
         led_array_interface->setLed(led_number, color_channel_index, led_value[color_channel_index]);
@@ -2578,6 +2562,16 @@ void LedArray::setInterface(LedArrayInterface * interface)
   led_array_interface = interface;
 }
 
+void LedArray::isPowerSourcePluggedIn()
+{
+  if (led_array_interface->isPowerSourcePluggedIn() == 1)
+    print("PS.1", "Power Source is plugged in and functioning correctly.");
+  else if (led_array_interface->isPowerSourcePluggedIn() == 0)
+    print("PS.0", "Power Source is not plugged in. Device will not illuminate.");
+  else
+    print("PS.-1", "Power source sensing is not enabled on this device.");
+}
+
 void LedArray::setup()
 {
   // If setup has been run before, deallocate previous arrays to avoid memory leaks
@@ -2590,7 +2584,6 @@ void LedArray::setup()
     delete[] led_value;
     delete[] led_color;
   }
-
 
   // Read device mac address once
   read_mac();
@@ -2626,10 +2619,6 @@ void LedArray::setup()
   // Populate led_color and led_value
   for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
     led_color[color_channel_index] = (uint8_t)(round((float)UINT8_MAX / led_array_interface->color_channel_count)) ; // TODO: make this respect bit depth
-
-  // Configure voltage sense pin
-  if (led_array_interface->power_sense_pin >= 0)
-    pinMode(led_array_interface->power_sense_pin, INPUT_PULLUP);
 
   // Reset sequence
   LedArray::led_sequence.deallocate();

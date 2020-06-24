@@ -35,7 +35,7 @@
 
 class LedArrayInterface {
   public:
-    void deviceSetup();
+    static void deviceSetup();
     void deviceReset();
 
     // Note that passing a -1 for led_number or color_channel_index sets all LEDs or all color channels respectively
@@ -50,7 +50,7 @@ class LedArrayInterface {
     uint16_t getLedValue(uint16_t led_number, int color_channel_index);
 
     // Clear array
-    void clear();
+    static void clear();
 
     // Get and set trigger state
     int sendTriggerPulse(int trigger_index, uint16_t delay_us, bool inverse_polarity);
@@ -58,7 +58,7 @@ class LedArrayInterface {
     int getInputTriggerState(int input_trigger_index);
 
     // Update array
-    void update();
+    static void update();
 
     // Debug
     bool getDebug();
@@ -79,6 +79,10 @@ class LedArrayInterface {
 
     // Not implemented function
     void notImplemented(const char * command_name);
+
+    // Power Source functions
+    static int16_t isPowerSourcePluggedIn();
+    static void sourceChangeIsr();
 
     // Device and Software Descriptors
     static const char * device_name;
@@ -112,7 +116,7 @@ class LedArrayInterface {
     static const int trigger_input_pin_list[];
     static bool trigger_input_state[];
 
-    // LED positions
+    // LED positionsde
     static const int16_t PROGMEM led_positions[][5];
     static const int16_t PROGMEM arbitrary_led_list[][1];
     static float led_position_list_na[][2];
@@ -140,6 +144,10 @@ class LedArrayInterface {
     // Demo Mode
     void setDemoMode(int8_t mode);
     int8_t getDemoMode();
+
+    // Source voltage checking
+    int16_t source_sense_pin = -1;
+    int16_t source_reference_value = -1;
 };
 
 

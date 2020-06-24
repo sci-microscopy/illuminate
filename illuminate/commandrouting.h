@@ -285,7 +285,7 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->setCommandMode("machine");
 
   else if ((strcmp(command_header, command_list[CMD_PRINT_SOURCE_VOLTAGE][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_SOURCE_VOLTAGE][1]) == 0))
-    led_array->printSourceVoltage();
+    led_array->isPowerSourcePluggedIn();
     
   else
   {

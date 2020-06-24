@@ -26,15 +26,15 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-
 #ifndef ERROR_CODES_H
 #define ERROR_CODES_H
 
 // List of command indicies in below array
-#define ERROR_CODE_COUNT 2
+#define ERROR_CODE_COUNT 3
 
 #define ERROR_CODE_NOT_IMPLEMENTED 0
 #define ERROR_CODE_ARGS_RUN_SEQUENCE 1
+#define ERROR_CODE_SOURCE_DISCONNECTED 2
 
 
 // Syntax is: {short code, long error description}
@@ -44,7 +44,10 @@ const char* error_code_list[ERROR_CODE_COUNT][2] = {
   {"NI", "Command not implemented."},
 
   // Sequence
-  {"ARGS", "(LedArray::runSequence): Wrong number of arguments. Syntax: rseq.[frame dt,ms],[# acquisitions],[trigger output mode 0], [trigger input mode 0], ...%s"}
+  {"ARGS", "(LedArray::runSequence): Wrong number of arguments. Syntax: rseq.[frame dt,ms],[# acquisitions],[trigger output mode 0], [trigger input mode 0], ...%s"},
+
+  // Power source disconnected
+  {"PSRC", "(LedArray::sourceConnected): Source Disconnected!%s"}
 };
 
 #endif
