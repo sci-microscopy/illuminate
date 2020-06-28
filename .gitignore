@@ -34,3 +34,7 @@
 # Custom led array folder
 illuminate/src/ledarrays_custom/*
 !illuminate/src/ledarrays_custom/.put_custom_led_array_cpp_files_here
+
+
+.vscode
+.pio
