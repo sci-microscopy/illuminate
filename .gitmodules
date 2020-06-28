@@ -1,3 +1,0 @@
-[submodule "illuminate/src/TLC5955"]
-	path = illuminate/src/TLC5955
-	url = https://github.com/zfphil/TLC5955.git
