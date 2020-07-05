@@ -32,6 +32,7 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
+#include "constants.h"
 
 class LedArrayInterface {
   public:
@@ -81,7 +82,10 @@ class LedArrayInterface {
     void notImplemented(const char * command_name);
 
     // Power Source functions
-    static int16_t isPowerSourcePluggedIn();
+    static int16_t getDevicePowerSensingCapability();
+    static bool isPowerSourcePluggedIn();
+    static bool getPowerSourceMonitoringState();
+    static void setPowerSourceMonitoringState(bool state);
     static void sourceChangeIsr();
 
     // Device and Software Descriptors
@@ -139,7 +143,6 @@ class LedArrayInterface {
     uint32_t getBaudRate();
     void setGsclkFreq(uint32_t new_gsclk_freq);
     uint32_t getGsclkFreq();
-    float getSourceVoltage();
 
     // Demo Mode
     void setDemoMode(int8_t mode);

@@ -28,10 +28,14 @@
 #ifdef USE_SCI_WING_ARRAY
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"
-#define SOURCE_SENSING 1
 
-#ifdef SOURCE_SENSING
-#include "../TeensyComparator/TeensyComparator.h"
+// Power monitoring commands
+#define DEVICE_SUPPORTS_POWER_SENSING 1
+#define DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING 0
+#define PSU_ACTIVE_MONITORING_COMPARATOR_MODE 7
+
+#ifdef DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
+  #include "../TeensyComparator/TeensyComparator.h"
 #endif
 
 // Pin definitions (used internally)
@@ -89,11 +93,14 @@ uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][T
 TLC5955 tlc;                            // TLC5955 object
 uint32_t gsclk_frequency = 2000000;     // Grayscale clock speed
 
-bool _source_state = true;
-#ifdef SOURCE_SENSING
-// Power source sensing variables
-elapsedMillis _time_elapsed_debounce;
-uint32_t _warning_delay_ms = 10;
+// Power source state
+bool _psu_is_connected = true;
+bool _power_source_sensing_is_enabled = false;
+
+#if DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
+  // Power source sensing variables
+  elapsedMillis _time_elapsed_debounce;
+  uint32_t _warning_delay_ms = 10;
 #endif
 
 /**** Device-specific commands ****/
@@ -1170,24 +1177,68 @@ void LedArrayInterface::sourceChangeIsr()
 
   if (_time_elapsed_debounce > _warning_delay_ms)
   {
-    bool new_source_state = TeensyComparator1.state();
-    if (_source_state && !new_source_state)
+    bool new_psu_is_connected = TeensyComparator1.state();
+    if (_psu_is_connected && !new_psu_is_connected)
     {
       Serial.printf("[%s] WARNING: Power is disconnected! LED array will not illuminate.\n", "WRN01");
       _time_elapsed_debounce = 0; // Reset timer
     }
-    else if (!_source_state && new_source_state)
+    else if (!_psu_is_connected && new_psu_is_connected)
     {
       Serial.printf("Power connected.\n");
       _time_elapsed_debounce = 0; // Reset timer
     }
-    _source_state = new_source_state;
+    _psu_is_connected = new_psu_is_connected;
   }
   interrupts();
 }
 #else
 void LedArrayInterface::sourceChangeIsr(){}
 #endif
+
+
+bool LedArrayInterface::getPowerSourceMonitoringState()
+{
+  return _power_source_sensing_is_enabled;
+}
+
+int16_t LedArrayInterface::getDevicePowerSensingCapability()
+{
+  if (DEVICE_SUPPORTS_POWER_SENSING)
+    if (DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING)
+      return PSU_SENSING_AND_MONITORING;
+    else
+      return PSU_SENSING_ONLY;
+    else
+      return NO_PSU_SENSING;
+}
+
+void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
+{
+  if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
+  {
+    if (new_state)
+    {
+      // Enable power sensing
+      TeensyComparator1.set_pin(0, PSU_ACTIVE_MONITORING_COMPARATOR_MODE);
+      TeensyComparator1.set_interrupt(sourceChangeIsr, CHANGE);
+    }
+    else
+    {
+      // Turn off power sensing
+      TeensyComparator1.unset_pin();
+      TeensyComparator1.unset_interrupt();
+    }
+
+    // Set new state
+    _power_source_sensing_is_enabled = new_state;
+  }
+}
+
+bool LedArrayInterface::isPowerSourcePluggedIn()
+{
+  return _psu_is_connected;
+}
 
 void LedArrayInterface::deviceSetup()
 {
@@ -1231,21 +1282,15 @@ void LedArrayInterface::deviceSetup()
         // Input trigger Pins
         for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
                 pinMode(trigger_input_pin_list[trigger_index], INPUT);
-        #ifdef SOURCE_SENSING
-        TeensyComparator1.set_pin(0, 5);
-        TeensyComparator1.set_interrupt(sourceChangeIsr, CHANGE);
-        #endif
 
-}
-
-int16_t LedArrayInterface::isPowerSourcePluggedIn()
-{
-  return _source_state;
+        // Turn on PSU sensing if it's supported
+        if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
+            setPowerSourceMonitoringState(true);
 }
 
 uint8_t LedArrayInterface::getDeviceCommandCount()
 {
-        return (LedArrayInterface::device_command_count);
+  return (LedArrayInterface::device_command_count);
 }
 
 const char * LedArrayInterface::getDeviceCommandNameShort(int device_command_index)
@@ -1336,14 +1381,6 @@ void LedArrayInterface::setBaudRate(uint32_t new_baud_rate)
 uint32_t LedArrayInterface::getBaudRate()
 {
   return tlc.getSpiBaudRate();
-}
-
-float LedArrayInterface::getSourceVoltage()
-{
-  if (power_sense_pin >= 0)
-    return ((float)analogRead(power_sense_pin)) / 1024.0 * 3.3;
-  else
-    return -1.0;
 }
 
 #endif

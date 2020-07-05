@@ -2572,6 +2572,23 @@ void LedArray::isPowerSourcePluggedIn()
     print("PS.-1", "Power source sensing is not enabled on this device.");
 }
 
+void LedArray::togglePowerSupplySensing()
+{
+  if (led_array_interface->getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
+    if (led_array_interface->getPowerSourceMonitoringState())
+    {
+      print("", "Power supply monitoring is disabled.");
+      led_array_interface->setPowerSourceMonitoringState(false);
+    }
+    else
+    {
+      print("", "Power supply monitoring is enabled.");
+      led_array_interface->setPowerSourceMonitoringState(true);
+    }
+  else
+    print("!PSS", "ERROR: Power source sensing is not enabled!");
+}
+
 void LedArray::setup()
 {
   // If setup has been run before, deallocate previous arrays to avoid memory leaks

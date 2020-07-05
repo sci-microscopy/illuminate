@@ -185,6 +185,7 @@ class LedArray {
 
     // Source voltage sensing
     void isPowerSourcePluggedIn();
+    void togglePowerSupplySensing();
 
   private:
 

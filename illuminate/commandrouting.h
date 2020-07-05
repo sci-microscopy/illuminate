@@ -284,8 +284,10 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_SET_MACHINE][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_MACHINE][1]) == 0))
     led_array->setCommandMode("machine");
 
-  else if ((strcmp(command_header, command_list[CMD_PRINT_SOURCE_VOLTAGE][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_SOURCE_VOLTAGE][1]) == 0))
+  else if ((strcmp(command_header, command_list[CMD_PRINT_SOURCE_VOLTAGE_SENSING][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_SOURCE_VOLTAGE_SENSING][1]) == 0))
     led_array->isPowerSourcePluggedIn();
+  else if ((strcmp(command_header, command_list[CMD_TOGGLE_SOURCE_VOLTAGE_SENSING][0]) == 0) || (strcmp(command_header, command_list[CMD_TOGGLE_SOURCE_VOLTAGE_SENSING][1]) == 0))
+    led_array->togglePowerSupplySensing();
     
   else
   {
