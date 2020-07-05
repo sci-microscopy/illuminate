@@ -30,9 +30,9 @@
 #include "../TLC5955/TLC5955.h"
 
 // Power monitoring commands
-#define DEVICE_SUPPORTS_POWER_SENSING 1
+#define DEVICE_SUPPORTS_POWER_SENSING 0
 #define DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING 0
-#define PSU_ACTIVE_MONITORING_COMPARATOR_MODE 7
+#define PSU_ACTIVE_MONITORING_COMPARATOR_MODE 5
 
 #ifdef DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
   #include "../TeensyComparator/TeensyComparator.h"
@@ -49,8 +49,9 @@ const int TRIGGER_OUTPUT_PIN_1 = 20;
 const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
+
+// Power sensing pin
 const int POWER_SENSE_PIN = 23;
-const float MIN_SOURCE_VOLTAGE = 2.5;
 
 // EEPROM Addresses
 #define DEMO_MODE_ADDRESS 50
@@ -93,15 +94,11 @@ uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][T
 TLC5955 tlc;                            // TLC5955 object
 uint32_t gsclk_frequency = 2000000;     // Grayscale clock speed
 
-// Power source state
+// Power source sensing variables
 bool _psu_is_connected = true;
 bool _power_source_sensing_is_enabled = false;
-
-#if DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
-  // Power source sensing variables
-  elapsedMillis _time_elapsed_debounce;
-  uint32_t _warning_delay_ms = 10;
-#endif
+elapsedMillis _time_elapsed_debounce;
+uint32_t _warning_delay_ms = 10;
 
 /**** Device-specific commands ****/
 const uint8_t LedArrayInterface::device_command_count = 1;
@@ -1167,10 +1164,9 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
 
 void LedArrayInterface::deviceReset()
 {
-        deviceSetup();
+  deviceSetup();
 }
 
-#ifdef SOURCE_SENSING
 void LedArrayInterface::sourceChangeIsr()
 {
   noInterrupts();
@@ -1192,10 +1188,17 @@ void LedArrayInterface::sourceChangeIsr()
   }
   interrupts();
 }
-#else
-void LedArrayInterface::sourceChangeIsr(){}
-#endif
 
+float LedArrayInterface::getPowerSourceVoltage()
+{
+  if (POWER_SENSE_PIN >= 0)
+  {
+    pinMode(POWER_SENSE_PIN, INPUT);
+    return ((float)analogRead(POWER_SENSE_PIN)) / 1024.0 * 3.3;
+  }
+  else
+    return -1.0;
+}
 
 bool LedArrayInterface::getPowerSourceMonitoringState()
 {

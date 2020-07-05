@@ -151,6 +151,7 @@ class LedArrayInterface {
     // Source voltage checking
     int16_t source_sense_pin = -1;
     int16_t source_reference_value = -1;
+    float getPowerSourceVoltage();
 };
 
 

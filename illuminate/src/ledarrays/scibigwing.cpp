@@ -29,6 +29,18 @@
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"
 
+// Power monitoring commands
+#define DEVICE_SUPPORTS_POWER_SENSING 0
+#define DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING 0
+#define PSU_ACTIVE_MONITORING_COMPARATOR_MODE 5
+
+#ifdef DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
+  #include "../TeensyComparator/TeensyComparator.h"
+#endif
+
+// Power sensing pin
+const int POWER_SENSE_PIN = 23;
+
 // Pin definitions (used internally)
 const int GSCLK = 6;
 const int LAT = 3;
@@ -45,6 +57,12 @@ const int TRIGGER_INPUT_COUNT = 2;
 #define DEMO_MODE_ADDRESS 50
 #define PN_ADDRESS 100
 #define SN_ADDRESS 200
+
+// Power source sensing variables
+bool _psu_is_connected = true;
+bool _power_source_sensing_is_enabled = false;
+elapsedMillis _time_elapsed_debounce;
+uint32_t _warning_delay_ms = 10;
 
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "Sci-Big-Wing";
@@ -1849,6 +1867,81 @@ void LedArrayInterface::deviceReset()
         deviceSetup();
 }
 
+void LedArrayInterface::sourceChangeIsr()
+{
+  noInterrupts();
+
+  if (_time_elapsed_debounce > _warning_delay_ms)
+  {
+    bool new_psu_is_connected = TeensyComparator1.state();
+    if (_psu_is_connected && !new_psu_is_connected)
+    {
+      Serial.printf("[%s] WARNING: Power is disconnected! LED array will not illuminate.\n", "WRN01");
+      _time_elapsed_debounce = 0; // Reset timer
+    }
+    else if (!_psu_is_connected && new_psu_is_connected)
+    {
+      Serial.printf("Power connected.\n");
+      _time_elapsed_debounce = 0; // Reset timer
+    }
+    _psu_is_connected = new_psu_is_connected;
+  }
+  interrupts();
+}
+
+float LedArrayInterface::getPowerSourceVoltage()
+{
+  if (POWER_SENSE_PIN >= 0)
+  {
+    pinMode(POWER_SENSE_PIN, INPUT);
+    return ((float)analogRead(POWER_SENSE_PIN)) / 1024.0 * 3.3;
+  }
+  else
+    return -1.0;
+}
+
+bool LedArrayInterface::getPowerSourceMonitoringState()
+{
+  return _power_source_sensing_is_enabled;
+}
+
+int16_t LedArrayInterface::getDevicePowerSensingCapability()
+{
+  if (DEVICE_SUPPORTS_POWER_SENSING)
+    if (DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING)
+      return PSU_SENSING_AND_MONITORING;
+    else
+      return PSU_SENSING_ONLY;
+    else
+      return NO_PSU_SENSING;
+}
+
+void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
+{
+  if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
+  {
+    if (new_state)
+    {
+      // Enable power sensing
+      TeensyComparator1.set_pin(0, PSU_ACTIVE_MONITORING_COMPARATOR_MODE);
+      TeensyComparator1.set_interrupt(sourceChangeIsr, CHANGE);
+    }
+    else
+    {
+      // Turn off power sensing
+      TeensyComparator1.unset_pin();
+      TeensyComparator1.unset_interrupt();
+    }
+
+    // Set new state
+    _power_source_sensing_is_enabled = new_state;
+  }
+}
+
+bool LedArrayInterface::isPowerSourcePluggedIn()
+{
+  return _psu_is_connected;
+}
 
 void LedArrayInterface::deviceSetup()
 {
@@ -1879,13 +1972,13 @@ void LedArrayInterface::deviceSetup()
         // Set RGB pin order
         tlc.setRgbPinOrder(0, 1, 2);
 
-        // SN-specific pin corrections
-        if (getSerialNumber() == 17)
-        {
-                tlc.setRgbPinOrderSingle(141, 2, 1, 0);
-                tlc.setRgbPinOrderSingle(1209, 2, 1, 0);
-                tlc.setRgbPinOrderSingle(1251, 2, 1, 0);
-        }
+        // // SN-specific pin corrections
+        // if (getSerialNumber() == 17)
+        // {
+        //         tlc.setRgbPinOrderSingle(141, 2, 1, 0);
+        //         tlc.setRgbPinOrderSingle(1209, 2, 1, 0);
+        //         tlc.setRgbPinOrderSingle(1251, 2, 1, 0);
+        // }
 
         // swap green and red for custom led connection
         tlc.setRgbPinOrderSingle(459, 1, 0, 2); // led 879

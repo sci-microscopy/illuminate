@@ -31,7 +31,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 59
+#define COMMAND_COUNT 60
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -105,6 +105,7 @@
 
 #define CMD_PRINT_SOURCE_VOLTAGE_SENSING 57
 #define CMD_TOGGLE_SOURCE_VOLTAGE_SENSING 58
+#define CMD_PRINT_POWER_SOURCE_VOLTAGE 59
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -191,8 +192,9 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"human", "setModeHuman", "Sets command mode to human-readable", "human"},
   {"machine", "setModeMachine", "Sets command mode to machine-readable", "machine"},
 
-  {"pwr", "isPowerSupplyConnected", "Gets the state of the power source, if this device has the hardware to do so.", "pwr"},
-  {"spwr", "togglePowerSupplySensing", "Toggle power supply sensing on or off.", "spwr"}
+  {"pwrc", "isPowerSourceConnected", "Gets the state of the power source, if this device has the hardware to do so.", "pwrc"},
+  {"pwrs", "togglePowerSourceSensing", "Toggle power source sensing on or off.", "pwrs"},
+  {"pwrv", "printPowerSourceVoltage", "Print power sourve voltage.", "pwrv"}
 
 };
 

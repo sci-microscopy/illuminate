@@ -29,7 +29,18 @@
  #include "../../ledarrayinterface.h"
  #include "../TLC5955/TLC5955.h"
  #include <EEPROM.h>
- #include "../TeensyComparator/TeensyComparator.h"
+
+ // Power monitoring commands
+ #define DEVICE_SUPPORTS_POWER_SENSING 0
+ #define DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING 0
+ #define PSU_ACTIVE_MONITORING_COMPARATOR_MODE 5
+
+ #ifdef DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
+   #include "../TeensyComparator/TeensyComparator.h"
+ #endif
+
+ // Power sensing pin
+ const int POWER_SENSE_PIN = 23;
 
 // Pin definitions (used internally)
 const int GSCLK = 6;
@@ -46,8 +57,11 @@ const int TRIGGER_INPUT_COUNT = 1;
 #define PN_ADDRESS 100
 #define SN_ADDRESS 200
 
-elapsedMillis time_elapsed;
-uint32_t _source_warning_delay_ms = 200;
+// Power source sensing variables
+bool _psu_is_connected = true;
+bool _power_source_sensing_is_enabled = false;
+elapsedMillis _time_elapsed_debounce;
+uint32_t _warning_delay_ms = 10;
 
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "Sci-Round";
@@ -588,6 +602,83 @@ void LedArrayInterface::deviceReset()
         deviceSetup();
 }
 
+
+void LedArrayInterface::sourceChangeIsr()
+{
+  noInterrupts();
+
+  if (_time_elapsed_debounce > _warning_delay_ms)
+  {
+    bool new_psu_is_connected = TeensyComparator1.state();
+    if (_psu_is_connected && !new_psu_is_connected)
+    {
+      Serial.printf("[%s] WARNING: Power is disconnected! LED array will not illuminate.\n", "WRN01");
+      _time_elapsed_debounce = 0; // Reset timer
+    }
+    else if (!_psu_is_connected && new_psu_is_connected)
+    {
+      Serial.printf("Power connected.\n");
+      _time_elapsed_debounce = 0; // Reset timer
+    }
+    _psu_is_connected = new_psu_is_connected;
+  }
+  interrupts();
+}
+
+float LedArrayInterface::getPowerSourceVoltage()
+{
+  if (POWER_SENSE_PIN >= 0)
+  {
+    pinMode(POWER_SENSE_PIN, INPUT);
+    return ((float)analogRead(POWER_SENSE_PIN)) / 1024.0 * 3.3;
+  }
+  else
+    return -1.0;
+}
+
+bool LedArrayInterface::getPowerSourceMonitoringState()
+{
+  return _power_source_sensing_is_enabled;
+}
+
+int16_t LedArrayInterface::getDevicePowerSensingCapability()
+{
+  if (DEVICE_SUPPORTS_POWER_SENSING)
+    if (DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING)
+      return PSU_SENSING_AND_MONITORING;
+    else
+      return PSU_SENSING_ONLY;
+    else
+      return NO_PSU_SENSING;
+}
+
+void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
+{
+  if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
+  {
+    if (new_state)
+    {
+      // Enable power sensing
+      TeensyComparator1.set_pin(0, PSU_ACTIVE_MONITORING_COMPARATOR_MODE);
+      TeensyComparator1.set_interrupt(sourceChangeIsr, CHANGE);
+    }
+    else
+    {
+      // Turn off power sensing
+      TeensyComparator1.unset_pin();
+      TeensyComparator1.unset_interrupt();
+    }
+
+    // Set new state
+    _power_source_sensing_is_enabled = new_state;
+  }
+}
+
+bool LedArrayInterface::isPowerSourcePluggedIn()
+{
+  return _psu_is_connected;
+}
+
 uint16_t LedArrayInterface::getSerialNumber()
 {
   uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
@@ -644,9 +735,9 @@ void LedArrayInterface::deviceSetup()
         tlc.setAllLed(0);
         tlc.updateLeds();
 
-        // Initialize analog comparator for voltage monitor
-        TeensyComparator1.set_pin(0, 5);
-        TeensyComparator1.set_interrupt(sourceUnpluggedIsr, CHANGE);
+        // Turn on PSU sensing if it's supported
+        if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
+            setPowerSourceMonitoringState(true);
 
         // Output trigger Pins
         for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
@@ -659,27 +750,6 @@ void LedArrayInterface::deviceSetup()
         for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
                 pinMode(LedArrayInterface::trigger_input_pin_list[trigger_index], INPUT);
 
-}
-
-int16_t LedArrayInterface::isPowerSourcePluggedIn()
-{
-  return TeensyComparator1.state();
-}
-
-void LedArrayInterface::sourceUnpluggedIsr()
-{
-  noInterrupts();
-  if (time_elapsed > _source_warning_delay_ms)
-  {
-
-    // Print warning if source has been disconnected
-    if ((!TeensyComparator1.state()))
-      Serial.printf("[%s] WARNING: Power is disconnected! LED array will not illuminate.\n", "WN01", SERIAL_LINE_ENDING);
-
-    // Reset timer
-    time_elapsed = 0;
-  }
-  interrupts();
 }
 
 uint8_t LedArrayInterface::getDeviceCommandCount()

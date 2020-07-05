@@ -2589,6 +2589,20 @@ void LedArray::togglePowerSupplySensing()
     print("!PSS", "ERROR: Power source sensing is not enabled!");
 }
 
+void LedArray::printPowerSourceVoltage()
+{
+  if (led_array_interface->getDevicePowerSensingCapability() >= PSU_SENSING_ONLY)
+  {
+    // Print current source voltage
+    clearOutputBuffers();
+    sprintf(output_buffer_short, "PSV.%.3fV", led_array_interface->getPowerSourceVoltage());
+    sprintf(output_buffer_long, "Current power source voltage is: %.3f Volts.", led_array_interface->getPowerSourceVoltage());
+    print(output_buffer_short, output_buffer_long);
+  }
+  else
+    print("ERR:NPSV", "ERROR: Device does not support power supply voltage sensing.");
+}
+
 void LedArray::setup()
 {
   // If setup has been run before, deallocate previous arrays to avoid memory leaks
