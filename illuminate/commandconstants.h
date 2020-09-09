@@ -145,7 +145,7 @@ const char* command_list[COMMAND_COUNT][4] = {
 
   // Custom Sequence Scanning
   {"ssl",   "setSeqLength", "Set sequence length in terms of independent patterns", "ssl,[Sequence length]"},
-  {"ssv",   "setSeqValue", "Set sequence value", "ssl.[1st LED #]. [1st rVal]. [1st gVal]. [1st bVal]. [2nd LED #]. [2nd rVal]. [2nd gVal]. [2nd bVal] ..."},
+  {"ssv",   "setSeqValue", "Set sequence value", "ssl.[# Number of LEDs], [LED value 0], [LED value 1]], [LED value 2], ..."},
   {"rseq",  "runSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
   {"rseqf",  "runSequenceFast", "Runs sequence with specified delay between each update. Uses parallel digital IO to acheive very fast speeds. Only available on certain LED arrays.", "rseqf,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
   {"pseq",  "printSeq", "Prints sequence values to the terminal", "pseq"}, \
