@@ -39,7 +39,6 @@ volatile int * LedArray::trigger_input_mode_list;
 volatile int * LedArray::trigger_output_mode_list;
 LedSequence LedArray::led_sequence;
 
-
 uint8_t LedArray::getDeviceCommandCount()
 {
   return led_array_interface->getDeviceCommandCount();
