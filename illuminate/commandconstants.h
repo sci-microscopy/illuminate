@@ -145,15 +145,15 @@ const char* command_list[COMMAND_COUNT][4] = {
 
   // Custom Sequence Scanning
   {"ssl",   "setSeqLength", "Set sequence length in terms of independent patterns", "ssl,[Sequence length]"},
-  {"ssv",   "setSeqValue", "Set sequence value", "ssl.[# Number of LEDs], [LED value 0], [LED value 1]], [LED value 2], ..."},
+  {"ssv",   "setSeqValue", "Set sequence value", "ssl.[# Number of LEDs], [LED number 0], [LED number 1]], [LED number 2], ..."},
   {"rseq",  "runSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
-  {"rseqf",  "runSequenceFast", "Runs sequence with specified delay between each update. Uses parallel digital IO to acheive very fast speeds. Only available on certain LED arrays.", "rseqf,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
+  {"rseqf", "runSequenceFast", "Runs sequence with specified delay between each update. Uses parallel digital IO to acheive very fast speeds (single us). Only available on certain LED arrays.", "rseqf,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
   {"pseq",  "printSeq", "Prints sequence values to the terminal", "pseq"}, \
   {"pseql", "printSeqLength", "Prints sequence length to the terminal", "pseql"},
   {"sseq",  "stepSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "sseq.[trigger output mode for index 0].[trigger output mode for index 1],"},
   {"reseq", "resetSeq", "Resets sequence index to start", "reseq"},
-  {"ssbd", "setSeqBitDepth", "Sets bit depth of sequence values (1, 8, or 16)", "ssbd.1 --or-- ssbd.8 --or-- ssbd.16."},
-  {"ssz", "setSeqZeros", "Sets a range of the sequence entries to zero, starting at the current sequence index", "ssz.10"},
+  {"ssbd",  "setSeqBitDepth", "Sets bit depth of sequence values (1, 8, or 16)", "ssbd.1 --or-- ssbd.8 --or-- ssbd.16."},
+  {"ssz",   "setSeqZeros", "Sets a range of the sequence entries to zero, starting at the current sequence index", "ssz.10"},
 
   // Debugging, Low-level Access, etc.
   {"tr", "trig", "Output TTL trigger pulse to camera", "tr.[trigger index]"},

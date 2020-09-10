@@ -515,12 +515,14 @@ void CommandRouter::processSerialStream()
 
           else if (argument_bit_depth > 0 && (argument_flag && argument_total_count == 1))
           { // This is the case where we're running a numeric storage command (such as setSequenceValue) and need to collect the number of LEDs in the list (first argument), as provided by the user.
+            
             if (debug > 1) {
               Serial.print("Processing LED count at index ");
               Serial.print(argument_total_count);
               Serial.print(SERIAL_LINE_ENDING);
               delay(10);
             }
+            
             // Get argument LED count
             argument_max_led_count = strtoul(current_argument, NULL, 0);
 
