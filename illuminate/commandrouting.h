@@ -483,6 +483,9 @@ void CommandRouter::processSerialStream()
             Serial.print(SERIAL_COMMAND_TERMINATOR);
             Serial.print(SERIAL_LINE_ENDING);
           }
+          
+          argument_flag = false;
+          
           break;
         }
       case '.':   // dot SERIAL_DELIMITER
