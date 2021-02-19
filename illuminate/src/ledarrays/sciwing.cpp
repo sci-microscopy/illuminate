@@ -79,7 +79,6 @@ const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TR
 bool LedArrayInterface::trigger_input_state[] = {false, false};
 float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 const int LedArrayInterface::power_sense_pin = POWER_SENSE_PIN;
-const float LedArrayInterface::min_source_voltage = MIN_SOURCE_VOLTAGE;
 
 const uint8_t TLC5955::_tlc_count = 100;    // Change to reflect number of TLC chips
 float TLC5955::max_current_amps = 8.0;      // Maximum current output, amps

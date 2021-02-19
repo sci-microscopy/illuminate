@@ -31,7 +31,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 60
+#define COMMAND_COUNT 68
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -106,6 +106,16 @@
 #define CMD_PRINT_SOURCE_VOLTAGE_SENSING 57
 #define CMD_TOGGLE_SOURCE_VOLTAGE_SENSING 58
 #define CMD_PRINT_POWER_SOURCE_VOLTAGE 59
+
+#define CMD_SET_INNER_NA 60
+
+#define CMD_TRIGGER_INPUT_TIMEOUT 61
+#define CMD_TRIGGER_OUTPUT_PULSE_WIDTH 62
+#define CMD_TRIGGER_INPUT_POLARITY 63
+#define CMD_TRIGGER_OUTPUT_POLARITY 64
+#define CMD_TRIGGER_OUTPUT_DELAY 65
+#define CMD_TRIGGER_INPUT_PIN 66
+#define CMD_TRIGGER_OUTPUT_PIN 67
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -182,8 +192,8 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"setpn", "setPartNumber", "Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING"},
 
   // Run case-specific sequences
-  {"rdpc",  "runDpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rdpc,[Delay between each pattern in ms].[Number of acquisitions].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
-  {"rfpm",  "runFpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rfpm,[Delay between each pattern in ms].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
+  {"rdpc",  "runDpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rdpc,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]"},
+  {"rfpm",  "runFpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rfpm,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]"},
 
   // Functions to set baud rate and gsclk frequency (for TLC5955 based boards)
   {"sbr",  "setBaudRate", "Sets SPI baud rate for TLC5955 Chips in Hz (baud)", "sbr.1000000"},
@@ -194,7 +204,16 @@ const char* command_list[COMMAND_COUNT][4] = {
 
   {"pwrc", "isPowerSourceConnected", "Gets the state of the power source, if this device has the hardware to do so.", "pwrc"},
   {"pwrs", "togglePowerSourceSensing", "Toggle power source sensing on or off.", "pwrs"},
-  {"pwrv", "printPowerSourceVoltage", "Print power sourve voltage.", "pwrv"}
+  {"pwrv", "printPowerSourceVoltage", "Print power sourve voltage.", "pwrv"},
+
+  {"nai", "setInnerNa", "Sets the inner NA. (nai.20 sets an inner NA of 0.20)  Respected by bf, dpc, and rdpc commands. Default is 0", "nai.20"},
+  {"trinputtimeout", "triggerInputTimeout", "Sets the trigger input timeout in seconds. Default is 3600", "trinputtimeout.10"},
+  {"troutputpulsewidth", "triggerOutputPulseWidth", "Sets the trigger pulse width in microseconds, default is 1000.", "troutputpulsewidth.1000"},
+  {"trinputpolarity", "triggerInputPolarity", "Sets the trigger input polarity. 1=active high, 0=active low. Default is 1.", "trinputpolarity.1"},
+  {"troutputpolarity", "triggerOutputPolarity", "Sets the trigger output polarity. 1=active high, 0=active low. Default is 1.", "troutputpolarity.1"},
+  {"troutputdelay", "triggerOutputDelay", "Sets the trigger delay in microseconds. Default is zero.", "troutputdelay.0"},
+  {"trinputpin", "triggerInputPin", "Returns the Teensy pin of the trigger inputsignal. Used only for debugging.", "trinputpin"},
+  {"troutputpin", "triggerOutputPin", "Returns the Teensy pin of the trigger outputsignal. Used only for debugging.", "troutputpin"}
 
 };
 

@@ -290,6 +290,26 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->togglePowerSupplySensing();
   else if ((strcmp(command_header, command_list[CMD_PRINT_POWER_SOURCE_VOLTAGE][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_POWER_SOURCE_VOLTAGE][1]) == 0))
     led_array->printPowerSourceVoltage();
+
+  else if ((strcmp(command_header, command_list[CMD_SET_INNER_NA][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_INNER_NA][1]) == 0))
+    led_array->setInnerNa(argc, (char * *) argv);
+
+  else if ((strcmp(command_header, command_list[CMD_TRIGGER_INPUT_TIMEOUT][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_INPUT_TIMEOUT][1]) == 0))
+    led_array->setTriggerInputTimeout(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_PULSE_WIDTH][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_PULSE_WIDTH][1]) == 0))
+    led_array->setTriggerOutputPulseWidth(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_TRIGGER_INPUT_POLARITY][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_INPUT_POLARITY][1]) == 0))
+    led_array->setTriggerInputPolarity(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_POLARITY][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_POLARITY][1]) == 0))
+    led_array->setTriggerOutputPolarity(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_DELAY][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_DELAY][1]) == 0))
+    led_array->setTriggerOutputDelay(argc, (char * *) argv);
+  else if ((strcmp(command_header, command_list[CMD_TRIGGER_INPUT_PIN][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_INPUT_PIN][1]) == 0))
+    led_array->getTriggerInputPins(argc, (char * *) argv);
+    else if ((strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_PIN][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_PIN][1]) == 0))
+    led_array->getTriggerOutputPins(argc, (char * *) argv);
+
+    
     
   else
   {

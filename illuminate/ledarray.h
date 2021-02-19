@@ -42,9 +42,11 @@
 #define TRIG_MODE_START -2   // Triggering at the start of each acquisition
 
 // Trigger timing constants
-#define TRIGGER_PULSE_WIDTH_DEFAULT 500
-#define TRIGGER_DELAY_DEFAULT 0
-#define MAX_TRIGGER_WAIT_TIME_S 5.0
+#define TRIGGER_OUTPUT_PULSE_WIDTH_DEFAULT 500
+#define TRIGGER_OUTPUT_DELAY_DEFAULT 0
+#define TRIGGER_TIMEOUT_DEFAULT 3600.0
+#define TRIGGER_INPUT_POLARITY_DEFAULT 1
+#define TRIGGER_OUTPUT_POLARITY_DEFAULT 1
 
 // Misc constants
 #define PVALS_USE_UINT8 1     // Whether to return uint8 for pvals instead of 16-bit (Default is on)
@@ -110,6 +112,7 @@ class LedArray {
 
     // Setting system parameters
     void setNa(int argc, char ** argv);
+    void setInnerNa(int argc, char ** argv);
     void setArrayDistance(int argc, char ** argv);
     void setColor(int16_t argc, char ** argv);
     void setBrightness(int16_t argc, char ** argv);
@@ -188,6 +191,15 @@ class LedArray {
     void togglePowerSupplySensing();
     void printPowerSourceVoltage();
 
+    // Trigger Configuration
+    void setTriggerInputTimeout(int argc, char ** argv);
+    void setTriggerOutputPulseWidth(int argc, char ** argv);
+    void setTriggerOutputDelay(int argc, char ** argv);
+    void setTriggerInputPolarity(int argc, char ** argv);
+    void setTriggerOutputPolarity(int argc, char ** argv);
+    void getTriggerInputPins(int argc, char ** argv);
+    void getTriggerOutputPins(int argc, char ** argv);
+
   private:
 
     /* DPC Commands */
@@ -214,6 +226,7 @@ class LedArray {
     boolean initial_setup = true;
     int debug = 0;
     float objective_na = 0.25;
+    float inner_na = 0.0;
     float led_array_distance_z = 60.0;
     int color_channel_count = 3;
     char * device_name;
@@ -221,12 +234,15 @@ class LedArray {
 
     // Trigger Input (feedback) Settings
     static volatile float trigger_feedback_timeout_ms;
-    static volatile uint32_t * trigger_pulse_width_list_us;
-    static volatile uint32_t * trigger_start_delay_list_us;
+    static volatile uint32_t * trigger_output_pulse_width_list_us;
+    static volatile uint32_t * trigger_output_start_delay_list_us;
     static volatile int * trigger_input_mode_list;
     static volatile int * trigger_output_mode_list;
+    static volatile bool * trigger_input_polarity_list;
+    static volatile bool * trigger_output_polarity_list;
     static volatile int trigger_input_count;
     static volatile int trigger_output_count;
+    static volatile float trigger_input_timeout;
     static const int * trigger_output_pin_list;
     static const int * trigger_input_pin_list;
 
