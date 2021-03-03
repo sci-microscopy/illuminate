@@ -31,7 +31,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 68
+#define COMMAND_COUNT 69
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -116,6 +116,8 @@
 #define CMD_TRIGGER_OUTPUT_DELAY 65
 #define CMD_TRIGGER_INPUT_PIN 66
 #define CMD_TRIGGER_OUTPUT_PIN 67
+
+#define CMD_COSINE_FACTOR 68
 
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
@@ -213,7 +215,9 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"troutputpolarity", "triggerOutputPolarity", "Sets the trigger output polarity. 1=active high, 0=active low. Default is 1.", "troutputpolarity.1"},
   {"troutputdelay", "triggerOutputDelay", "Sets the trigger delay in microseconds. Default is zero.", "troutputdelay.0"},
   {"trinputpin", "triggerInputPin", "Returns the Teensy pin of the trigger inputsignal. Used only for debugging.", "trinputpin"},
-  {"troutputpin", "triggerOutputPin", "Returns the Teensy pin of the trigger outputsignal. Used only for debugging.", "troutputpin"}
+  {"troutputpin", "triggerOutputPin", "Returns the Teensy pin of the trigger outputsignal. Used only for debugging.", "troutputpin"},
+
+  {"cos", "cosineFactor", "Returns or sets the cosine factor, used to scale LED intensity (so outer LEDs are brighter). Input is cos.[integer cosine factor]", "cos.2"}
 
 };
 

@@ -306,11 +306,13 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
     led_array->setTriggerOutputDelay(argc, (char * *) argv);
   else if ((strcmp(command_header, command_list[CMD_TRIGGER_INPUT_PIN][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_INPUT_PIN][1]) == 0))
     led_array->getTriggerInputPins(argc, (char * *) argv);
-    else if ((strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_PIN][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_PIN][1]) == 0))
+  else if ((strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_PIN][0]) == 0) || (strcmp(command_header, command_list[CMD_TRIGGER_OUTPUT_PIN][1]) == 0))
     led_array->getTriggerOutputPins(argc, (char * *) argv);
+    
+  else if ((strcmp(command_header, command_list[CMD_COSINE_FACTOR][0]) == 0) || (strcmp(command_header, command_list[CMD_COSINE_FACTOR][1]) == 0))
+    led_array->setCosineFactor(argc, (char * *) argv);
 
-    
-    
+
   else
   {
     // Check if the command is equal to any device-specific commands
@@ -510,9 +512,9 @@ void CommandRouter::processSerialStream()
             Serial.print(SERIAL_COMMAND_TERMINATOR);
             Serial.print(SERIAL_LINE_ENDING);
           }
-          
+
           argument_flag = false;
-          
+
           break;
         }
       case '.':   // dot SERIAL_DELIMITER
@@ -538,14 +540,14 @@ void CommandRouter::processSerialStream()
 
           else if (argument_bit_depth > 0 && (argument_flag && argument_total_count == 1))
           { // This is the case where we're running a numeric storage command (such as setSequenceValue) and need to collect the number of LEDs in the list (first argument), as provided by the user.
-            
+
             if (debug > 1) {
               Serial.print("Processing LED count at index ");
               Serial.print(argument_total_count);
               Serial.print(SERIAL_LINE_ENDING);
               delay(10);
             }
-            
+
             // Get argument LED count
             argument_max_led_count = strtoul(current_argument, NULL, 0);
 
@@ -560,7 +562,7 @@ void CommandRouter::processSerialStream()
                 argument_list_uint16 = new uint16_t[argument_max_led_count];
 
               // Initialize LED number list
-              argument_led_number_list = new int16_t [argument_max_led_count+1];
+              argument_led_number_list = new int16_t [argument_max_led_count + 1];
             }
             else
             { // Case where user types ssl.0 (no leds on)

@@ -164,6 +164,11 @@ class LedArray {
     void setBaudRate(uint16_t argc, char ** argv);
     void setGsclkFreq(uint16_t argc, char ** argv);
     void setCommandMode(const char * mode);
+    
+    // Note that passing a -1 for led_number or color_channel_index sets all LEDs or all color channels respectively
+    void setLed(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)
+    void setLed(int16_t led_number, int16_t color_channel_index, uint8_t value);      // LED brightness (8-bit)
+    void setLed(int16_t led_number, int16_t color_channel_index, bool value);         // LED brightness (boolean)
 
     // Device-specific commands
     uint8_t getDeviceCommandCount();
@@ -200,6 +205,8 @@ class LedArray {
     void getTriggerInputPins(int argc, char ** argv);
     void getTriggerOutputPins(int argc, char ** argv);
 
+    void setCosineFactor(int argc, char ** argv);
+
   private:
 
     /* DPC Commands */
@@ -231,6 +238,7 @@ class LedArray {
     int color_channel_count = 3;
     char * device_name;
     int8_t default_brightness = 63;
+    int8_t cosine_factor;
 
     // Trigger Input (feedback) Settings
     static volatile float trigger_feedback_timeout_ms;

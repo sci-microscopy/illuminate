@@ -30,12 +30,13 @@
 #define ERROR_CODES_H
 
 // List of command indicies in below array
-#define ERROR_CODE_COUNT 4
+#define ERROR_CODE_COUNT 5
 
 #define ERROR_CODE_NOT_IMPLEMENTED 0
 #define ERROR_CODE_ARG_COUNT 1
 #define ERROR_CODE_SOURCE_DISCONNECTED 2
 #define ERROR_CODE_ARGS_SET_TRIGGER_TIMEOUT 3
+#define ERROR_CODE_COSINE_FACTOR 4
 
 
 // Syntax is: {short code, long error description}
@@ -51,7 +52,10 @@ const char* error_code_list[ERROR_CODE_COUNT][2] = {
   {"PSRC", "(LedArray::sourceConnected): Source Disconnected!%s"},
 
   // Trigger Settings
-  {"PSRC", "(LedArray::sourceConnected): Source Disconnected!%s"},
+  {"TRIGT", "Trigger Timeout.%s"},
+
+  // Cosine Factor
+  {"COS", "Invalid cosine factor.%s"},
 };
 
 #endif
