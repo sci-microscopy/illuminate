@@ -52,357 +52,421 @@ Pull requests will be reviewed as received!
 ## API Reference
 
 ```
-=== Illuminate r1.16 | Serial Number: 65535 | Part Number: 65535 | Teensy MAC address: 04:E9:E5:04:17:29
-=== For help, type ?
 -----------------------------------
-Command List:
+Command List: 
 -----------------------------------
-COMMAND:
+COMMAND: 
 ? / help
 SYNTAX:?
 DESCRIPTION:
 Display help info
 -----------------------------------
-COMMAND:
+COMMAND: 
 info / about
 SYNTAX:about
 DESCRIPTION:
 Displays information about this LED Array
 -----------------------------------
-COMMAND:
+COMMAND: 
 reboot / reset
 SYNTAX:reboot
 DESCRIPTION:
 Runs setup routine again, for resetting LED array
 -----------------------------------
-COMMAND:
+COMMAND: 
 ver / version
 SYNTAX:
 DESCRIPTION:
 Display controller version number
 -----------------------------------
-COMMAND:
+COMMAND: 
 ac / autoClear
 SYNTAX:ac --or-- ac.[0/1]
 DESCRIPTION:
 Toggle clearing of array between led updates. Can call with or without options.
 -----------------------------------
-COMMAND:
+COMMAND: 
 na / setNa
 SYNTAX:na.[na*100]
 DESCRIPTION:
 Set na used for bf/df/dpc/cdpc patterns
 -----------------------------------
-COMMAND:
+COMMAND: 
 sc / setColor
 SYNTAX:sc,[rgbVal] --or-- sc.[rVal].[gVal].[bVal]
 DESCRIPTION:
 Set LED array color
 -----------------------------------
-COMMAND:
+COMMAND: 
 sb / setBrightness
 SYNTAX:sb,[rgbVal] --or-- sb.[rVal].[gVal].[bVal]
 DESCRIPTION:
 Set LED array brightness
 -----------------------------------
-COMMAND:
+COMMAND: 
 sad / setArrayDistance
 SYNTAX:sad,[dist (mm)]
 DESCRIPTION:
 Set LED array distance
 -----------------------------------
-COMMAND:
+COMMAND: 
 l / led
 SYNTAX:ll.[led #].[led #], ...
 DESCRIPTION:
 Turn on a single LED (or multiple LEDs in a list)
 -----------------------------------
-COMMAND:
+COMMAND: 
 x / xx
 SYNTAX:x
 DESCRIPTION:
 Clear the LED array.
 -----------------------------------
-COMMAND:
+COMMAND: 
 ff / fillArray
 SYNTAX:ff
 DESCRIPTION:
 Fill the LED array with default color.
 -----------------------------------
-COMMAND:
+COMMAND: 
 bf / brightfield
 SYNTAX:bf
 DESCRIPTION:
 Display brightfield pattern
 -----------------------------------
-COMMAND:
+COMMAND: 
 df / darkfield
 SYNTAX:df
 DESCRIPTION:
 Display darkfield pattern
 -----------------------------------
-COMMAND:
+COMMAND: 
 dpc / halfCircle
 SYNTAX:dpc.[t/b/l/r] --or-- dpc.[top/bottom/left/right] --or-- dpc (will raw first pattern)
 DESCRIPTION:
 Illuminate half-circle (DPC) pattern
 -----------------------------------
-COMMAND:
+COMMAND: 
 cdpc / colorDpc
 SYNTAX:cdpc.[rVal],[gVal].[bVal]) --or-- cdpc.[rgbVal]) --or-- cdpc
 DESCRIPTION:
 Illuminate color DPC (cDPC) pattern
 -----------------------------------
-COMMAND:
+COMMAND: 
 an / annulus
 SYNTAX:an.[minNA*100].[maxNA*100]
 DESCRIPTION:
 Display annulus pattern set by min/max na
 -----------------------------------
-COMMAND:
+COMMAND: 
 ha / halfAnnulus
 SYNTAX:ha.[type].[minNA*100].[maxNA*100]
 DESCRIPTION:
 Illuminate half annulus
 -----------------------------------
-COMMAND:
+COMMAND: 
 dq / drawQuadrant
 SYNTAX:dq --or-- dq.[rVal].[gVal].[bVal]
 DESCRIPTION:
 Draws single quadrant
 -----------------------------------
-COMMAND:
+COMMAND: 
 cdf / Color Darkfield
 SYNTAX:cdf.[rVal].[gVal].[bVal]) --or-- cdf.[rgbVal]) --or-- cdf
 DESCRIPTION:
 Draws color darkfield pattern
 -----------------------------------
-COMMAND:
+COMMAND: 
 ndpc / navigator
 SYNTAX:ndpc.[t/b/l/r] --or-- ndpc.[top/bottom/left/right]
 DESCRIPTION:
 Illuminate half-circle (DPC) pattern with navigator
 -----------------------------------
-COMMAND:
+COMMAND: 
 scf / scanFull
 SYNTAX:scf,[delay_ms]
 DESCRIPTION:
 Scan all active LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.
 -----------------------------------
-COMMAND:
+COMMAND: 
 scb / scanBrightfield
 SYNTAX:scb,[delay_ms]
 DESCRIPTION:
 Scan all brightfield LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.
 -----------------------------------
-COMMAND:
+COMMAND: 
 ssl / setSeqLength
 SYNTAX:ssl,[Sequence length]
 DESCRIPTION:
 Set sequence length in terms of independent patterns
 -----------------------------------
-COMMAND:
+COMMAND: 
 ssv / setSeqValue
-SYNTAX:ssl.[1st LED #]. [1st rVal]. [1st gVal]. [1st bVal]. [2nd LED #]. [2nd rVal]. [2nd gVal]. [2nd bVal] ...
+SYNTAX:ssl.[# Number of LEDs], [LED number 0], [LED number 1]], [LED number 2], ...
 DESCRIPTION:
 Set sequence value
 -----------------------------------
-COMMAND:
+COMMAND: 
 rseq / runSequence
-SYNTAX:rseq,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2]
+SYNTAX:rseq,[Delay between each pattern in ms].[number of times to repeat pattern].[trigger output 0 mode].[trigger output 1 mode].[trigger input 0 mode].[trigger input 1 mode]
 DESCRIPTION:
 Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.
 -----------------------------------
-COMMAND:
+COMMAND: 
 rseqf / runSequenceFast
-SYNTAX:rseqf,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2]
+SYNTAX:rseqf,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] 
 DESCRIPTION:
-Runs sequence with specified delay between each update. Uses parallel digital IO to acheive very fast speeds. Only available on certain LED arrays.
+Runs sequence with specified delay between each update. Uses parallel digital IO to acheive very fast speeds (single us). Only available on certain LED arrays.
 -----------------------------------
-COMMAND:
+COMMAND: 
 pseq / printSeq
 SYNTAX:pseq
 DESCRIPTION:
 Prints sequence values to the terminal
 -----------------------------------
-COMMAND:
+COMMAND: 
 pseql / printSeqLength
 SYNTAX:pseql
 DESCRIPTION:
 Prints sequence length to the terminal
 -----------------------------------
-COMMAND:
+COMMAND: 
 sseq / stepSequence
 SYNTAX:sseq.[trigger output mode for index 0].[trigger output mode for index 1],
 DESCRIPTION:
 Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.
 -----------------------------------
-COMMAND:
+COMMAND: 
 reseq / resetSeq
 SYNTAX:reseq
 DESCRIPTION:
 Resets sequence index to start
 -----------------------------------
-COMMAND:
+COMMAND: 
 ssbd / setSeqBitDepth
-SYNTAX:ssbd.1 --or-- ssbd.8 --or-- ssbd.16
+SYNTAX:ssbd.1 --or-- ssbd.8 --or-- ssbd.16.
 DESCRIPTION:
 Sets bit depth of sequence values (1, 8, or 16)
 -----------------------------------
-COMMAND:
+COMMAND: 
 ssz / setSeqZeros
 SYNTAX:ssz.10
 DESCRIPTION:
 Sets a range of the sequence entries to zero, starting at the current sequence index
 -----------------------------------
-COMMAND:
+COMMAND: 
 tr / trig
 SYNTAX:tr.[trigger index]
 DESCRIPTION:
 Output TTL trigger pulse to camera
 -----------------------------------
-COMMAND:
+COMMAND: 
 trs / trigSetup
 SYNTAX:trs.[trigger index].[trigger pin index].['trigger delay between H and L pulses]
 DESCRIPTION:
 Set up hardware (TTL) triggering
 -----------------------------------
-COMMAND:
-ptr / trigPrint
-SYNTAX:ptr
-DESCRIPTION:
-Prints information about the current i/o trigger setting
------------------------------------
-COMMAND:
+COMMAND: 
 trt / trigTest
 SYNTAX:trt.[trigger input index]
 DESCRIPTION:
 Waits for trigger pulses on the defined channel
 -----------------------------------
-COMMAND:
+COMMAND: 
 ch / drawChannel
 SYNTAX:dc.[led#]
 DESCRIPTION:
 Draw LED by hardware channel (use for debugging)
 -----------------------------------
-COMMAND:
+COMMAND: 
 dbg / debug
 SYNTAX:dbg.[command router debug].[LED array (generic) debug].[LED interface debug] --or-- dbg (toggles all between level 1 or 0)
 DESCRIPTION:
 Toggle debug flag. Can call with or without options.
 -----------------------------------
-COMMAND:
+COMMAND: 
 spo / setPinOrder
 SYNTAX:spo.[rChan].[gChan].[bChan] --or-- spo.[led#].[rChan].[gChan].[bChan]
 DESCRIPTION:
 Sets pin order (R/G/B) for setup purposes. Also can flip individual leds by passing fourth argument.
 -----------------------------------
-COMMAND:
+COMMAND: 
 delay / wait
 SYNTAX:delay.[length of time in ms]
 DESCRIPTION:
 Simply puts the device in a loop for the amount of time in ms
 -----------------------------------
-COMMAND:
+COMMAND: 
 smc / setMaxCurrent
 SYNTAX:smc.[current limit in amps]
 DESCRIPTION:
 Sets max current in amps
 -----------------------------------
-COMMAND:
+COMMAND: 
 smce / setMaxCurrentEnforcement
 SYNTAX:smce.[0, 1]
 DESCRIPTION:
 Sets whether or not max current limit is enforced (0 is no, all other values are yes)
 -----------------------------------
-COMMAND:
+COMMAND: 
 pvals / printVals
 SYNTAX:pvals
 DESCRIPTION:
 Print led values for software interface
 -----------------------------------
-COMMAND:
+COMMAND: 
 pp / printParams
 SYNTAX:pp
 DESCRIPTION:
 Prints system parameters such as NA, LED Array z-distance, etc. in the format of a json file
 -----------------------------------
-COMMAND:
+COMMAND: 
 pledpos / printLedPositions
 SYNTAX:pledpos
 DESCRIPTION:
 Prints the positions of each LED in cartesian coordinates.
 -----------------------------------
-COMMAND:
+COMMAND: 
 pledposna / printLedPositionsNa
 SYNTAX:pledposna
 DESCRIPTION:
 Prints the positions of each LED in NA coordinates (NA_x, NA_y, NA_distance
 -----------------------------------
-COMMAND:
+COMMAND: 
 disco / party
-SYNTAX:disco,[Number of LEDs in pattern]
+SYNTAX:disco.[Number of LEDs in pattern]
 DESCRIPTION:
 Illuminate a random color pattern of LEDs
 -----------------------------------
-COMMAND:
+COMMAND: 
 demo / runDemo
 SYNTAX:demo
 DESCRIPTION:
 Runs a demo routine to show what the array can do.
 -----------------------------------
-COMMAND:
+COMMAND: 
 water / waterDrop
 SYNTAX:water
 DESCRIPTION:
 Water drop demo
 -----------------------------------
-COMMAND:
+COMMAND: 
 setsn / setSerialNumber
 SYNTAX:
 DESCRIPTION:
 Sets device serial number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING
 -----------------------------------
-COMMAND:
+COMMAND: 
 setpn / setPartNumber
 SYNTAX:
 DESCRIPTION:
 Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING
 -----------------------------------
-COMMAND:
+COMMAND: 
 rdpc / runDpc
-SYNTAX:rdpc,[Delay between each pattern in ms].[Number of acquisitions].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2]
+SYNTAX:rdpc,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]
 DESCRIPTION:
-Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warming message will print.
+Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.
 -----------------------------------
-COMMAND:
+COMMAND: 
 rfpm / runFpm
-SYNTAX:rfpm,[Delay between each pattern in ms].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2]
+SYNTAX:rfpm,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]
 DESCRIPTION:
-Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warming message will print.
+Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warning message will print.
 -----------------------------------
-COMMAND:
+COMMAND: 
 sbr / setBaudRate
 SYNTAX:sbr.1000000
 DESCRIPTION:
 Sets SPI baud rate for TLC5955 Chips in Hz (baud)
 -----------------------------------
-COMMAND:
+COMMAND: 
 sgs / setGsclkFreq
 SYNTAX:sgs.1000000
 DESCRIPTION:
 Sets GSCLK frequency in Hz
 -----------------------------------
-COMMAND:
+COMMAND: 
 human / setModeHuman
 SYNTAX:human
 DESCRIPTION:
 Sets command mode to human-readable
 -----------------------------------
-COMMAND:
+COMMAND: 
 machine / setModeMachine
 SYNTAX:machine
 DESCRIPTION:
 Sets command mode to machine-readable
+-----------------------------------
+COMMAND: 
+pwrc / isPowerSourceConnected
+SYNTAX:pwrc
+DESCRIPTION:
+Gets the state of the power source, if this device has the hardware to do so.
+-----------------------------------
+COMMAND: 
+pwrs / togglePowerSourceSensing
+SYNTAX:pwrs
+DESCRIPTION:
+Toggle power source sensing on or off.
+-----------------------------------
+COMMAND: 
+pwrv / printPowerSourceVoltage
+SYNTAX:pwrv
+DESCRIPTION:
+Print power sourve voltage.
+-----------------------------------
+COMMAND: 
+nai / setInnerNa
+SYNTAX:nai.20
+DESCRIPTION:
+Sets the inner NA. (nai.20 sets an inner NA of 0.20)  Respected by bf, dpc, and rdpc commands. Default is 0
+-----------------------------------
+COMMAND: 
+trinputtimeout / triggerInputTimeout
+SYNTAX:trinputtimeout.10
+DESCRIPTION:
+Sets the trigger input timeout in seconds. Default is 3600
+-----------------------------------
+COMMAND: 
+troutputpulsewidth / triggerOutputPulseWidth
+SYNTAX:troutputpulsewidth.1000
+DESCRIPTION:
+Sets the trigger pulse width in microseconds, default is 1000.
+-----------------------------------
+COMMAND: 
+trinputpolarity / triggerInputPolarity
+SYNTAX:trinputpolarity.1
+DESCRIPTION:
+Sets the trigger input polarity. 1=active high, 0=active low. Default is 1.
+-----------------------------------
+COMMAND: 
+troutputpolarity / triggerOutputPolarity
+SYNTAX:troutputpolarity.1
+DESCRIPTION:
+Sets the trigger output polarity. 1=active high, 0=active low. Default is 1.
+-----------------------------------
+COMMAND: 
+troutputdelay / triggerOutputDelay
+SYNTAX:troutputdelay.0
+DESCRIPTION:
+Sets the trigger delay in microseconds. Default is zero.
+-----------------------------------
+COMMAND: 
+trinputpin / triggerInputPin
+SYNTAX:trinputpin
+DESCRIPTION:
+Returns the Teensy pin of the trigger inputsignal. Used only for debugging.
+-----------------------------------
+COMMAND: 
+troutputpin / triggerOutputPin
+SYNTAX:troutputpin
+DESCRIPTION:
+Returns the Teensy pin of the trigger outputsignal. Used only for debugging.
+-----------------------------------
+COMMAND: 
+cos / cosineFactor
+SYNTAX:cos.2
+DESCRIPTION:
+Returns or sets the cosine factor, used to scale LED intensity (so outer LEDs are brighter). Input is cos.[integer cosine factor]
 -----------------------------------
 ```

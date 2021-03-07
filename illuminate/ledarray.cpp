@@ -2422,10 +2422,10 @@ void LedArray::runSequenceDpc(uint16_t argc, char ** argv)
   /* Format for argv:
      0: delay between acquisitions, us/ms
      1: number of times to repeat pattern
-     2: trigger output 1 setting
-     3: trigger output 2 setting
-     4: trigger input 1 setting
-     5: trigger input 2 setting
+     2: trigger output 0 setting
+     3: trigger input 0 setting
+     4: trigger output 1 setting
+     5: trigger input 1 setting
   */
 
   // Reset Trigger parameters
@@ -2595,10 +2595,10 @@ void LedArray::runSequenceFpm(uint16_t argc, char ** argv)
      0: delay between acquisitions, us/ms
      1: number of times to repeat pattern
      2: maximum na
-     3: trigger output 1 setting
-     4: trigger output 2 setting
+     2: trigger output 0 setting
+     3: trigger input 0 setting
+     4: trigger output 1 setting
      5: trigger input 1 setting
-     6: trigger input 2 setting
   */
 
   // Reset Trigger parameters
