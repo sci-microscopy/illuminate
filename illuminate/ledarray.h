@@ -53,10 +53,10 @@
 #define MIN_SEQUENCE_DELAY 5  // Min deblur pattern delay in ms (set by hardware)
 #define MIN_SEQUENCE_DELAY_FAST 2 // Min deblur pattern delay for fast sequence in us (set by hardware)
 #define DELAY_MAX 2000        // Global maximum amount to wait inside loop
-#define INVALID_NA -2000.0    // Represents an invalid NA
-#define DEFAULT_NA 0.25         // 100 * default NA, int
+#define INVALID_NA -2000.0    // Rep```resents an invalid NA
+#define DEFAULT_NA 0.40         // 100 * default NA, int
 
-#define LED_BRIGHTNESS_DEFAULT 50
+#define LED_BRIGHTNESS_DEFAULT 128
 
 // Command mode constants
 #define COMMAND_MODE_LONG 1
@@ -239,6 +239,7 @@ class LedArray {
     char * device_name;
     int8_t default_brightness = 63;
     int8_t cosine_factor;
+    bool normalize_color = true;
 
     // Trigger Input (feedback) Settings
     static volatile float trigger_feedback_timeout_ms;

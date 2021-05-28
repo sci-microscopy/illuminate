@@ -26,7 +26,6 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#define DEMO_MODE 0
 #define SERIAL_BAUD_RATE 115200
 
 // Include various files depending on which LED array is used
@@ -51,10 +50,6 @@ void setup()
 
   // Initialize command router
   cmd.setLedArray(&led_array);
-
-  // Demo mode
-  if (DEMO_MODE)
-    led_array.demo();
 
   // Print the about screen when connected
   led_array.printAbout();

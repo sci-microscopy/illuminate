@@ -1353,7 +1353,7 @@ void LedArray::setColor(int16_t argc, char ** argv)
       else if (isdigit(argv[0][0]))
       {
         for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-          led_color[color_channel_index] = (uint8_t)atoi(argv[0]);
+          led_color[color_channel_index] = (uint8_t) atoi(argv[0]);
       }
       else
       {
@@ -1372,11 +1372,20 @@ void LedArray::setColor(int16_t argc, char ** argv)
       return;
     }
 
+    // Normalize Color if desired
+    if (normalize_color)
+    {
+      uint8_t max_value = max(max(led_color[0], led_color[1]), led_color[2]);
+      for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
+        led_color[color_channel_index]  = (uint8_t) round(UINT8_MAX * ((float) led_color[color_channel_index]) / ((float) max_value));
+    }
+
     // Set LED vlaue based on color and brightness
     for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
+    {
       led_value[color_channel_index] = (uint8_t) (((float) led_color[color_channel_index] / UINT8_MAX) * (float) led_brightness);
-
-
+    }
+    
     // Print current color value
     clearOutputBuffers();
 
@@ -2937,7 +2946,6 @@ void LedArray::setup()
   led_brightness = LED_BRIGHTNESS_DEFAULT;
   led_value = new uint8_t[led_array_interface->color_channel_count];
   led_color = new uint8_t[led_array_interface->color_channel_count];
-
 
   // Populate led_color and led_value
   for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
