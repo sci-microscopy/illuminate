@@ -29,29 +29,17 @@
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"
 
-// Power monitoring commands
-#define DEVICE_SUPPORTS_POWER_SENSING 0
-#define DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING 0
-#define PSU_ACTIVE_MONITORING_COMPARATOR_MODE 5
-
-#ifdef DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
-  #include "../TeensyComparator/TeensyComparator.h"
-#endif
-
 // Pin definitions (used internally)
 const int GSCLK = 6;
 const int LAT = 3;
 const int SPI_MOSI = 11;
 const int SPI_CLK = 13;
-const int TRIGGER_OUTPUT_PIN_0 = 23;
-const int TRIGGER_INPUT_PIN_0 = 22;
-const int TRIGGER_OUTPUT_PIN_1 = 20;
-const int TRIGGER_INPUT_PIN_1 = 19;
+const int TRIGGER_OUTPUT_PIN_0 = 22;
+const int TRIGGER_INPUT_PIN_0 = 23;
+const int TRIGGER_OUTPUT_PIN_1 = 19;
+const int TRIGGER_INPUT_PIN_1 = 18;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
-
-// Power sensing pin
-const int POWER_SENSE_PIN = 23;
 
 // EEPROM Addresses
 #define DEMO_MODE_ADDRESS 50
@@ -78,11 +66,9 @@ const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, 
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
 bool LedArrayInterface::trigger_input_state[] = {false, false};
 float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
-const int LedArrayInterface::power_sense_pin = POWER_SENSE_PIN;
-const float LedArrayInterface::min_source_voltage = MIN_SOURCE_VOLTAGE;
 
 const uint8_t TLC5955::_tlc_count = 100;    // Change to reflect number of TLC chips
-float TLC5955::max_current_amps = 8.0;      // Maximum current output, amps
+float TLC5955::max_current_amps = 10.0;      // Maximum current output, amps
 bool TLC5955::enforce_max_current = true;   // Whether to enforce max current limit
 
 // Define dot correction, pin rgb order, and grayscale data arrays in program memory
@@ -93,12 +79,6 @@ uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][T
 /**** Device-specific variables ****/
 TLC5955 tlc;                            // TLC5955 object
 uint32_t gsclk_frequency = 2000000;     // Grayscale clock speed
-
-// Power source sensing variables
-bool _psu_is_connected = true;
-bool _power_source_sensing_is_enabled = false;
-elapsedMillis _time_elapsed_debounce;
-uint32_t _warning_delay_ms = 10;
 
 /**** Device-specific commands ****/
 const uint8_t LedArrayInterface::device_command_count = 1;
@@ -1055,10 +1035,7 @@ int LedArrayInterface::sendTriggerPulse(int trigger_index, uint16_t delay_us, bo
 }
 void LedArrayInterface::update()
 {
-      if (isPowerSourcePluggedIn())
-        tlc.updateLeds();
-      else
-        Serial.printf(F("ERROR: Power source is disconnected!%s"), SERIAL_LINE_ENDING);
+      tlc.updateLeds();
 }
 
 void LedArrayInterface::clear()
@@ -1167,82 +1144,6 @@ void LedArrayInterface::deviceReset()
   deviceSetup();
 }
 
-void LedArrayInterface::sourceChangeIsr()
-{
-  noInterrupts();
-
-  if (_time_elapsed_debounce > _warning_delay_ms)
-  {
-    bool new_psu_is_connected = TeensyComparator1.state();
-    if (_psu_is_connected && !new_psu_is_connected)
-    {
-      Serial.printf("[%s] WARNING: Power is disconnected! LED array will not illuminate.\n", "WRN01");
-      _time_elapsed_debounce = 0; // Reset timer
-    }
-    else if (!_psu_is_connected && new_psu_is_connected)
-    {
-      Serial.printf("Power connected.\n");
-      _time_elapsed_debounce = 0; // Reset timer
-    }
-    _psu_is_connected = new_psu_is_connected;
-  }
-  interrupts();
-}
-
-float LedArrayInterface::getPowerSourceVoltage()
-{
-  if (POWER_SENSE_PIN >= 0)
-  {
-    pinMode(POWER_SENSE_PIN, INPUT);
-    return ((float)analogRead(POWER_SENSE_PIN)) / 1024.0 * 3.3;
-  }
-  else
-    return -1.0;
-}
-
-bool LedArrayInterface::getPowerSourceMonitoringState()
-{
-  return _power_source_sensing_is_enabled;
-}
-
-int16_t LedArrayInterface::getDevicePowerSensingCapability()
-{
-  if (DEVICE_SUPPORTS_POWER_SENSING)
-    if (DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING)
-      return PSU_SENSING_AND_MONITORING;
-    else
-      return PSU_SENSING_ONLY;
-    else
-      return NO_PSU_SENSING;
-}
-
-void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
-{
-  if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
-  {
-    if (new_state)
-    {
-      // Enable power sensing
-      TeensyComparator1.set_pin(0, PSU_ACTIVE_MONITORING_COMPARATOR_MODE);
-      TeensyComparator1.set_interrupt(sourceChangeIsr, CHANGE);
-    }
-    else
-    {
-      // Turn off power sensing
-      TeensyComparator1.unset_pin();
-      TeensyComparator1.unset_interrupt();
-    }
-
-    // Set new state
-    _power_source_sensing_is_enabled = new_state;
-  }
-}
-
-bool LedArrayInterface::isPowerSourcePluggedIn()
-{
-  return _psu_is_connected;
-}
-
 void LedArrayInterface::deviceSetup()
 {
         // Initialize TLC5955
@@ -1286,9 +1187,6 @@ void LedArrayInterface::deviceSetup()
         for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
                 pinMode(trigger_input_pin_list[trigger_index], INPUT);
 
-        // Turn on PSU sensing if it's supported
-        if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
-            setPowerSourceMonitoringState(true);
 }
 
 uint8_t LedArrayInterface::getDeviceCommandCount()

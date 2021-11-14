@@ -31,7 +31,7 @@
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 60
+#define COMMAND_COUNT 57
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -103,10 +103,6 @@
 #define CMD_SET_HUMAN 55
 #define CMD_SET_MACHINE 56
 
-#define CMD_PRINT_SOURCE_VOLTAGE_SENSING 57
-#define CMD_TOGGLE_SOURCE_VOLTAGE_SENSING 58
-#define CMD_PRINT_POWER_SOURCE_VOLTAGE 59
-
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
 
@@ -114,7 +110,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"?", "help", "Display help info", "?"},
   {"info", "about", "Displays information about this LED Array", "about"},
   {"reboot", "reset", "Runs setup routine again, for resetting LED array", "reboot"},
-  {"ver", "version", "Display controller version number"},
+  {"ver", "version", "Display controller version number", "version"},
 
   // System Parameters
   {"ac", "autoClear", "Toggle clearing of array between led updates. Can call with or without options.", "ac --or-- ac.[0/1]"},
@@ -178,8 +174,8 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"water", "waterDrop", "Water drop demo", "water"},
 
   // Set part and serial number in EEPROM
-  {"setsn", "setSerialNumber", "Sets device serial number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING"},
-  {"setpn", "setPartNumber", "Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING"},
+  {"setsn", "setSerialNumber", "Sets device serial number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING", "setsn.100"},
+  {"setpn", "setPartNumber", "Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING", "setpn.1000"},
 
   // Run case-specific sequences
   {"rdpc",  "runDpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rdpc,[Delay between each pattern in ms].[Number of acquisitions].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
@@ -190,11 +186,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"sgs",  "setGsclkFreq", "Sets GSCLK frequency in Hz", "sgs.1000000"},
 
   {"human", "setModeHuman", "Sets command mode to human-readable", "human"},
-  {"machine", "setModeMachine", "Sets command mode to machine-readable", "machine"},
-
-  {"pwrc", "isPowerSourceConnected", "Gets the state of the power source, if this device has the hardware to do so.", "pwrc"},
-  {"pwrs", "togglePowerSourceSensing", "Toggle power source sensing on or off.", "pwrs"},
-  {"pwrv", "printPowerSourceVoltage", "Print power sourve voltage.", "pwrv"}
+  {"machine", "setModeMachine", "Sets command mode to machine-readable", "machine"}
 
 };
 

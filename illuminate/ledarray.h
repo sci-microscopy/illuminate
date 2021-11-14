@@ -32,7 +32,6 @@
 #include "ledarrayinterface.h"
 #include "ledsequence.h"
 #include "illuminate.h"
-#include "src/T3Mac/T3Mac.h"
 
 #include <Arduino.h>
 
@@ -137,7 +136,7 @@ class LedArray {
     // Printing system state and information
     void printLedPositions(uint16_t argc, char * *argv, bool print_na);
     void printCurrentLedValues(uint16_t argc, char * *argv);
-    void printAbout();
+    void print_about();
     void printSystemParams();
     void printVersion();
 
@@ -145,7 +144,7 @@ class LedArray {
     void setDebug(uint16_t new_debug_level);
     void setup();   // Setup command
     int getArgumentLedNumberPitch(char * command_header);
-    void setInterface(LedArrayInterface * interface);
+    void set_interface(LedArrayInterface * interface);
     void notImplemented(const char * command_name);
     void drawChannel(int argc, char * *argv);
     void setPinOrder(int argc, char * *argv);
@@ -182,11 +181,6 @@ class LedArray {
 
     // Error codes
     void error(int16_t error_code, const char * calling_function);
-
-    // Source voltage sensing
-    void isPowerSourcePluggedIn();
-    void togglePowerSupplySensing();
-    void printPowerSourceVoltage();
 
   private:
 

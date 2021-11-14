@@ -31,7 +31,7 @@
 #define COMMAND_ROUTING_H
 
 #include <SPI.h>
-#include <mk20dx128.h>
+//#include <mk20dx128.h>
 
 #define MAX_ARGUMENT_ELEMENT_LENGTH 10
 #define MAX_COMMAND_LENGTH 20
@@ -44,9 +44,9 @@ class CommandRouter {
   public:
     int getArgumentBitDepth(char * command_header);
     void route(char * command_header, int16_t argc, void ** argv, int16_t * argument_led_number_list);
-    void processSerialStream();
+    void process_serial_stream();
     int getArgumentLedNumberPitch(char * command_header);
-    void printHelp();
+    void print_help();
     void setLedArray(LedArray *  new_led_array);
     void printTerminator();
     void setDebug(int16_t argc, char * * argv);
@@ -69,24 +69,24 @@ class CommandRouter {
     int16_t * argument_led_number_list = NULL;
 };
 
-void CommandRouter::printHelp()
+void CommandRouter::print_help()
 {
-  led_array->printAbout();
+  led_array->print_about();
   Serial.printf(F("-----------------------------------%s"), SERIAL_LINE_ENDING);
   Serial.printf(F("Command List: %s"), SERIAL_LINE_ENDING);
   Serial.printf(F("-----------------------------------%s"), SERIAL_LINE_ENDING);
-  for (int16_t cIdx = 0; cIdx < COMMAND_COUNT; cIdx++)
+  for (int16_t index = 0; index < COMMAND_COUNT; index++)
   {
-    Serial.printf(F("COMMAND: %s"), SERIAL_LINE_ENDING);
-    Serial.print(command_list[cIdx][0]);
+    Serial.printf("COMMAND: %s", SERIAL_LINE_ENDING);
+    Serial.print(command_list[index][0]);
     Serial.print(" / ");
-    Serial.print(command_list[cIdx][1]);
+    Serial.print(command_list[index][1]);
     Serial.print(SERIAL_LINE_ENDING);
-    Serial.print(F("SYNTAX:"));
-    Serial.print(command_list[cIdx][3]);
+    Serial.print("SYNTAX:");
+    Serial.print(command_list[index][3]);
     Serial.print(SERIAL_LINE_ENDING);
     Serial.printf(F("DESCRIPTION:%s"), SERIAL_LINE_ENDING);
-    Serial.print(command_list[cIdx][2]);
+    Serial.print(command_list[index][2]);
     Serial.print(SERIAL_LINE_ENDING);
     Serial.printf(F("-----------------------------------%s"), SERIAL_LINE_ENDING);
   }
@@ -156,9 +156,9 @@ int CommandRouter::getArgumentLedNumberPitch(char * command_header)
 void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int16_t * argument_led_number_list)
 {
   if ((strcmp(command_header, command_list[CMD_HELP_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_HELP_IDX][1]) == 0))
-    printHelp();
+    print_help();
   else if ((strcmp(command_header, command_list[CMD_ABOUT_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_ABOUT_IDX][1]) == 0))
-    led_array->printAbout();
+    led_array->print_about();
   else if ((strcmp(command_header, command_list[CMD_REBOOT_IDX][0]) == 0) || (strcmp(command_header, command_list[CMD_REBOOT_IDX][1]) == 0))
     led_array->reset();
   else if ((strcmp(command_header, command_list[CMD_SHOW_VERSION][0]) == 0) || (strcmp(command_header, command_list[CMD_SHOW_VERSION][1]) == 0))
@@ -284,13 +284,6 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   else if ((strcmp(command_header, command_list[CMD_SET_MACHINE][0]) == 0) || (strcmp(command_header, command_list[CMD_SET_MACHINE][1]) == 0))
     led_array->setCommandMode("machine");
 
-  else if ((strcmp(command_header, command_list[CMD_PRINT_SOURCE_VOLTAGE_SENSING][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_SOURCE_VOLTAGE_SENSING][1]) == 0))
-    led_array->isPowerSourcePluggedIn();
-  else if ((strcmp(command_header, command_list[CMD_TOGGLE_SOURCE_VOLTAGE_SENSING][0]) == 0) || (strcmp(command_header, command_list[CMD_TOGGLE_SOURCE_VOLTAGE_SENSING][1]) == 0))
-    led_array->togglePowerSupplySensing();
-  else if ((strcmp(command_header, command_list[CMD_PRINT_POWER_SOURCE_VOLTAGE][0]) == 0) || (strcmp(command_header, command_list[CMD_PRINT_POWER_SOURCE_VOLTAGE][1]) == 0))
-    led_array->printPowerSourceVoltage();
-    
   else
   {
     // Check if the command is equal to any device-specific commands
@@ -313,13 +306,16 @@ void CommandRouter::route(char * command_header, int16_t argc, void ** argv, int
   }
 }
 
-void CommandRouter::processSerialStream()
+void CommandRouter::process_serial_stream()
 {
   // Initialize command string
   memset(command, 0, sizeof(command));
 
   // Initialize empty argument element
   memset(current_argument, 0, sizeof(current_argument));
+
+  // Small delay for Teensy 4.0
+  delayMicroseconds(10);
 
   // Initialize indexing variables used locally by this function
   uint16_t command_position = 0;
@@ -490,9 +486,9 @@ void CommandRouter::processSerialStream()
             Serial.print(SERIAL_COMMAND_TERMINATOR);
             Serial.print(SERIAL_LINE_ENDING);
           }
-          
+
           argument_flag = false;
-          
+
           break;
         }
       case '.':   // dot SERIAL_DELIMITER
@@ -518,14 +514,14 @@ void CommandRouter::processSerialStream()
 
           else if (argument_bit_depth > 0 && (argument_flag && argument_total_count == 1))
           { // This is the case where we're running a numeric storage command (such as setSequenceValue) and need to collect the number of LEDs in the list (first argument), as provided by the user.
-            
+
             if (debug > 1) {
               Serial.print("Processing LED count at index ");
               Serial.print(argument_total_count);
               Serial.print(SERIAL_LINE_ENDING);
               delay(10);
             }
-            
+
             // Get argument LED count
             argument_max_led_count = strtoul(current_argument, NULL, 0);
 
@@ -540,7 +536,7 @@ void CommandRouter::processSerialStream()
                 argument_list_uint16 = new uint16_t[argument_max_led_count];
 
               // Initialize LED number list
-              argument_led_number_list = new int16_t [argument_max_led_count+1];
+              argument_led_number_list = new int16_t [argument_max_led_count + 1];
             }
             else
             { // Case where user types ssl.0 (no leds on)

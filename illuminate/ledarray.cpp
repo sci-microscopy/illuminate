@@ -225,9 +225,9 @@ void LedArray::printVersion()
 }
 
 /* A function to print a human-readable about page */
-void LedArray::printAbout()
+void LedArray::print_about()
 {
-  Serial.printf("====================================================================================================%s", SERIAL_LINE_ENDING);
+  Serial.printf("=========================================================================================================%s", SERIAL_LINE_ENDING);
   Serial.print("  ");
   Serial.print(led_array_interface->device_name);
   Serial.printf(F(" LED Array Controller %s"), SERIAL_LINE_ENDING);
@@ -240,7 +240,7 @@ void LedArray::printAbout()
   Serial.print(F(" | Teensy MAC address: "));
   printMacAddress();
   Serial.printf(F("\n  For help, type ? %s"), SERIAL_LINE_ENDING);
-  Serial.printf("====================================================================================================%s", SERIAL_LINE_ENDING);
+  Serial.printf("=========================================================================================================%s", SERIAL_LINE_ENDING);
 }
 
 /* A function to print a json-formatted file which contains relevant system parameters */
@@ -311,7 +311,66 @@ void LedArray::setMaxCurrentEnforcement(int argc, char ** argv)
 
 void LedArray::printMacAddress()
 {
-  print_mac();
+  uint8_t mac[6];
+
+  static char teensyMac[23];
+
+#if defined HW_OCOTP_MAC1 && defined HW_OCOTP_MAC0
+  //    Serial.println("using HW_OCOTP_MAC* - see https://forum.pjrc.com/threads/57595-Serial-amp-MAC-Address-Teensy-4-0");
+  for (uint8_t by = 0; by < 2; by++) mac[by] = (HW_OCOTP_MAC1 >> ((1 - by) * 8)) & 0xFF;
+  for (uint8_t by = 0; by < 4; by++) mac[by + 2] = (HW_OCOTP_MAC0 >> ((3 - by) * 8)) & 0xFF;
+
+#define MAC_OK
+
+#else
+
+  mac[0] = 0x04;
+  mac[1] = 0xE9;
+  mac[2] = 0xE5;
+
+  uint32_t SN = 0;
+  __disable_irq();
+
+#if defined(HAS_KINETIS_FLASH_FTFA) || defined(HAS_KINETIS_FLASH_FTFL)
+  //      Serial.println("using FTFL_FSTAT_FTFA - vis teensyID.h - see https://github.com/sstaub/TeensyID/blob/master/TeensyID.h");
+
+  FTFL_FSTAT = FTFL_FSTAT_RDCOLERR | FTFL_FSTAT_ACCERR | FTFL_FSTAT_FPVIOL;
+  FTFL_FCCOB0 = 0x41;
+  FTFL_FCCOB1 = 15;
+  FTFL_FSTAT = FTFL_FSTAT_CCIF;
+  while (!(FTFL_FSTAT & FTFL_FSTAT_CCIF)) ; // wait
+  SN = *(uint32_t *)&FTFL_FCCOB7;
+
+#define MAC_OK
+
+#elif defined(HAS_KINETIS_FLASH_FTFE)
+  //      Serial.println("using FTFL_FSTAT_FTFE - vis teensyID.h - see https://github.com/sstaub/TeensyID/blob/master/TeensyID.h");
+
+  kinetis_hsrun_disable();
+  FTFL_FSTAT = FTFL_FSTAT_RDCOLERR | FTFL_FSTAT_ACCERR | FTFL_FSTAT_FPVIOL;
+  *(uint32_t *)&FTFL_FCCOB3 = 0x41070000;
+  FTFL_FSTAT = FTFL_FSTAT_CCIF;
+  while (!(FTFL_FSTAT & FTFL_FSTAT_CCIF)) ; // wait
+  SN = *(uint32_t *)&FTFL_FCCOBB;
+  kinetis_hsrun_enable();
+
+#define MAC_OK
+
+#endif
+
+  __enable_irq();
+
+  for (uint8_t by = 0; by < 3; by++) mac[by + 3] = (SN >> ((2 - by) * 8)) & 0xFF;
+
+#endif
+
+#ifdef MAC_OK
+  sprintf(teensyMac, "MAC: %02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  Serial.println(teensyMac);
+#else
+  ;
+  //    Serial.println("ERROR: could not get MAC");
+#endif
 }
 
 uint16_t LedArray::getSerialNumber()
@@ -482,7 +541,7 @@ void LedArray::setNa(int argc, char ** argv)
   else if (argc == 1)
   {
     int new_na = atoi(argv[0]);
-    if ((new_na > 0) && new_na < 100 * led_array_interface->max_na)
+    if ((new_na > 0) && new_na < 100)
       objective_na = (float)new_na / 100.0;
     else
       Serial.printf(F("ERROR (LedArray::setNa): invalid NA. Make sure NA is 100*na%s"), SERIAL_LINE_ENDING);
@@ -2556,50 +2615,9 @@ void LedArray::setDebug(uint16_t new_debug_level)
   led_array_interface->setDebug((int) (new_debug_level % 10));
 }
 
-void LedArray::setInterface(LedArrayInterface * interface)
+void LedArray::set_interface(LedArrayInterface * interface)
 {
   led_array_interface = interface;
-}
-
-void LedArray::isPowerSourcePluggedIn()
-{
-  if (led_array_interface->isPowerSourcePluggedIn() == 1)
-    print("PS.1", "Power Source is plugged in and functioning correctly.");
-  else if (led_array_interface->isPowerSourcePluggedIn() == 0)
-    print("PS.0", "Power Source is not plugged in. Device will not illuminate.");
-  else
-    print("PS.-1", "Power source sensing is not enabled on this device.");
-}
-
-void LedArray::togglePowerSupplySensing()
-{
-  if (led_array_interface->getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
-    if (led_array_interface->getPowerSourceMonitoringState())
-    {
-      print("", "Power supply monitoring is disabled.");
-      led_array_interface->setPowerSourceMonitoringState(false);
-    }
-    else
-    {
-      print("", "Power supply monitoring is enabled.");
-      led_array_interface->setPowerSourceMonitoringState(true);
-    }
-  else
-    print("!PSS", "ERROR: Power source sensing is not enabled!");
-}
-
-void LedArray::printPowerSourceVoltage()
-{
-  if (led_array_interface->getDevicePowerSensingCapability() >= PSU_SENSING_ONLY)
-  {
-    // Print current source voltage
-    clearOutputBuffers();
-    sprintf(output_buffer_short, "PSV.%.3fV", led_array_interface->getPowerSourceVoltage());
-    sprintf(output_buffer_long, "Current power source voltage is: %.3f Volts.", led_array_interface->getPowerSourceVoltage());
-    print(output_buffer_short, output_buffer_long);
-  }
-  else
-    print("ERR:NPSV", "ERROR: Device does not support power supply voltage sensing.");
 }
 
 void LedArray::setup()
@@ -2614,9 +2632,6 @@ void LedArray::setup()
     delete[] led_value;
     delete[] led_color;
   }
-
-  // Read device mac address once
-  read_mac();
 
   // Initialize led array
   led_array_interface->deviceSetup();

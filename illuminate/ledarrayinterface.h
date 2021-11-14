@@ -80,14 +80,7 @@ class LedArrayInterface {
 
     // Not implemented function
     void notImplemented(const char * command_name);
-
-    // Power Source functions
-    static int16_t getDevicePowerSensingCapability();
-    static bool isPowerSourcePluggedIn();
-    static bool getPowerSourceMonitoringState();
-    static void setPowerSourceMonitoringState(bool state);
-    static void sourceChangeIsr();
-
+    
     // Device and Software Descriptors
     static const char * device_name;
     static const char * device_hardware_revision;

@@ -46,7 +46,7 @@ void setup()
   Serial.begin(SERIAL_BAUD_RATE);
 
   // Initialize LED Array
-  led_array.setInterface(&led_array_interface);
+  led_array.set_interface(&led_array_interface);
   led_array.setup();
 
   // Initialize command router
@@ -57,7 +57,7 @@ void setup()
     led_array.demo();
 
   // Print the about screen when connected
-  led_array.printAbout();
+  led_array.print_about();
 }
 
 // This command runs continuously after setup() runs once
@@ -65,5 +65,5 @@ void loop()
 {
   // Loop until we recieve a command, then parse it.
   if (Serial.available())
-    cmd.processSerialStream();
+    cmd.process_serial_stream();
 }
