@@ -1,7 +1,9 @@
 /*
+  Copyright (c) 2021, Zack Phillips
   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
   All rights reserved.
 
+  BSD 3-Clause License
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -29,13 +31,16 @@
 #ifndef ILLUMINATE_H
 #define ILLUMINATE_H
 
-#define VERSION 1.21
+#define VERSION 1.33
 
 // This file allows the user to define which LED array interface is used. This should be set before compilation.
 // The value these are set to does not matter - only that they are defined.
 //#define USE_QUADRANT_ARRAY
 //#define USE_QUASI_DOME_ARRAY
-#define USE_SCI_ROUND_ARRAY
+//#define USE_SCI_ROUND_ARRAY
+#define USE_SCI_ROUND_ARRAY_R1
+// #define USE_QUAD_LULED_ARRAY
+//#define USE_LUMINI_RING
 //#define USE_SCI_WING_ARRAY
 //#define USE_SCI_ASYM_ARRAY
 //#define USE_SCI_EPI_ARRAY

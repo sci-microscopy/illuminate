@@ -32,7 +32,6 @@
 #include "ledarrayinterface.h"
 #include "ledsequence.h"
 #include "illuminate.h"
-
 #include <Arduino.h>
 
 // Trigger mode constants
@@ -41,19 +40,21 @@
 #define TRIG_MODE_START -2   // Triggering at the start of each acquisition
 
 // Trigger timing constants
-#define TRIGGER_PULSE_WIDTH_DEFAULT 500
-#define TRIGGER_DELAY_DEFAULT 0
-#define MAX_TRIGGER_WAIT_TIME_S 5.0
+#define TRIGGER_OUTPUT_PULSE_WIDTH_DEFAULT 500
+#define TRIGGER_OUTPUT_DELAY_DEFAULT 0
+#define TRIGGER_TIMEOUT_DEFAULT 3600.0
+#define TRIGGER_INPUT_POLARITY_DEFAULT 1
+#define TRIGGER_OUTPUT_POLARITY_DEFAULT 1
 
 // Misc constants
 #define PVALS_USE_UINT8 1     // Whether to return uint8 for pvals instead of 16-bit (Default is on)
 #define MIN_SEQUENCE_DELAY 5  // Min deblur pattern delay in ms (set by hardware)
 #define MIN_SEQUENCE_DELAY_FAST 2 // Min deblur pattern delay for fast sequence in us (set by hardware)
 #define DELAY_MAX 2000        // Global maximum amount to wait inside loop
-#define INVALID_NA -2000.0    // Represents an invalid NA
-#define DEFAULT_NA 0.25         // 100 * default NA, int
+#define INVALID_NA -2000.0    // Rep```resents an invalid NA
+#define DEFAULT_NA 1.0         // 100 * default NA, int
 
-#define LED_BRIGHTNESS_DEFAULT 50
+#define LED_BRIGHTNESS_DEFAULT 255
 
 // Command mode constants
 #define COMMAND_MODE_LONG 1
@@ -109,6 +110,7 @@ class LedArray {
 
     // Setting system parameters
     void setNa(int argc, char ** argv);
+    void setInnerNa(int argc, char ** argv);
     void setArrayDistance(int argc, char ** argv);
     void setColor(int16_t argc, char ** argv);
     void setBrightness(int16_t argc, char ** argv);
@@ -136,7 +138,7 @@ class LedArray {
     // Printing system state and information
     void printLedPositions(uint16_t argc, char * *argv, bool print_na);
     void printCurrentLedValues(uint16_t argc, char * *argv);
-    void print_about();
+    void printAbout();
     void printSystemParams();
     void printVersion();
 
@@ -144,7 +146,7 @@ class LedArray {
     void setDebug(uint16_t new_debug_level);
     void setup();   // Setup command
     int getArgumentLedNumberPitch(char * command_header);
-    void set_interface(LedArrayInterface * interface);
+    void setInterface(LedArrayInterface * interface);
     void notImplemented(const char * command_name);
     void drawChannel(int argc, char * *argv);
     void setPinOrder(int argc, char * *argv);
@@ -160,6 +162,11 @@ class LedArray {
     void setBaudRate(uint16_t argc, char ** argv);
     void setGsclkFreq(uint16_t argc, char ** argv);
     void setCommandMode(const char * mode);
+    
+    // Note that passing a -1 for led_number or color_channel_index sets all LEDs or all color channels respectively
+    void setLed(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)
+    void setLed(int16_t led_number, int16_t color_channel_index, uint8_t value);      // LED brightness (8-bit)
+    void setLed(int16_t led_number, int16_t color_channel_index, bool value);         // LED brightness (boolean)
 
     // Device-specific commands
     uint8_t getDeviceCommandCount();
@@ -181,6 +188,22 @@ class LedArray {
 
     // Error codes
     void error(int16_t error_code, const char * calling_function);
+
+    // Source voltage sensing
+    void isPowerSourcePluggedIn();
+    void togglePowerSupplySensing();
+    void printPowerSourceVoltage();
+
+    // Trigger Configuration
+    void setTriggerInputTimeout(int argc, char ** argv);
+    void setTriggerOutputPulseWidth(int argc, char ** argv);
+    void setTriggerOutputDelay(int argc, char ** argv);
+    void setTriggerInputPolarity(int argc, char ** argv);
+    void setTriggerOutputPolarity(int argc, char ** argv);
+    void getTriggerInputPins(int argc, char ** argv);
+    void getTriggerOutputPins(int argc, char ** argv);
+
+    void setCosineFactor(int argc, char ** argv);
 
   private:
 
@@ -208,19 +231,25 @@ class LedArray {
     boolean initial_setup = true;
     int debug = 0;
     float objective_na = 0.25;
+    float inner_na = 0.0;
     float led_array_distance_z = 60.0;
     int color_channel_count = 3;
     char * device_name;
     int8_t default_brightness = 63;
+    int8_t cosine_factor;
+    bool normalize_color = true;
 
     // Trigger Input (feedback) Settings
     static volatile float trigger_feedback_timeout_ms;
-    static volatile uint32_t * trigger_pulse_width_list_us;
-    static volatile uint32_t * trigger_start_delay_list_us;
+    static volatile uint32_t * trigger_output_pulse_width_list_us;
+    static volatile uint32_t * trigger_output_start_delay_list_us;
     static volatile int * trigger_input_mode_list;
     static volatile int * trigger_output_mode_list;
+    static volatile bool * trigger_input_polarity_list;
+    static volatile bool * trigger_output_polarity_list;
     static volatile int trigger_input_count;
     static volatile int trigger_output_count;
+    static volatile float trigger_input_timeout;
     static const int * trigger_output_pin_list;
     static const int * trigger_input_pin_list;
 

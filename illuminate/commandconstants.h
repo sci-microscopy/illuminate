@@ -1,7 +1,9 @@
 /*
+  Copyright (c) 2021, Zack Phillips
   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
   All rights reserved.
 
+  BSD 3-Clause License
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -26,12 +28,11 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-
 #ifndef COMMAND_CONSTANTS_H
 #define COMMAND_CONSTANTS_H
 
 // List of command indicies in below array
-#define COMMAND_COUNT 57
+#define COMMAND_COUNT 69
 
 #define CMD_HELP_IDX 0
 #define CMD_ABOUT_IDX 1
@@ -103,6 +104,22 @@
 #define CMD_SET_HUMAN 55
 #define CMD_SET_MACHINE 56
 
+#define CMD_PRINT_SOURCE_VOLTAGE_SENSING 57
+#define CMD_TOGGLE_SOURCE_VOLTAGE_SENSING 58
+#define CMD_PRINT_POWER_SOURCE_VOLTAGE 59
+
+#define CMD_SET_INNER_NA 60
+
+#define CMD_TRIGGER_INPUT_TIMEOUT 61
+#define CMD_TRIGGER_OUTPUT_PULSE_WIDTH 62
+#define CMD_TRIGGER_INPUT_POLARITY 63
+#define CMD_TRIGGER_OUTPUT_POLARITY 64
+#define CMD_TRIGGER_OUTPUT_DELAY 65
+#define CMD_TRIGGER_INPUT_PIN 66
+#define CMD_TRIGGER_OUTPUT_PIN 67
+
+#define CMD_COSINE_FACTOR 68
+
 // Syntax is: {short command, long command, description, syntax}
 const char* command_list[COMMAND_COUNT][4] = {
 
@@ -120,7 +137,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"sad", "setArrayDistance", "Set LED array distance", "sad,[dist (mm)]"},
 
   // Single (or multiple) LED Display
-  {"l", "led", "Turn on a single LED (or multiple LEDs in a list)", "ll.[led #].[led #], ..."},
+  {"l", "led", "Turn on a single LED (or multiple LEDs in a list)", "l.[led #].[led #], ..."},
 
   // General Display
   {"x", "xx", "Clear the LED array.", "x"},
@@ -144,7 +161,7 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"ssv",   "setSeqValue", "Set sequence value", "ssl.[# Number of LEDs], [LED number 0], [LED number 1]], [LED number 2], ..."},
   {"rseq",  "runSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq,[Delay between each pattern in ms].[number of times to repeat pattern].[trigger output 0 mode].[trigger output 1 mode].[trigger input 0 mode].[trigger input 1 mode]"},
   {"rseqf", "runSequenceFast", "Runs sequence with specified delay between each update. Uses parallel digital IO to acheive very fast speeds (single us). Only available on certain LED arrays.", "rseqf,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
-  {"pseq",  "printSeq", "Prints sequence values to the terminal", "pseq"}, \
+  {"pseq",  "printSeq", "Prints sequence values to the terminal", "pseq"}, 
   {"pseql", "printSeqLength", "Prints sequence length to the terminal", "pseql"},
   {"sseq",  "stepSequence", "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "sseq.[trigger output mode for index 0].[trigger output mode for index 1],"},
   {"reseq", "resetSeq", "Resets sequence index to start", "reseq"},
@@ -174,19 +191,34 @@ const char* command_list[COMMAND_COUNT][4] = {
   {"water", "waterDrop", "Water drop demo", "water"},
 
   // Set part and serial number in EEPROM
-  {"setsn", "setSerialNumber", "Sets device serial number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING", "setsn.100"},
-  {"setpn", "setPartNumber", "Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING", "setpn.1000"},
+  {"setsn", "setSerialNumber", "Sets device serial number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING", "setsn"},
+  {"setpn", "setPartNumber", "Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING", "setpn"},
 
   // Run case-specific sequences
-  {"rdpc",  "runDpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rdpc,[Delay between each pattern in ms].[Number of acquisitions].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
-  {"rfpm",  "runFpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warming message will print.", "rfpm,[Delay between each pattern in ms].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2] "},
+  {"rdpc",  "runDpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rdpc,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]"},
+  {"rfpm",  "runFpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rfpm,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]"},
 
   // Functions to set baud rate and gsclk frequency (for TLC5955 based boards)
   {"sbr",  "setBaudRate", "Sets SPI baud rate for TLC5955 Chips in Hz (baud)", "sbr.1000000"},
   {"sgs",  "setGsclkFreq", "Sets GSCLK frequency in Hz", "sgs.1000000"},
 
   {"human", "setModeHuman", "Sets command mode to human-readable", "human"},
-  {"machine", "setModeMachine", "Sets command mode to machine-readable", "machine"}
+  {"machine", "setModeMachine", "Sets command mode to machine-readable", "machine"},
+
+  {"pwrc", "isPowerSourceConnected", "Gets the state of the power source, if this device has the hardware to do so.", "pwrc"},
+  {"pwrs", "togglePowerSourceSensing", "Toggle power source sensing on or off.", "pwrs"},
+  {"pwrv", "printPowerSourceVoltage", "Print power sourve voltage.", "pwrv"},
+
+  {"nai", "setInnerNa", "Sets the inner NA. (nai.20 sets an inner NA of 0.20)  Respected by bf, dpc, and rdpc commands. Default is 0", "nai.20"},
+  {"trinputtimeout", "triggerInputTimeout", "Sets the trigger input timeout in seconds. Default is 3600", "trinputtimeout.10"},
+  {"troutputpulsewidth", "triggerOutputPulseWidth", "Sets the trigger pulse width in microseconds, default is 1000.", "troutputpulsewidth.1000"},
+  {"trinputpolarity", "triggerInputPolarity", "Sets the trigger input polarity. 1=active high, 0=active low. Default is 1.", "trinputpolarity.1"},
+  {"troutputpolarity", "triggerOutputPolarity", "Sets the trigger output polarity. 1=active high, 0=active low. Default is 1.", "troutputpolarity.1"},
+  {"troutputdelay", "triggerOutputDelay", "Sets the trigger delay in microseconds. Default is zero.", "troutputdelay.0"},
+  {"trinputpin", "triggerInputPin", "Returns the Teensy pin of the trigger inputsignal. Used only for debugging.", "trinputpin"},
+  {"troutputpin", "triggerOutputPin", "Returns the Teensy pin of the trigger outputsignal. Used only for debugging.", "troutputpin"},
+
+  {"cos", "cosineFactor", "Returns or sets the cosine factor, used to scale LED intensity (so outer LEDs are brighter). Input is cos.[integer cosine factor]", "cos.2"}
 
 };
 

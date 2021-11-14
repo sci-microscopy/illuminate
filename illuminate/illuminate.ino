@@ -1,7 +1,9 @@
 /*
+  Copyright (c) 2021, Zack Phillips
   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
   All rights reserved.
 
+  BSD 3-Clause License
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -26,7 +28,6 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#define DEMO_MODE 0
 #define SERIAL_BAUD_RATE 115200
 
 // Include various files depending on which LED array is used
@@ -46,18 +47,14 @@ void setup()
   Serial.begin(SERIAL_BAUD_RATE);
 
   // Initialize LED Array
-  led_array.set_interface(&led_array_interface);
+  led_array.setInterface(&led_array_interface);
   led_array.setup();
 
   // Initialize command router
   cmd.setLedArray(&led_array);
 
-  // Demo mode
-  if (DEMO_MODE)
-    led_array.demo();
-
   // Print the about screen when connected
-  led_array.print_about();
+  led_array.printAbout();
 }
 
 // This command runs continuously after setup() runs once
@@ -65,5 +62,5 @@ void loop()
 {
   // Loop until we recieve a command, then parse it.
   if (Serial.available())
-    cmd.process_serial_stream();
+    cmd.processSerialStream();
 }

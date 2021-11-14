@@ -1,45 +1,62 @@
 /*
-   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
-   All rights reserved.
+  Copyright (c) 2021, Zack Phillips
+  Copyright (c) 2018, Zachary Phillips (UC Berkeley)
+  All rights reserved.
 
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions are met:
+  BSD 3-Clause License
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
       Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the <organization> nor the
+      Neither the name of the UC Berkley nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-   DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
-   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL ZACHARY PHILLIPS (UC BERKELEY) BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA , OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 #include "../../illuminate.h"
 #ifdef USE_SCI_WING_ARRAY
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"
+
+// Power monitoring commands
+#define DEVICE_SUPPORTS_POWER_SENSING 0
+#define DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING 0
+#define PSU_ACTIVE_MONITORING_COMPARATOR_MODE 5
+
+#ifdef DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
+  #include "../TeensyComparator/TeensyComparator.h"
+#endif
+
 
 // Pin definitions (used internally)
 const int GSCLK = 6;
 const int LAT = 3;
 const int SPI_MOSI = 11;
 const int SPI_CLK = 13;
-const int TRIGGER_OUTPUT_PIN_0 = 22;
-const int TRIGGER_INPUT_PIN_0 = 23;
-const int TRIGGER_OUTPUT_PIN_1 = 19;
-const int TRIGGER_INPUT_PIN_1 = 18;
+const int TRIGGER_OUTPUT_PIN_0 = 23;
+const int TRIGGER_INPUT_PIN_0 = 22;
+const int TRIGGER_OUTPUT_PIN_1 = 20;
+const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
+
+// Power sensing pin
+const int POWER_SENSE_PIN = -1;
 
 // EEPROM Addresses
 #define DEMO_MODE_ADDRESS 50
@@ -66,10 +83,12 @@ const int LedArrayInterface::trigger_output_pin_list[] = {TRIGGER_OUTPUT_PIN_0, 
 const int LedArrayInterface::trigger_input_pin_list[] = {TRIGGER_INPUT_PIN_0, TRIGGER_INPUT_PIN_1};
 bool LedArrayInterface::trigger_input_state[] = {false, false};
 float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
+const int LedArrayInterface::power_sense_pin = POWER_SENSE_PIN;
+
 
 const uint8_t TLC5955::_tlc_count = 100;    // Change to reflect number of TLC chips
-float TLC5955::max_current_amps = 10.0;      // Maximum current output, amps
 bool TLC5955::enforce_max_current = true;   // Whether to enforce max current limit
+float TLC5955::max_current_amps = 10.0;
 
 // Define dot correction, pin rgb order, and grayscale data arrays in program memory
 uint8_t TLC5955::_dc_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
@@ -1035,7 +1054,7 @@ int LedArrayInterface::sendTriggerPulse(int trigger_index, uint16_t delay_us, bo
 }
 void LedArrayInterface::update()
 {
-      tlc.updateLeds();
+        tlc.updateLeds();
 }
 
 void LedArrayInterface::clear()
@@ -1144,7 +1163,7 @@ void LedArrayInterface::deviceReset()
   deviceSetup();
 }
 
-void LedArrayInterface::deviceSetup()
+ledArrayInterface::deviceSetup()
 {
         // Initialize TLC5955
         tlc.init(LAT, SPI_MOSI, SPI_CLK, GSCLK);
@@ -1157,7 +1176,7 @@ void LedArrayInterface::deviceSetup()
 
         // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
         // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT
-        tlc.setFunctionData(true, true, true, true, true); // WORKS with fast update
+        tlc.setFunctionData(true, true, true, true, true);
 
         // Set all LED current levels to max (127)
         int currentR = 127;
@@ -1187,6 +1206,39 @@ void LedArrayInterface::deviceSetup()
         for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
                 pinMode(trigger_input_pin_list[trigger_index], INPUT);
 
+        // Turn on PSU sensing if it's supported
+        if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
+            setPowerSourceMonitoringState(true);
+}
+
+void LedArrayInterface::sourceChangeIsr()
+{
+        Serial.printf(F("ERROR (LedArrayInterface::sourceChangeIsr): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
+}
+
+float LedArrayInterface::getPowerSourceVoltage()
+{
+    return -1.0;
+}
+
+bool LedArrayInterface::getPowerSourceMonitoringState()
+{
+  return False
+}
+
+int16_t LedArrayInterface::getDevicePowerSensingCapability()
+{
+      return NO_PSU_SENSING;
+}
+
+void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
+{
+        Serial.printf(F("ERROR (LedArrayInterface::setPowerSourceMonitoringState): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
+}
+
+bool LedArrayInterface::isPowerSourcePluggedIn()
+{
+  return true;
 }
 
 uint8_t LedArrayInterface::getDeviceCommandCount()
