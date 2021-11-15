@@ -371,35 +371,6 @@ void LedArrayInterface::deviceReset()
   deviceSetup();
 }
 
-void LedArrayInterface::sourceChangeIsr()
-{
-}
-
-float LedArrayInterface::getPowerSourceVoltage()
-{
-  return -1.0;
-}
-
-bool LedArrayInterface::getPowerSourceMonitoringState()
-{
-  return _power_source_sensing_is_enabled;
-}
-
-int16_t LedArrayInterface::getDevicePowerSensingCapability()
-{
-  return NO_PSU_SENSING;
-}
-
-void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
-{
-  ;
-}
-
-bool LedArrayInterface::isPowerSourcePluggedIn()
-{
-  return true;
-}
-
 void LedArrayInterface::deviceSetup()
 {
 
@@ -431,6 +402,36 @@ void LedArrayInterface::deviceSetup()
     for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
             pinMode(trigger_input_pin_list[trigger_index], INPUT);
 
+}
+
+void LedArrayInterface::sourceChangeIsr()
+{
+        Serial.printf(F("ERROR (LedArrayInterface::sourceChangeIsr): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
+}
+
+float LedArrayInterface::getPowerSourceVoltage()
+{
+    return -1.0;
+}
+
+bool LedArrayInterface::getPowerSourceMonitoringState()
+{
+  return false;
+}
+
+int16_t LedArrayInterface::getDevicePowerSensingCapability()
+{
+      return NO_PSU_SENSING;
+}
+
+void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
+{
+        Serial.printf(F("ERROR (LedArrayInterface::setPowerSourceMonitoringState): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
+}
+
+bool LedArrayInterface::isPowerSourcePluggedIn()
+{
+  return true;
 }
 
 uint8_t LedArrayInterface::getDeviceCommandCount()

@@ -1,7 +1,9 @@
 /*
+  Copyright (c) 2021, Zack Phillips
   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
   All rights reserved.
 
+  BSD 3-Clause License
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -25,7 +27,6 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 
 #ifndef COMMAND_ROUTING_H
 #define COMMAND_ROUTING_H

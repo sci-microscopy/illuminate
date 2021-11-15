@@ -39,7 +39,7 @@
 #define DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING 0
 #define PSU_ACTIVE_MONITORING_COMPARATOR_MODE 5
 
-#ifdef DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
+#if DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
   #include "../TeensyComparator/TeensyComparator.h"
 #endif
 
@@ -632,82 +632,6 @@ void LedArrayInterface::deviceReset()
   deviceSetup();
 }
 
-void LedArrayInterface::sourceChangeIsr()
-{
-  noInterrupts();
-
-  if (_time_elapsed_debounce > _warning_delay_ms)
-  {
-    bool new_psu_is_connected = TeensyComparator1.state();
-    if (_psu_is_connected && !new_psu_is_connected)
-    {
-      Serial.printf("[%s] WARNING: Power is disconnected! LED array will not illuminate.\n", "WRN01");
-      _time_elapsed_debounce = 0; // Reset timer
-    }
-    else if (!_psu_is_connected && new_psu_is_connected)
-    {
-      Serial.printf("Power connected.\n");
-      _time_elapsed_debounce = 0; // Reset timer
-    }
-    _psu_is_connected = new_psu_is_connected;
-  }
-  interrupts();
-}
-
-float LedArrayInterface::getPowerSourceVoltage()
-{
-  if (POWER_SENSE_PIN >= 0)
-  {
-    pinMode(POWER_SENSE_PIN, INPUT);
-    return ((float)analogRead(POWER_SENSE_PIN)) / 1024.0 * 3.3;
-  }
-  else
-    return -1.0;
-}
-
-bool LedArrayInterface::getPowerSourceMonitoringState()
-{
-  return _power_source_sensing_is_enabled;
-}
-
-int16_t LedArrayInterface::getDevicePowerSensingCapability()
-{
-  if (DEVICE_SUPPORTS_POWER_SENSING)
-    if (DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING)
-      return PSU_SENSING_AND_MONITORING;
-    else
-      return PSU_SENSING_ONLY;
-    else
-      return NO_PSU_SENSING;
-}
-
-void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
-{
-  if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
-  {
-    if (new_state)
-    {
-      // Enable power sensing
-      TeensyComparator1.set_pin(0, PSU_ACTIVE_MONITORING_COMPARATOR_MODE);
-      TeensyComparator1.set_interrupt(sourceChangeIsr, CHANGE);
-    }
-    else
-    {
-      // Turn off power sensing
-      TeensyComparator1.unset_pin();
-      TeensyComparator1.unset_interrupt();
-    }
-
-    // Set new state
-    _power_source_sensing_is_enabled = new_state;
-  }
-}
-
-bool LedArrayInterface::isPowerSourcePluggedIn()
-{
-  return _psu_is_connected;
-}
-
 void LedArrayInterface::deviceSetup()
 {
   LEDS.addLeds<APA102, DATA_PIN, CLOCK_PIN, BGR, DATA_RATE_MHZ(1)>(matrix, NUM_LEDS);
@@ -738,9 +662,36 @@ void LedArrayInterface::deviceSetup()
     for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
             pinMode(trigger_input_pin_list[trigger_index], INPUT);
 
-    // Turn on PSU sensing if it's supported
-    if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
-        setPowerSourceMonitoringState(true);
+}
+
+void LedArrayInterface::sourceChangeIsr()
+{
+        Serial.printf(F("ERROR (LedArrayInterface::sourceChangeIsr): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
+}
+
+float LedArrayInterface::getPowerSourceVoltage()
+{
+    return -1.0;
+}
+
+bool LedArrayInterface::getPowerSourceMonitoringState()
+{
+  return false;
+}
+
+int16_t LedArrayInterface::getDevicePowerSensingCapability()
+{
+      return NO_PSU_SENSING;
+}
+
+void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
+{
+        Serial.printf(F("ERROR (LedArrayInterface::setPowerSourceMonitoringState): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
+}
+
+bool LedArrayInterface::isPowerSourcePluggedIn()
+{
+  return true;
 }
 
 uint8_t LedArrayInterface::getDeviceCommandCount()

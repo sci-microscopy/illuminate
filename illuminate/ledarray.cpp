@@ -2970,9 +2970,6 @@ void LedArray::setup()
     delete[] led_color;
   }
 
-  // Read device mac address once
-  read_mac();
-
   // Initialize led array
   led_array_interface->deviceSetup();
 

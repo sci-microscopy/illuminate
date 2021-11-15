@@ -1,7 +1,9 @@
 /*
+  Copyright (c) 2021, Zack Phillips
   Copyright (c) 2018, Zachary Phillips (UC Berkeley)
   All rights reserved.
 
+  BSD 3-Clause License
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -25,7 +27,6 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 
 #ifndef LED_ARRAY_INTERFACE_H
 #define LED_ARRAY_INTERFACE_H
@@ -141,7 +142,12 @@ class LedArrayInterface {
     void setDemoMode(int8_t mode);
     int8_t getDemoMode();
 
-    // Source voltage checking
+    // Power Source functions
+    static int16_t getDevicePowerSensingCapability();
+    static bool isPowerSourcePluggedIn();
+    static bool getPowerSourceMonitoringState();
+    static void setPowerSourceMonitoringState(bool state);
+    static void sourceChangeIsr();
     int16_t source_sense_pin = -1;
     int16_t source_reference_value = -1;
     float getPowerSourceVoltage();

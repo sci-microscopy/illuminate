@@ -38,7 +38,7 @@
 #define DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING 0
 #define PSU_ACTIVE_MONITORING_COMPARATOR_MODE 5
 
-#ifdef DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
+#if DEVICE_SUPPORTS_ACTIVE_POWER_MONITORING
   #include "../TeensyComparator/TeensyComparator.h"
 #endif
 
@@ -1163,7 +1163,7 @@ void LedArrayInterface::deviceReset()
   deviceSetup();
 }
 
-ledArrayInterface::deviceSetup()
+void LedArrayInterface::deviceSetup()
 {
         // Initialize TLC5955
         tlc.init(LAT, SPI_MOSI, SPI_CLK, GSCLK);
@@ -1205,10 +1205,6 @@ ledArrayInterface::deviceSetup()
         // Input trigger Pins
         for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
                 pinMode(trigger_input_pin_list[trigger_index], INPUT);
-
-        // Turn on PSU sensing if it's supported
-        if (getDevicePowerSensingCapability() == PSU_SENSING_AND_MONITORING)
-            setPowerSourceMonitoringState(true);
 }
 
 void LedArrayInterface::sourceChangeIsr()
@@ -1223,7 +1219,7 @@ float LedArrayInterface::getPowerSourceVoltage()
 
 bool LedArrayInterface::getPowerSourceMonitoringState()
 {
-  return False
+  return false;
 }
 
 int16_t LedArrayInterface::getDevicePowerSensingCapability()
