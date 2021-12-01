@@ -28,7 +28,9 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// Define which LED Array is used
 #include "../../illuminate.h"
+
 #ifdef USE_QUADRANT_ARRAY
 #include "../../ledarrayinterface.h"
 

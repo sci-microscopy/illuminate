@@ -28,9 +28,10 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// Define which LED Array is used
 #include "../../illuminate.h"
-#ifdef USE_LUMINI_RING
 
+#ifdef USE_LUMINI_RING
 #include "../../ledarrayinterface.h"
 #include <FastLED.h>
 

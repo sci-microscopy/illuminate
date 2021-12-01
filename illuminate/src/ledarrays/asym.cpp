@@ -28,7 +28,9 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// Define which LED Array is used
 #include "../../illuminate.h"
+
 #ifdef USE_SCI_ASYM_ARRAY
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"
@@ -55,7 +57,6 @@ const char * LedArrayInterface::device_name = "sci.asym";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
 const float LedArrayInterface::max_na = 0.8;
 const int16_t LedArrayInterface::led_count = 48;
-const float LedArrayInterface::default_na = 0.4;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 2;
 const int LedArrayInterface::trigger_input_count = 2;

@@ -28,11 +28,13 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
- #include "../../illuminate.h"
- #ifdef USE_SCI_ROUND_ARRAY
- #include "../../ledarrayinterface.h"
- #include "../TLC5955/TLC5955.h"
- #include <EEPROM.h>
+// Define which LED Array is used
+#include "../../illuminate.h"
+
+#ifdef USE_SCI_ROUND_ARRAY
+#include "../../ledarrayinterface.h"
+#include "../TLC5955/TLC5955.h"
+#include <EEPROM.h>
 
 // Pin definitions (used internally)
 const int GSCLK = 6;
@@ -618,42 +620,42 @@ void LedArrayInterface::setPartNumber(uint16_t part_number)
 
 void LedArrayInterface::deviceSetup()
 {
-        // Initialize TLC5955
-        tlc.init(LAT, SPI_MOSI, SPI_CLK, GSCLK);
+    // Initialize TLC5955
+    tlc.init(LAT, SPI_MOSI, SPI_CLK, GSCLK);
 
-        // We must set dot correction values, so set them all to the brightest adjustment
-        tlc.setAllDcData(127);
+    // We must set dot correction values, so set them all to the brightest adjustment
+    tlc.setAllDcData(127);
 
-        // Set Max Current Values (see TLC5955 datasheet)
-        tlc.setMaxCurrent(3, 3, 3); // Go up to 7
+    // Set Max Current Values (see TLC5955 datasheet)
+    tlc.setMaxCurrent(3, 3, 3); // Go up to 7
 
-        // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
-        // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT
-        tlc.setFunctionData(true, true, false, true, true); // WORKS with fast update
+    // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
+    // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT
+    tlc.setFunctionData(true, true, false, true, true); // WORKS with fast update
 
-        // set all brightness levels to max (127)
-        int currentR = 127;
-        int currentB = 127;
-        int currentG = 127;
-        tlc.setBrightnessCurrent(currentR, currentB, currentG);
+    // set all brightness levels to max (127)
+    int currentR = 127;
+    int currentB = 127;
+    int currentG = 127;
+    tlc.setBrightnessCurrent(currentR, currentB, currentG);
 
-        // Update Control Register
-        tlc.updateControl();
+    // Update Control Register
+    tlc.updateControl();
 
-        // Update the GS register (ideally LEDs should be dark up to here)
-        tlc.setAllLed(0);
-        tlc.updateLeds();
+    // Update the GS register (ideally LEDs should be dark up to here)
+    tlc.setAllLed(0);
+    tlc.updateLeds();
 
-        // Output trigger Pins
-        for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
-        {
-                pinMode(LedArrayInterface::trigger_output_pin_list[trigger_index], OUTPUT);
-                digitalWriteFast(LedArrayInterface::trigger_output_pin_list[trigger_index], LOW);
-        }
+    // Output trigger Pins
+    for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
+    {
+            pinMode(LedArrayInterface::trigger_output_pin_list[trigger_index], OUTPUT);
+            digitalWriteFast(LedArrayInterface::trigger_output_pin_list[trigger_index], LOW);
+    }
 
-        // Input trigger Pins
-        for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
-                pinMode(LedArrayInterface::trigger_input_pin_list[trigger_index], INPUT);
+    // Input trigger Pins
+    for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
+            pinMode(LedArrayInterface::trigger_input_pin_list[trigger_index], INPUT);
 
 }
 

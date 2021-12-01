@@ -28,10 +28,12 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LED_ARRAY_SEQUENCE_H
-#define LED_ARRAY_SEQUENCE_H
+#ifndef LEDSEQUENCE_H
+#define LEDSEQUENCE_H
+
 #include "Arduino.h"
 #include "illuminate.h"
+#include "ledarrayinterface.h"
 
 // Define LED Sequence Object
 struct LedSequence

@@ -28,7 +28,9 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// Define which LED Array is used
 #include "../../illuminate.h"
+
 #ifdef USE_SCI_WING_ARRAY
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"
@@ -66,9 +68,7 @@ const int POWER_SENSE_PIN = -1;
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "Sci-Wing";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
-const float LedArrayInterface::max_na = 0.8;
 const int16_t LedArrayInterface::led_count = 793;
-const float LedArrayInterface::default_na = 0.4;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 2;
 const int LedArrayInterface::trigger_input_count = 2;
@@ -1227,7 +1227,7 @@ int16_t LedArrayInterface::getDevicePowerSensingCapability()
       return NO_PSU_SENSING;
 }
 
-void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
+void LedArrayInterface::setPowerSourceMonitoringState(int new_state)
 {
         Serial.printf(F("ERROR (LedArrayInterface::setPowerSourceMonitoringState): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
 }

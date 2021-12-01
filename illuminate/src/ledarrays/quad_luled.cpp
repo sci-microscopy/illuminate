@@ -28,9 +28,10 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// Define which LED Array is used
 #include "../../illuminate.h"
-#ifdef USE_QUAD_LULED_ARRAY
 
+#ifdef USE_QUAD_LULED_ARRAY
 #include "../../ledarrayinterface.h"
 #include <FastLED.h>
 

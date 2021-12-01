@@ -28,7 +28,9 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// Define which LED Array is used
 #include "../../illuminate.h"
+
 #ifdef USE_SCI_BIG_WING_ARRAY
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"

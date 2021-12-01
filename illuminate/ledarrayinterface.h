@@ -28,17 +28,18 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LED_ARRAY_INTERFACE_H
-#define LED_ARRAY_INTERFACE_H
+#ifndef LEDARRAYINTERFACE_H
+#define LEDARRAYINTERFACE_H
 
+#include "illuminate.h"
 #include <Arduino.h>
 #include <EEPROM.h>
 #include "constants.h"
 
 class LedArrayInterface {
   public:
-    static void deviceSetup();
-    void deviceReset();
+    static int deviceSetup();
+    int deviceReset();
 
     // Note that passing a -1 for led_number or color_channel_index sets all LEDs or all color channels respectively
     void setLed(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)
@@ -85,8 +86,6 @@ class LedArrayInterface {
     // Device and Software Descriptors
     static const char * device_name;
     static const char * device_hardware_revision;
-    static const float max_na;
-    static const float default_na;
     static const int16_t led_count;
     static const uint16_t center_led;
     static const int trigger_output_count;
@@ -142,16 +141,18 @@ class LedArrayInterface {
     void setDemoMode(int8_t mode);
     int8_t getDemoMode();
 
-    // Power Source functions
-    static int16_t getDevicePowerSensingCapability();
-    static bool isPowerSourcePluggedIn();
-    static bool getPowerSourceMonitoringState();
-    static void setPowerSourceMonitoringState(bool state);
-    static void sourceChangeIsr();
+    // Source voltage checking
     int16_t source_sense_pin = -1;
     int16_t source_reference_value = -1;
     float getPowerSourceVoltage();
-};
+    bool isPowerSourcePluggedIn();
+    int16_t getDevicePowerSensingCapability();
+    bool getPowerSourceMonitoringState();
+    void setPowerSourceMonitoringState(int state);
+    void sourceChangeIsr();
 
+    int8_t store_parameters(float objective_na, float led_Array_distance_z, uint8_t brightness, uint8_t color_r, uint8_t color_g, uint8_t color_b);
+    int8_t recall_parameters(float* objective_na, float* led_Array_distance_z, uint8_t* brightness, uint8_t* color_r, uint8_t* color_g, uint8_t* color_b);
+};
 
 #endif
