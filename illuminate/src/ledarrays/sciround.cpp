@@ -74,14 +74,14 @@ bool LedArrayInterface::trigger_input_state[] = {false};
 
 int LedArrayInterface::debug = 0;
 
-const uint8_t TLC5955::_tlc_count = 52;          // Change to reflect number of TLC chips
+const uint8_t TLC5955::chip_count = 52;          // Change to reflect number of TLC chips
 float TLC5955::max_current_amps = 8.0;      // Maximum current output, amps
 bool TLC5955::enforce_max_current = true;   // Whether to enforce max current limit
 
 // Define dot correction, pin rgb order, and grayscale data arrays in program memory
-uint8_t TLC5955::_dc_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
-uint8_t TLC5955::_rgb_order[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
-uint16_t TLC5955::_grayscale_data[TLC5955::_tlc_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
+uint8_t TLC5955::_dc_data[TLC5955::chip_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
+uint8_t TLC5955::_rgb_order[TLC5955::chip_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
+uint16_t TLC5955::_grayscale_data[TLC5955::chip_count][TLC5955::LEDS_PER_CHIP][TLC5955::COLOR_CHANNEL_COUNT];
 
 /**** Device-specific variables ****/
 TLC5955 tlc; // TLC5955 object
@@ -89,8 +89,8 @@ uint32_t gsclk_frequency = 1000000;
 
 /**** Device-specific commands ****/
 const uint8_t LedArrayInterface::device_command_count = 1;
-const char * LedArrayInterface::deviceCommandNamesShort[] = {"c"};
-const char * LedArrayInterface::deviceCommandNamesLong[] = {"center"};
+const char * LedArrayInterface::device_commandNamesShort[] = {"c"};
+const char * LedArrayInterface::device_commandNamesLong[] = {"center"};
 const uint16_t LedArrayInterface::device_command_pattern_dimensions[][2] = {{1,5}}; // Number of commands, number of LEDs in each command.
 
 /**** Part number and Serial number addresses in EEPROM ****/
@@ -362,61 +362,61 @@ const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
         {256, 145, 400, -4321, 0}
 };
 
-void LedArrayInterface::setMaxCurrentEnforcement(bool enforce)
+void LedArrayInterface::set_max_current_enforcement(bool enforce)
 {
         TLC5955::enforce_max_current = enforce;
 }
 
-void LedArrayInterface::setMaxCurrentLimit(float limit)
+void LedArrayInterface::set_max_current_limit(float limit)
 {
         if (limit > 0)
                 TLC5955::max_current_amps = limit;
 }
 
-void LedArrayInterface::notImplemented(const char * command_name)
+void LedArrayInterface::not_implemented(const char * command_name)
 {
         Serial.print(F("Command "));
         Serial.print(command_name);
         Serial.printf(F(" is not implemented for this device. %s"), SERIAL_LINE_ENDING);
 }
 
-uint16_t LedArrayInterface::getLedValue(uint16_t led_number, int color_channel_index)
+uint16_t LedArrayInterface::get_led_value(uint16_t led_number, int color_channel_index)
 {
         int16_t channel_number = (int16_t)pgm_read_word(&(led_positions[led_number][1]));
         if (channel_number >= 0)
                 return tlc.getChannelValue(channel_number, color_channel_index);
         else
         {
-                Serial.print(F("ERROR (LedArrayInterface::getLedValue) - invalid LED number ("));
+                Serial.print(F("ERROR (LedArrayInterface::get_led_value) - invalid LED number ("));
                 Serial.print(led_number);
                 Serial.printf(F(")%s"), SERIAL_LINE_ENDING);
                 return 0;
         }
 }
 
-void LedArrayInterface::setPinOrder(int16_t led_number, int16_t color_channel_index, uint8_t position)
+void LedArrayInterface::set_pin_order(int16_t led_number, int16_t color_channel_index, uint8_t position)
 {
-        notImplemented("SetPinOrder");
+        not_implemented("set_pin_order");
 }
 
-void LedArrayInterface::setLedFast(int16_t led_number, int color_channel_index, bool value)
+void LedArrayInterface::set_ledFast(int16_t led_number, int color_channel_index, bool value)
 {
-        notImplemented("setLedFast");
+        not_implemented("set_ledFast");
 }
 
 // Debug Variables
-bool LedArrayInterface::getDebug()
+bool LedArrayInterface::get_debug()
 {
         return (LedArrayInterface::debug);
 }
 
-void LedArrayInterface::setDebug(int state)
+void LedArrayInterface::set_debug(int state)
 {
         debug = state;
-        Serial.printf(F("(LedArrayInterface::setDebug): Set debug level to %d \n"), debug);
+        Serial.printf(F("(LedArrayInterface::set_debug): Set debug level to %d \n"), debug);
 }
 
-int LedArrayInterface::setTriggerState(int trigger_index, bool state)
+int LedArrayInterface::set_trigger_state(int trigger_index, bool state)
 {
         // Get trigger pin
         int trigger_pin = trigger_output_pin_list[trigger_index];
@@ -432,7 +432,7 @@ int LedArrayInterface::setTriggerState(int trigger_index, bool state)
         }
 }
 
-int LedArrayInterface::getInputTriggerState(int input_trigger_index)
+int LedArrayInterface::get_input_trigger_state(int input_trigger_index)
 {
         // Get trigger pin
         int trigger_pin = trigger_input_pin_list[input_trigger_index];
@@ -442,7 +442,7 @@ int LedArrayInterface::getInputTriggerState(int input_trigger_index)
                 return (-1);
 }
 
-int LedArrayInterface::sendTriggerPulse(int trigger_index, uint16_t delay_us, bool inverse_polarity)
+int LedArrayInterface::send_trigger_pulse(int trigger_index, uint16_t delay_us, bool inverse_polarity)
 {
         // Get trigger pin
         int trigger_pin = trigger_output_pin_list[trigger_index];
@@ -480,7 +480,7 @@ void LedArrayInterface::clear()
         tlc.updateLeds();
 }
 
-void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel_number, uint16_t value)
+void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, uint16_t value)
 {
         if (debug >= 2)
         {
@@ -492,16 +492,16 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
         }
 
         if (channel_number >= 0)
-                tlc.setChannel(channel_number, value);
+                tlc.set_channel(channel_number, value);
         else
         {
-                Serial.print(F("Error (LedArrayInterface::setChannel): Invalid channel ("));
+                Serial.print(F("Error (LedArrayInterface::set_channel): Invalid channel ("));
                 Serial.print(channel_number);
                 Serial.printf(F(")%s"), SERIAL_LINE_ENDING);
         }
 }
 
-void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel_number, uint8_t value)
+void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, uint8_t value)
 {
         if (debug >= 2)
         {
@@ -511,10 +511,10 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
                 Serial.print(color_channel_number);
                 Serial.print(SERIAL_LINE_ENDING);
         }
-        setChannel(channel_number, color_channel_number, (uint16_t)( value * UINT16_MAX / UINT8_MAX));
+        set_channel(channel_number, color_channel_number, (uint16_t)( value * UINT16_MAX / UINT8_MAX));
 }
 
-void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel_number, bool value)
+void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, bool value)
 {
         if (debug >= 2)
         {
@@ -524,10 +524,10 @@ void LedArrayInterface::setChannel(int16_t channel_number, int16_t color_channel
                 Serial.print(color_channel_number);
                 Serial.print(SERIAL_LINE_ENDING);
         }
-        setChannel(channel_number, color_channel_number, (uint16_t) (value * UINT16_MAX));
+        set_channel(channel_number, color_channel_number, (uint16_t) (value * UINT16_MAX));
 }
 
-void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number, uint16_t value)
+void LedArrayInterface::set_led(int16_t led_number, int16_t color_channel_number, uint16_t value)
 {
         int16_t channel_number = -1;
 
@@ -536,13 +536,13 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
                 for (uint16_t led_index = 0; led_index < led_count; led_index++)
                 {
                         channel_number = (int16_t)pgm_read_word(&(led_positions[led_index][1]));
-                        setChannel(channel_number, color_channel_number, value);
+                        set_channel(channel_number, color_channel_number, value);
                 }
         }
         else
         {
                 channel_number = (int16_t)pgm_read_word(&(led_positions[led_number][1]));
-                setChannel(channel_number, color_channel_number, value);
+                set_channel(channel_number, color_channel_number, value);
         }
 
         if (debug >= 2)
@@ -559,7 +559,7 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
         }
 }
 
-void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number, uint8_t value)
+void LedArrayInterface::set_led(int16_t led_number, int16_t color_channel_number, uint8_t value)
 {
         if (debug >= 2)
         {
@@ -569,10 +569,10 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
                 Serial.print(color_channel_number);
                 Serial.print(SERIAL_LINE_ENDING);
         }
-        setLed(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX / UINT8_MAX));
+        set_led(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX / UINT8_MAX));
 }
 
-void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number, bool value)
+void LedArrayInterface::set_led(int16_t led_number, int16_t color_channel_number, bool value)
 {
         if (debug >= 2)
         {
@@ -582,15 +582,15 @@ void LedArrayInterface::setLed(int16_t led_number, int16_t color_channel_number,
                 Serial.print(color_channel_number);
                 Serial.print(SERIAL_LINE_ENDING);
         }
-        setLed(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX));
+        set_led(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX));
 }
 
-void LedArrayInterface::deviceReset()
+void LedArrayInterface::device_reset()
 {
-        deviceSetup();
+        device_setup();
 }
 
-uint16_t LedArrayInterface::getSerialNumber()
+uint16_t LedArrayInterface::get_serial_number()
 {
   uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
   return (sn_read);
@@ -604,13 +604,13 @@ void LedArrayInterface::setSerialNumber(uint16_t serial_number)
 	EEPROM.write(SN_ADDRESS + 1, upper_8bits_sn);
 }
 
-uint16_t LedArrayInterface::getPartNumber()
+uint16_t LedArrayInterface::get_part_number()
 {
   uint16_t pn_read = (EEPROM.read(PN_ADDRESS + 1) << 8) | EEPROM.read(PN_ADDRESS);
   return (pn_read);
 }
 
-void LedArrayInterface::setPartNumber(uint16_t part_number)
+void LedArrayInterface::set_part_number(uint16_t part_number)
 {
 	byte lower_8bits_pn = part_number & 0xff;
 	byte upper_8bits_pn = (part_number >> 8) & 0xff;
@@ -618,29 +618,29 @@ void LedArrayInterface::setPartNumber(uint16_t part_number)
 	EEPROM.write(PN_ADDRESS + 1, upper_8bits_pn);
 }
 
-void LedArrayInterface::deviceSetup()
+void LedArrayInterface::device_setup()
 {
     // Initialize TLC5955
     tlc.init(LAT, SPI_MOSI, SPI_CLK, GSCLK);
 
     // We must set dot correction values, so set them all to the brightest adjustment
-    tlc.setAllDcData(127);
+    tlc.set_all_dc_data(127);
 
     // Set Max Current Values (see TLC5955 datasheet)
-    tlc.setMaxCurrent(3, 3, 3); // Go up to 7
+    tlc.set_max_current(3, 3, 3); // Go up to 7
 
     // Set Function Control Data Latch values. See the TLC5955 Datasheet for the purpose of this latch.
     // DSPRPT, TMGRST, RFRESH, ESPWM, LSDVLT
-    tlc.setFunctionData(true, true, false, true, true); // WORKS with fast update
+    tlc.set_function_data(true, true, false, true, true); // WORKS with fast update
 
     // set all brightness levels to max (127)
     int currentR = 127;
     int currentB = 127;
     int currentG = 127;
-    tlc.setBrightnessCurrent(currentR, currentB, currentG);
+    tlc.set_brightness_current(currentR, currentB, currentG);
 
     // Update Control Register
-    tlc.updateControl();
+    tlc.update_control();
 
     // Update the GS register (ideally LEDs should be dark up to here)
     tlc.setAllLed(0);
@@ -659,64 +659,64 @@ void LedArrayInterface::deviceSetup()
 
 }
 
-void LedArrayInterface::sourceChangeIsr()
+void LedArrayInterface::source_change_interrupt()
 {
-        Serial.printf(F("ERROR (LedArrayInterface::sourceChangeIsr): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
+        Serial.printf(F("ERROR (LedArrayInterface::source_change_interrupt): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
 }
 
-float LedArrayInterface::getPowerSourceVoltage()
+float LedArrayInterface::get_power_source_voltage()
 {
     return -1.0;
 }
 
-bool LedArrayInterface::getPowerSourceMonitoringState()
+bool LedArrayInterface::get_power_source_monitoring_state()
 {
   return false;
 }
 
-int16_t LedArrayInterface::getDevicePowerSensingCapability()
+int16_t LedArrayInterface::get_device_power_sensing_capability()
 {
       return NO_PSU_SENSING;
 }
 
-void LedArrayInterface::setPowerSourceMonitoringState(bool new_state)
+void LedArrayInterface::set_power_source_monitoring_state(bool new_state)
 {
-        Serial.printf(F("ERROR (LedArrayInterface::setPowerSourceMonitoringState): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
+        Serial.printf(F("ERROR (LedArrayInterface::set_power_source_monitoring_state): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
 }
 
-bool LedArrayInterface::isPowerSourcePluggedIn()
+bool LedArrayInterface::is_power_source_plugged_in()
 {
   return true;
 }
 
-uint8_t LedArrayInterface::getDeviceCommandCount()
+uint8_t LedArrayInterface::get_device_command_count()
 {
         return (LedArrayInterface::device_command_count);
 }
 
-const char * LedArrayInterface::getDeviceCommandNameShort(int device_command_index)
+const char * LedArrayInterface::get_device_command_name_short(int device_command_index)
 {
         if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
-                return (LedArrayInterface::deviceCommandNamesShort[device_command_index]);
+                return (LedArrayInterface::device_commandNamesShort[device_command_index]);
         else
         {
-                Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+                Serial.printf(F("ERROR (LedArrayInterface::get_device_command_led_list_size): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
                 return ("");
         }
 }
 
-const char * LedArrayInterface::getDeviceCommandNameLong(int device_command_index)
+const char * LedArrayInterface::get_device_command_name_long(int device_command_index)
 {
         if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
-                return (LedArrayInterface::deviceCommandNamesLong[device_command_index]);
+                return (LedArrayInterface::device_commandNamesLong[device_command_index]);
         else
         {
-                Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+                Serial.printf(F("ERROR (LedArrayInterface::get_device_command_led_list_size): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
                 return ("");
         }
 }
 
-uint32_t LedArrayInterface::getDeviceCommandLedListSize(int device_command_index)
+uint32_t LedArrayInterface::get_device_command_led_list_size(int device_command_index)
 {
         if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
         {
@@ -730,16 +730,16 @@ uint32_t LedArrayInterface::getDeviceCommandLedListSize(int device_command_index
         }
         else
         {
-                Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+                Serial.printf(F("ERROR (LedArrayInterface::get_device_command_led_list_size): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
                 return (0);
         }
 }
 
-uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_index, uint16_t pattern_index, uint16_t led_index)
+uint16_t LedArrayInterface::get_device_command_led_list_element(int device_command_index, uint16_t pattern_index, uint16_t led_index)
 {
         if ((device_command_index >= 0) && (device_command_index < LedArrayInterface::device_command_count))
         {
-                uint32_t concatenated = getDeviceCommandLedListSize(device_command_index);
+                uint32_t concatenated = get_device_command_led_list_size(device_command_index);
                 uint16_t pattern_count  = (uint16_t)(concatenated >> 16);
                 uint16_t leds_per_pattern = (uint16_t)concatenated;
 
@@ -755,35 +755,35 @@ uint16_t LedArrayInterface::getDeviceCommandLedListElement(int device_command_in
                 }
                 else
                 {
-                        Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid pattern index (%d) / led index (%d)"), pattern_index, led_index, SERIAL_LINE_ENDING);
+                        Serial.printf(F("ERROR (LedArrayInterface::get_device_command_led_list_size): Invalid pattern index (%d) / led index (%d)"), pattern_index, led_index, SERIAL_LINE_ENDING);
                         return (0);
                 }
         }
         else
         {
-                Serial.printf(F("ERROR (LedArrayInterface::getDeviceCommandLedListSize): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
+                Serial.printf(F("ERROR (LedArrayInterface::get_device_command_led_list_size): Invalid device command index (%d)"), device_command_index, SERIAL_LINE_ENDING);
                 return (0);
         }
 }
 
-void LedArrayInterface::setGsclkFreq(uint32_t gsclk_frequency)
+void LedArrayInterface::set_gsclk_frequency(uint32_t gsclk_frequency)
 {
-  tlc.setGsclkFreq(gsclk_frequency);
+  tlc.set_gsclk_frequency(gsclk_frequency);
 }
 
-uint32_t LedArrayInterface::getGsclkFreq()
+uint32_t LedArrayInterface::get_gsclk_frequency()
 {
-  return tlc.getGsclkFreq();
+  return tlc.get_gsclk_frequency();
 }
 
-void LedArrayInterface::setBaudRate(uint32_t new_baud_rate)
+void LedArrayInterface::set_sclk_baud_rate(uint32_t new_baud_rate)
 {
-  tlc.setSpiBaudRate(new_baud_rate);
+  tlc.set_sclk_frequency(new_baud_rate);
 }
 
-uint32_t LedArrayInterface::getBaudRate()
+uint32_t LedArrayInterface::get_sclk_baud_rate()
 {
-  return tlc.getSpiBaudRate();
+  return tlc.get_sclk_frequency();
 }
 
 int8_t LedArrayInterface::getDemoMode()

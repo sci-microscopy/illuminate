@@ -48,23 +48,22 @@ class LedArray {
     int run_demo();    // Run a demo which tests the functions below
 
     // Pattern commands
-    int drawLedList(uint16_t argc, char ** argv);          // Draw a list of LEDs (or just 1)
-    int scanBrightfieldLeds(uint16_t argc, char ** argv);  // Scan brightfield LEDs
-    int scanDarkfieldLeds(uint16_t argc, char ** argv);  // Scan brightfield LEDs
-    int scanAllLeds(uint16_t argc, char ** argv);
-    int drawDpc(uint16_t argc, char ** argv);
-    int drawBrightfield(uint16_t argc, char ** argv);;
-    int drawHalfAnnulus(uint16_t argc, char * *argv);
-    int drawColorDarkfield(uint16_t argc, char * * argv);
-    int drawAnnulus(uint16_t argc, char * * argv);
-    int drawQuadrant(uint16_t argc, char * *argv);
-    int drawDarkfield(uint16_t argc, char * *argv);
-    int drawCdpc(uint16_t argc, char * *argv);
-    int drawNavigator(uint16_t argc, char * *argv);
-    int fillArray();
+    int draw_led_list(uint16_t argc, char ** argv);          // Draw a list of LEDs (or just 1)
+    int scan_brightfield_leds(uint16_t argc, char ** argv);  // Scan brightfield LEDs
+    int scan_darkfield_leds(uint16_t argc, char ** argv);  // Scan brightfield LEDs
+    int scan_all_leds(uint16_t argc, char ** argv);
+    int draw_dpc(uint16_t argc, char ** argv);
+    int draw_brightfield(uint16_t argc, char ** argv);;
+    int draw_half_annulus(uint16_t argc, char * *argv);
+    int draw_color_darkfield(uint16_t argc, char * * argv);
+    int draw_annulus(uint16_t argc, char * * argv);
+    int draw_quadrant(uint16_t argc, char * *argv);
+    int draw_darkfield(uint16_t argc, char * *argv);
+    int draw_cdpc(uint16_t argc, char * *argv);
+    int fill_array();
     int clear();
-    int drawDiscoPattern();
-    int waterDrop();
+    int disco();
+    int water_drop();
 
     // Drawing primatives
     void draw_primative_quadrant(int quadrant_number, float start_na, float end_na, bool include_center);
@@ -73,85 +72,76 @@ class LedArray {
     void draw_primative_led_scan(uint16_t delay_ms, float start_na, float end_na, bool print_indicies);
 
     // Triggering
-    bool getTriggerState(int trigger_index);
-    bool waitForTriggerState(int trigger_index, bool state);
-    int triggerInputTest(uint16_t channel);
-    int triggerSetup(uint16_t argc, char ** argv);
-    int sendTriggerPulse(int trigger_index, bool show_output);
-    int setTriggerState(int trigger_index, bool state, bool show_output);
+    bool get_trigger_state(int trigger_index);
+    bool wait_for_trigger_state(int trigger_index, bool state);
+    int trigger_input_test(uint16_t channel);
+    int trigger_setup(uint16_t argc, char ** argv);
+    int send_trigger_pulse(int trigger_index, bool show_output);
+    int set_trigger_state(int trigger_index, bool state, bool show_output);
 
     // Setting system parameters
-    int setNa(uint16_t argc, char ** argv);
-    int setInnerNa(uint16_t argc, char ** argv);
-    int setArrayDistance(uint16_t argc, char ** argv);
-    int setColor(int16_t argc, char ** argv);
-    int setBrightness(int16_t argc, char ** argv);
-    void buildNaList(float boardDistance);
-    int toggleAutoClear(uint16_t argc, char ** argv);
-    int setMaxCurrentEnforcement(uint16_t argc, char ** argv);
-    int setMaxCurrentLimit(uint16_t argc, char ** argv);
+    int set_na(uint16_t argc, char ** argv);
+    int set_inner_na(uint16_t argc, char ** argv);
+    int set_array_distance(uint16_t argc, char ** argv);
+    int set_color(int16_t argc, char ** argv);
+    int set_brightness(int16_t argc, char ** argv);
+    void build_na_list(float boardDistance);
+    int set_auto_clear(uint16_t argc, char ** argv);
+    int set_max_current_enforcement(uint16_t argc, char ** argv);
+    int set_max_current_limit(uint16_t argc, char ** argv);
 
     // Sequencing
-    int runSequence(uint16_t argc, char ** argv);
-    int runSequenceDpc(uint16_t argc, char ** argv);
-    int runSequenceFpm(uint16_t argc, char ** argv);
-    int runSequenceFast(uint16_t argc, char ** argv);
-    int stepSequence(uint16_t argc, char ** argv);
-    int setSequenceValue(uint16_t argc, char ** argv);
-    int printSequence(uint16_t argc, char ** argv);
-    int printSequenceLength(uint16_t argc, char ** argv);
-    int resetSequence(uint16_t argc, char ** argv);
-    int setSequenceLength(uint16_t argc, char ** argv);
-    int setSequenceZeros(uint16_t argc, char ** argv);
-    int setSequenceBitDepth(uint16_t argc, char ** argv);
-    int setPartNumber(uint16_t argc, char ** argv);
-    int setSerialNumber(uint16_t argc, char ** argv);
-    int _getSequenceLength();
-    int _getSequenceBitDepth();
+    int run_sequence(uint16_t argc, char ** argv);
+    int run_sequence_dpc(uint16_t argc, char ** argv);
+    int run_sequence_fpm(uint16_t argc, char ** argv);
+    int step_sequence(uint16_t argc, char ** argv);
+    int set_sequence_value(uint16_t argc, char ** argv);
+    int print_sequence(uint16_t argc, char ** argv);
+    int restart_sequence(uint16_t argc, char ** argv);
+    int set_sequence_length(uint16_t argc, char ** argv);
 
-    int setDebug(uint16_t argc, char ** argv);
+    int print_part_number(uint16_t argc, char ** argv);
+    int print_serial_number(uint16_t argc, char ** argv);
+
+    int set_debug(uint16_t argc, char ** argv);
 
     // Printing system state and information
-    int printLedPositions(uint16_t argc, char * *argv, bool print_na);
-    int printCurrentLedValues(uint16_t argc, char * *argv);
-    int printAbout(uint16_t argc, char * *argv);
-    int printSystemParams(uint16_t argc, char * *argv);
-    int printVersion(uint16_t argc, char * *argv);
+    int print_led_positions(uint16_t argc, char * *argv, bool print_na);
+    int print_led_values(uint16_t argc, char * *argv);
+    int print_about(uint16_t argc, char * *argv);
+    int print_system_parameters(uint16_t argc, char * *argv);
+    int print_version(uint16_t argc, char * *argv);
 
     // Internal functions
     void setup();   // Setup command
-    int getArgumentLedNumberPitch(char * command_header);
-    void setInterface(LedArrayInterface * interface);
-    void notImplemented(const char * command_name);
-    int drawChannel(uint16_t argc, char * *argv);
-    int setPinOrder(uint16_t argc, char * *argv);
-    int getColorChannelCount();
-    static void tripTimer();
-    static void patternIncrementFast();
-    void scanLedRange(uint16_t delay_ms, float start_na, float end_na, bool print_indicies);
+    void set_interface(LedArrayInterface * interface);
+    void not_implemented(const char * command_name);
+    int draw_channel(uint16_t argc, char * *argv);
+    int set_pin_order(uint16_t argc, char * *argv);
+    void scan_led_range(uint16_t delay_ms, float start_na, float end_na, bool print_indicies);
 
-    int printMacAddress();
-    int setBaudRate(uint16_t argc, char ** argv);
-    int setGsclkFreq(uint16_t argc, char ** argv);
-    int setCommandMode(const char * mode);
+    int print_mac_address();
+    int set_sclk_baud_rate(uint16_t argc, char ** argv);
+    int set_gsclk_frequency(uint16_t argc, char ** argv);
+    int set_command_mode(const char * mode);
 
     // Note that passing a -1 for led_number or color_channel_index sets all LEDs or all color channels respectively
-    int setLed(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)
-    int setLed(int16_t led_number, int16_t color_channel_index, uint8_t value);      // LED brightness (8-bit)
-    int setLed(int16_t led_number, int16_t color_channel_index, bool value);         // LED brightness (boolean)
+    int set_led(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)
+    int set_led(int16_t led_number, int16_t color_channel_index, uint8_t value);      // LED brightness (8-bit)
+    int set_led(int16_t led_number, int16_t color_channel_index, bool value);         // LED brightness (boolean)
 
     // Device-specific commands
-    uint8_t getDeviceCommandCount();
-    const char * getDeviceCommandNameShort(int device_command_index);
-    const char * getDeviceCommandNameLong(int device_command_index);
-    int deviceCommand(int device_command_index, uint16_t argc, char * *argv);
+    uint8_t get_device_command_count();
+    const char * get_device_command_name_short(int device_command_index);
+    const char * get_device_command_name_long(int device_command_index);
+    int device_command(int device_command_index, uint16_t argc, char * *argv);
 
     // Demo mode
-    int setDemoMode(uint16_t argc, char ** argv);
+    int set_demo_mode(uint16_t argc, char ** argv);
 
     // Printing
     void print(const char * short_command, const char * long_command);
-    void clearOutputBuffers();
+    void clear_output_buffers();
 
     // Short and long responses
     char output_buffer_short[MAX_RESPONSE_LENGTH_SHORT];
@@ -163,19 +153,32 @@ class LedArray {
     int print_power_supply_voltage(uint16_t argc, char ** argv);
 
     // Trigger Configuration
-    int setTriggerInputTimeout(uint16_t argc, char ** argv);
-    int setTriggerOutputPulseWidth(uint16_t argc, char ** argv);
-    int setTriggerOutputDelay(uint16_t argc, char ** argv);
-    int setTriggerInputPolarity(uint16_t argc, char ** argv);
-    int setTriggerOutputPolarity(uint16_t argc, char ** argv);
-    int getTriggerInputPins(uint16_t argc, char ** argv);
-    int getTriggerOutputPins(uint16_t argc, char ** argv);
+    int set_trigger_input_timeout(uint16_t argc, char ** argv);
+    int set_trigger_output_pulse_width(uint16_t argc, char ** argv);
+    int set_trigger_output_delay(uint16_t argc, char ** argv);
+    int set_trigger_input_polarity(uint16_t argc, char ** argv);
+    int set_trigger_output_polarity(uint16_t argc, char ** argv);
+    int get_trigger_input_pins(uint16_t argc, char ** argv);
+    int get_trigger_output_pins(uint16_t argc, char ** argv);
 
-    int setCosineFactor(uint16_t argc, char ** argv);
+    int set_cosine_factor(uint16_t argc, char ** argv);
     void calculate_max_na();
 
-    int store_parameters(uint16_t argc, char * *argv);
-    int recall_parameters(uint16_t argc, char * *argv);
+    int8_t store_parameters();
+    int8_t recall_parameters();
+
+    // Demo Mode
+    int8_t set_demo_mode(int8_t mode);
+    int8_t get_demo_mode();
+
+    int8_t set_autoload_on_reboot(uint16_t argc, char ** argv);
+
+    uint16_t get_serial_number();
+    void set_serial_number(uint16_t serial_number);
+    uint16_t get_part_number();
+    void set_part_number(uint16_t part_number);
+
+    int8_t initialize_hardware(uint16_t argc, char ** argv);
 
   private:
 

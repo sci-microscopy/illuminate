@@ -84,70 +84,24 @@ const char* error_code_list[ERROR_CODE_COUNT][2] = {
   // Sequence zeros too long
   {"INTERRUPTED", "Command interrupted."},
 
+  // Invalid command
   {"INVALID_COMMAND", "Invalid command."},
 
-  {"MEMORY", "Not enough memory for operation."}
+  // Not enough memory for operation
+  {"MEMORY", "Not enough memory for operation."},
+
+  // Invalid command
+  {"COMMAND_LENGTH", "Command too long."},
+
+  // Sequence full
+  {"SEQUENCE_FULL", "Sequence is full."}
 
 };
 
 int CommandRouter::init(command_item_t *commands, int buffer_size,
-                        int argv_max) {
-  if (argv_max == 0) {
-    return ERROR_INVALID_COMMAND;
-  }
-  if (buffer_size == 0) {
-    return ERROR_INVALID_COMMAND;
-  }
-
-  argv = new const char *[argv_max];
-  if (argv == nullptr)
-    goto fail_argv_alloc;
-
-  this->argv_max = argv_max;
-
-  // TODO: do I need a + 1 here?
-  buffer = new char[buffer_size + 1];
-  if (buffer == nullptr)
-    goto fail_buffer_alloc;
-  this->buffer_size = buffer_size;
-
-  command_list = commands;
-  malloc_used = true;
-  return NO_ERROR;
-
-  delete buffer;
-  buffer = nullptr;
-  this->buffer_size = 0;
-fail_buffer_alloc:
-  delete argv;
-  argv = nullptr;
-  this->argv_max = 0;
-fail_argv_alloc:
-  return ERROR_MEMORY_ALLOC;
-}
-
-int CommandRouter::init_no_malloc(command_item_t *commands, int buffer_size,
-                                  char *serial_buffer, int argv_max,
-                                  const char **argv_buffer) {
-
-  if (commands == nullptr) {
-    return ERROR_INVALID_COMMAND;
-  }
-  if (buffer_size == 0) {
-    return ERROR_INVALID_COMMAND;
-  }
-  if (argv_max == 0) {
-    return ERROR_INVALID_COMMAND;
-  }
-  if (serial_buffer == nullptr) {
-    return ERROR_INVALID_COMMAND;
-  }
-  if (argv_buffer == nullptr) {
-    return ERROR_INVALID_COMMAND;
-  }
-
-  cleanup();
-
+                        char *serial_buffer, int argv_max,
+                        const char **argv_buffer)
+{
   this->buffer = serial_buffer;
   this->argv = argv_buffer;
   this->buffer_size = buffer_size;
@@ -157,178 +111,102 @@ int CommandRouter::init_no_malloc(command_item_t *commands, int buffer_size,
   return NO_ERROR;
 }
 
-void CommandRouter::cleanup() {
-  if (malloc_used) {
-    if (buffer != nullptr) {
-      delete buffer;
-    }
-    if (argv != nullptr) {
-      delete argv;
-    }
-  }
-
-  buffer = nullptr;
-  buffer_size = 0;
-  argv = nullptr;
-  argv_max = 0;
-  command_list = nullptr;
-  malloc_used = false;
-}
-
-CommandRouter::~CommandRouter() {
-  cleanup();
-}
-
-int CommandRouter::help(const char *command_name) {
-  if (command_name == nullptr) {
-    Serial.print(F("-----------------------------------\n"));
-    Serial.print(F("Command List:\n"));
-    Serial.print(F("-----------------------------------\n"));
-  }
-  for (int i = 0; command_list[i].name != nullptr; i++) {
-    if (command_name == nullptr ||
-        (strcmp(command_name, command_list[i].name) == 0)) {
-      Serial.print(F("COMMAND: \n"));
-      Serial.print(command_list[i].name);
-      Serial.print("\n");
-      Serial.print(F("SYNTAX:\n"));
-      Serial.print(command_list[i].syntax);
-      Serial.print("\n");
-      Serial.print(F("DESCRIPTION:\n"));
-      Serial.print(command_list[i].description);
-      Serial.print("\n");
-      if (command_name == nullptr) {
-        Serial.print(F("-----------------------------------\n"));
-      } else {
-        return NO_ERROR;
-      }
-    }
-  }
-  if (command_name == nullptr) {
-    return NO_ERROR;
-  } else {
-    snprintf(buffer, buffer_size, "%s not found", command_name);
-    return ERROR_INVALID_COMMAND;
-  }
-}
-
 int CommandRouter::route(int argc, const char **argv) {
-  if (command_list == nullptr)
-    return ERROR_INVALID_COMMAND;
 
   if (argc == 0)
-    return ERROR_INVALID_COMMAND;
+    return NO_ERROR;
 
-  if (argv[0] == nullptr)
-    return ERROR_INVALID_COMMAND;
+  for (int i = 0; command_list[i].name != nullptr; i++)
+    if (strcmp(argv[0], command_list[i].name) == 0)
+      return command_list[i].func(this, argc, argv);
 
-  for (int i = 0; command_list[i].name != nullptr; i++) {
-    if (strcmp(argv[0], command_list[i].name) == 0) {
-      if (command_list[i].func != nullptr) {
-        return command_list[i].func(this, argc, argv);
-      } else {
-        snprintf(buffer, buffer_size, "%s not found", argv[0]);
-        return ERROR_INVALID_COMMAND;
-      }
-    }
-  }
   return ERROR_INVALID_COMMAND;
 }
 
-int command_help_func(CommandRouter *cmd, int argc, const char **argv) {
-  if (argc == 1) {
-    return cmd->help(nullptr);
-  } else {
-    return cmd->help(argv[1]);
+int CommandRouter::help() {
+  Serial.print(F("-----------------------------------\n"));
+  Serial.print(F("Command List:\n"));
+  Serial.print(F("-----------------------------------\n"));
+  for (int i = 0; command_list[i].name != nullptr; i++)
+  {
+    Serial.print(F("COMMAND: \n  "));
+    Serial.print(command_list[i].name);
+    Serial.print("\n");
+    Serial.print(F("SYNTAX:\n  "));
+    Serial.print(command_list[i].syntax);
+    Serial.print("\n");
+    Serial.print(F("DESCRIPTION:\n  "));
+    Serial.print(command_list[i].description);
+    Serial.print("\n");
+    Serial.print(F("-----------------------------------\n"));
   }
+  return NO_ERROR;
 }
 
-int CommandRouter::processSerialStream() {
+
+int CommandRouter::process_serial_stream() {
   int argc;
   int bytes_read = 0;
   int bytes_read_max = buffer_size - 1 - 1;
   int result;
-  // The results will be placed in the
-  // buffer starting at index 0 AFTER they have used the
-  // parameter
-  // So we place the input parametrers at index 1
+
+  // Set input buffer to second character in input buffer
   char *input_buffer = &this->buffer[1];
   this->buffer[0] = '\0'; // Null terminate the return string
 
   // TODO: is this limit correct?
-  while (bytes_read < bytes_read_max) {
-    int c;
-    c = Serial.read();
-    if (c == -1) {
-      continue;
-    }
-    if (c == '\n' || c == '\r')
-      break;
-    if (c == '\b') {
-      bytes_read = bytes_read == 0 ? 0 : bytes_read - 1;
-      continue;
-    }
+  while (bytes_read < bytes_read_max)
+  {
+    incoming = Serial.read();
 
-    input_buffer[bytes_read] = (char)c;
+    // Newline
+    if (incoming == '\n' || incoming == '\r')
+      break;
+
+    input_buffer[bytes_read] = (char)incoming;
     bytes_read++;
   }
-  // Just flush the serial buffer, and terminate the command
-  if (bytes_read == bytes_read_max) {
-    result = ERROR_MEMORY_ALLOC;
-    while (true) {
-      int c;
-      c = Serial.read();
-      if (c == '\n' || c == '\r') {
-        goto finish;
-      }
-    }
-  }
-  input_buffer[bytes_read] = '\0';
-  if (bytes_read == 0) {
-    return NO_ERROR;
-  }
 
-  // This could likely be replaced by strtok_r, but I really failed
-  // at using it on the teensy 4.0
-  // And as such, I'm simply ignoring using it.
-  int i;
-  i = 0;
-  argc = 0;
-  while (i < bytes_read) {
-    char c;
-    c = input_buffer[i];
-    if (c == '\0')
-      break;
-    if (input_buffer[i] == DELIMETER) {
-      input_buffer[i] = '\0';
-      i++;
-      continue;
-    }
-    argv[argc] = &input_buffer[i];
-    argc++;
-    while (i < bytes_read) {
-      i += 1;
-      c = input_buffer[i];
-      if (c == DELIMETER || c  == '\0')
+  // Flush remaining parts of serial buffer
+  if (bytes_read == bytes_read_max)
+  {
+    while (true)
+    {
+      incoming = Serial.read();
+      if (incoming == '\n' || incoming == '\r')
         break;
     }
+    return ERROR_COMMAND_TOO_LONG;
   }
+
+  if (bytes_read == 0)
+    return NO_ERROR;
+
+  // Set null terminating character
+  input_buffer[bytes_read] = '\0';
+
+  // Tokenize strings
+  argc = 0;
+  argv[argc] = strtok(input_buffer, ".");
+  while (argv[argc] != NULL)
+  {
+    delayMicroseconds(1); // For teensy 4.0
+    argv[++argc] = strtok(NULL, ".");
+  }
+
+  // Call route command
   result = route(argc, argv);
 
-finish:
   // Print the error message, if any
   if (result > 0)
   {
     if (result < ERROR_CODE_COUNT)
-      Serial.printf("ERROR: %s\n", error_code_list[result][1]);
+      Serial.printf("ERROR[%d]: %s\n", result, error_code_list[result][1]);
     else
-      Serial.printf("ERROR [%d]: INVALID ERROR CODE %s", result, '\n');
+      Serial.printf("ERROR[%d]: INVALID ERROR CODE %s", result, '\n');
   }
-  // And any payload that exists
-  if (buffer[0]) {
-    Serial.print(" ");
-    Serial.print(buffer);
-  }
-  Serial.print("\n");
+  else
+    Serial.printf("%s%s", COMMAND_END, SERIAL_LINE_ENDING);
+
   return result;
 }

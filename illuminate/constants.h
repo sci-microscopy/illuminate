@@ -33,6 +33,15 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+// Serial line ending
+static const char SERIAL_LINE_ENDING[] = "\n";
+
+// Serial command termiator
+static const char SERIAL_COMMAND_TERMINATOR[] = "-==-";
+
+// Serial delimeter
+static const char SERIAL_DELIMITER[] = ".";
+
 // PSU Sensing constants
 #define PSU_SENSING_AND_MONITORING 2
 #define PSU_SENSING_ONLY 1
@@ -51,7 +60,6 @@
 #define TRIGGER_OUTPUT_POLARITY_DEFAULT 1
 
 // Misc constants
-#define PVALS_USE_UINT8 1     // Whether to return uint8 for pvals instead of 16-bit (Default is on)
 #define MIN_SEQUENCE_DELAY 5  // Min deblur pattern delay in ms (set by hardware)
 #define MIN_SEQUENCE_DELAY_FAST 2 // Min deblur pattern delay for fast sequence in us (set by hardware)
 #define DELAY_MAX 2000        // Global maximum amount to wait inside loop
@@ -65,9 +73,6 @@
 #define MAX_RESPONSE_LENGTH_SHORT 100
 #define MAX_RESPONSE_LENGTH_LONG 100
 
-// Bit depth to use
-#define USE_8_BIT_VALUES 1
-
 // EEPROM Addresses
 #define DEMO_MODE_ADDRESS 50
 #define PN_ADDRESS 100
@@ -80,9 +85,14 @@
 #define STORED_GSCLK_ADDRESS 306
 #define STORED_SCLK_ADDRESS 307
 #define STORED_BRIGHTNESS_ADDRESS 308
+#define STORED_COMMAND_MODE_ADDRESS 309
+#define STORED_AUTOLOAD_LAST_STATE 310
+
+// Serial characters
+#define COMMAND_END "-==-"
 
 // Error Codes
-#define ERROR_CODE_COUNT 18
+#define ERROR_CODE_COUNT 20
 
 #define NO_ERROR 0
 #define ERROR_NOT_IMPLEMENTED 1
@@ -102,5 +112,7 @@
 #define ERROR_COMMAND_INTERRUPTED 15
 #define ERROR_INVALID_COMMAND 16
 #define ERROR_MEMORY_ALLOC 17
+#define ERROR_COMMAND_TOO_LONG 18
+#define ERROR_SEQUENCE_FULL 19
 
 #endif

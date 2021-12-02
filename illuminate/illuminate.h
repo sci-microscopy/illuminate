@@ -12,7 +12,9 @@
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the UC Berkley nor the
+      Neither the name of the UC Berkley no
+      
+      r the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
@@ -31,7 +33,7 @@
 #ifndef ILLUMINATE_H
 #define ILLUMINATE_H
 
-#define VERSION 1.50
+#define VERSION 2.00
 
 // This file allows the user to define which LED array interface is used. This should be set before compilation.
 // The value these are set to does not matter - only that they are defined.
@@ -45,14 +47,5 @@
 //#define USE_SCI_ASYM_ARRAY
 //#define USE_SCI_EPI_ARRAY
 //#define USE_SCI_BIG_WING_ARRAY
-
-// Serial line ending
-static const char SERIAL_LINE_ENDING[] = "\n";
-
-// Serial command termiator
-static const char SERIAL_COMMAND_TERMINATOR[] = "-==-";
-
-// Serial delimeter
-static const char SERIAL_DELIMITER[] = ".";
 
 #endif

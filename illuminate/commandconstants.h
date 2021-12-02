@@ -41,6 +41,7 @@ int demo_func(CommandRouter *cmd, int argc, const char **argv);
 int help_func(CommandRouter *cmd, int argc, const char **argv);
 int store_func(CommandRouter *cmd, int argc, const char **argv);
 int recall_func(CommandRouter *cmd, int argc, const char **argv);
+int autoload_func(CommandRouter *cmd, int argc, const char **argv);
 
 int autoclear_func(CommandRouter *cmd, int argc, const char **argv);
 int na_func(CommandRouter *cmd, int argc, const char **argv);
@@ -61,7 +62,6 @@ int annulus_func(CommandRouter *cmd, int argc, const char **argv);
 int half_annulus_func(CommandRouter *cmd, int argc, const char **argv);
 int quadrant_func(CommandRouter *cmd, int argc, const char **argv);
 int color_darkfield_func(CommandRouter *cmd, int argc, const char **argv);
-int navigator_func(CommandRouter *cmd, int argc, const char **argv);
 
 int scan_full_func(CommandRouter *cmd, int argc, const char **argv);
 int scan_brightfield_func(CommandRouter *cmd, int argc, const char **argv);
@@ -70,13 +70,9 @@ int scan_darkfield_func(CommandRouter *cmd, int argc, const char **argv);
 int set_sequence_length_func(CommandRouter *cmd, int argc, const char **argv);
 int set_sequence_value_func(CommandRouter *cmd, int argc, const char **argv);
 int run_sequence_func(CommandRouter *cmd, int argc, const char **argv);
-int run_sequence_fast_func(CommandRouter *cmd, int argc, const char **argv);
 int print_sequence_func(CommandRouter *cmd, int argc, const char **argv);
-int print_sequence_length_func(CommandRouter *cmd, int argc, const char **argv);
 int step_sequence_func(CommandRouter *cmd, int argc, const char **argv);
-int reset_sequence_func(CommandRouter *cmd, int argc, const char **argv);
-int set_sequence_bit_depth_func(CommandRouter *cmd, int argc, const char **argv);
-int set_sequence_zeros_func(CommandRouter *cmd, int argc, const char **argv);
+int restart_sequence_func(CommandRouter *cmd, int argc, const char **argv);
 
 int trigger_func(CommandRouter *cmd, int argc, const char **argv);
 int trigger_setup_func(CommandRouter *cmd, int argc, const char **argv);
@@ -97,8 +93,8 @@ int disco_func(CommandRouter *cmd, int argc, const char **argv);
 int demo_mode_func(CommandRouter *cmd, int argc, const char **argv);
 int water_func(CommandRouter *cmd, int argc, const char **argv);
 
-int set_sn_func(CommandRouter *cmd, int argc, const char **argv);
-int set_pn_func(CommandRouter *cmd, int argc, const char **argv);
+int get_sn_func(CommandRouter *cmd, int argc, const char **argv);
+int get_pn_func(CommandRouter *cmd, int argc, const char **argv);
 
 int run_fpm_func(CommandRouter *cmd, int argc, const char **argv);
 int run_dpc_func(CommandRouter *cmd, int argc, const char **argv);
@@ -122,6 +118,8 @@ int trigger_output_pin_func(CommandRouter *cmd, int argc, const char **argv);
 
 int cosine_func(CommandRouter *cmd, int argc, const char **argv);
 
+int hw_initialize_function(CommandRouter *cmd, int argc, const char **argv);
+
 // Syntax is: {short command, long command, description, syntax}
 command_item_t command_list[] = {
 
@@ -133,6 +131,7 @@ command_item_t command_list[] = {
   {"?", "Display human-readable help information.", "license", help_func},
   {"store", "Store device parameters", "store", store_func},
   {"recall", "Recall stored device parameters", "recall", recall_func},
+  {"autoload", "Toggle/set whether previously stored settings are loaded on power-up. Value is persistant.", "autoload [or] autoload.1", autoload_func},
 
   // System Parameters
   {"ac", "Toggle clearing of array between led updates. Calling without options toggles the state.", "ac --or-- ac.[0/1]", autoclear_func},
@@ -156,7 +155,6 @@ command_item_t command_list[] = {
   {"ha", "Illuminate half annulus", "ha.[type].[minNA*100].[maxNA*100]", half_annulus_func},
   {"dq", "Draws single quadrant", "dq --or-- dq.[quadrant index]", quadrant_func},
   {"cdf", "Draws color darkfield pattern", "cdf.[rVal].[gVal].[bVal]) --or-- cdf.[rgbVal]) --or-- cdf", color_darkfield_func},
-  {"ndpc", "Illuminate half-circle (DPC) pattern with navigator", "ndpc.[t/b/l/r] --or-- ndpc.[top/bottom/left/right]", navigator_func},
 
   // Single LED Scanning
   {"scf",  "Scan all active LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scf,[delay_ms]", scan_full_func},
@@ -166,14 +164,14 @@ command_item_t command_list[] = {
   // Custom Sequence Scanning
   {"ssl",   "Set sequence length in terms of independent patterns", "ssl,[Sequence length]", set_sequence_length_func},
   {"ssv",   "Set sequence value", "ssl.[# Number of LEDs], [LED number 0], [LED number 1]], [LED number 2], ...", set_sequence_value_func},
-  {"rseq",  "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq,[Delay between each pattern in ms].[number of times to repeat pattern].[trigger output 0 mode].[trigger output 1 mode].[trigger input 0 mode].[trigger input 1 mode]", run_sequence_func},
-  {"rseqf", "Runs sequence with specified delay between each update. Uses parallel digital IO to acheive very fast speeds (single us). Only available on certain LED arrays.", "rseqf,[Delay between each pattern in ms].[trigger mode for index 0].[trigger mode for index 1].[trigger mode for index 2]", run_sequence_fast_func},
-  {"pseq",  "Prints sequence values to the terminal", "pseq", print_sequence_func}, 
-  {"pseql", "Prints sequence length to the terminal", "pseql", print_sequence_length_func},
+  {"rseq",  "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq,[Delay between each pattern in ms].[number of times to repeat pattern].[trigger output 0 mode].[trigger input 0 mode].[trigger output 1 mode].[trigger input 1 mode]", run_sequence_func},
+  {"pseq",  "Prints sequence values to the terminal", "pseq", print_sequence_func},
   {"sseq",  "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "sseq.[trigger output mode for index 0].[trigger output mode for index 1]", step_sequence_func},
-  {"reseq", "Resets sequence index to start", "reseq", reset_sequence_func},
-  {"ssbd",  "Sets bit depth of sequence values (1, 8, or 16)", "ssbd.1 --or-- ssbd.8 --or-- ssbd.16.", set_sequence_bit_depth_func},
-  {"ssz",   "Sets a range of the sequence entries to zero, starting at the current sequence index", "ssz.10", set_sequence_zeros_func},
+  {"xseq",  "Sets sequence index to start", "xseq", restart_sequence_func},
+
+  // Pre-defined sequences
+  {"rdpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rdpc,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_fpm_func},
+  {"rfpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rfpm,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_dpc_func},
 
   // Debugging, Low-level Access, etc.
   {"tr",    "Output TTL trigger pulse to camera", "tr.[trigger index]", trigger_func},
@@ -189,7 +187,7 @@ command_item_t command_list[] = {
   // Quering System State
   {"pvals", "Print led values for software interface", "pvals", print_led_values_func},
   {"pledpos", "Prints the positions of each LED in cartesian coordinates.", "pledpos", print_led_positions_func},
-  {"params",    "Prints system parameters such as NA, LED Array z-distance, etc. in the format of a json file", "pp", print_parameters_func},
+  {"pp",    "Prints system parameters such as NA, LED Array z-distance, etc. in the format of a json file", "pp", print_parameters_func},
   {"pledposna", "Prints the positions of each LED in NA coordinates (NA_x, NA_y, NA_distance", "pledposna", print_led_positions_na},
 
   // Stored Patterns
@@ -198,12 +196,8 @@ command_item_t command_list[] = {
   {"water", "Water drop demo", "water", water_func},
 
   // Set part and serial number in EEPROM
-  {"sn", "Sets device serial number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING", "setsn", set_sn_func},
-  {"pn", "Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING", "setpn", set_pn_func},
-
-  // Run case-specific sequences
-  {"rdpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rdpc,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_fpm_func},
-  {"rfpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rfpm,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_dpc_func},
+  {"sn", "Gets device serial number", "sn", get_sn_func},
+  {"pn", "Gets device part number", "pn", get_pn_func},
 
   // Functions to set baud rate and gsclk frequency (for TLC5955 based boards)
   {"sbr", "Sets SPI baud rate for TLC5955 Chips in Hz (baud)", "sbr.1000000", set_baud_rate_func},
@@ -224,6 +218,8 @@ command_item_t command_list[] = {
   {"troutputpin", "Returns the Teensy pin of the trigger outputsignal. Used only for debugging.", "troutputpin", trigger_output_pin_func},
 
   {"cos", "Returns or sets the cosine factor, used to scale LED intensity (so outer LEDs are brighter). Input is cos.[integer cosine factor]", "cos.2", cosine_func},
+
+  {"hwinit", "Manufacturer hardware initialization. Modifies persistant settings - do not use unless you know what you're doing.", "hwinit.[sn].[pn]", hw_initialize_function},
 
   {nullptr, nullptr, nullptr, nullptr}
 };

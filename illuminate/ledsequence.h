@@ -34,6 +34,7 @@
 #include "Arduino.h"
 #include "illuminate.h"
 #include "ledarrayinterface.h"
+#include "constants.h"
 
 // Define LED Sequence Object
 struct LedSequence
@@ -41,7 +42,6 @@ struct LedSequence
   uint16_t length = 0;                      // Length of values
   volatile uint16_t * led_counts;           // Number of LEDs in each values
   volatile uint16_t * * led_list;           // LED numbers used in each entry
-  volatile uint8_t * * values;                     // Actual LED values (will be assigned to one of the other variables
   volatile uint16_t number_of_patterns_assigned = 0; // Number of patterns which have been assigned
   volatile uint16_t current_pattern_led_index = 0;   // Current led index within current pattern
   uint8_t color_channel_count = 1;
@@ -55,19 +55,6 @@ struct LedSequence
 
   void allocate(uint16_t values_length)
   {
-    // Allocate sequence with desired bit_depth
-    if (bit_depth == 1)
-      ; // Don't allocate anything - any LED in the LED list is considered "on" or true.
-    else if (bit_depth == 8)
-      values = new volatile uint8_t * [values_length];
-    else if (bit_depth == 16)
-      Serial.printf(F("16bit sequences not yet supported %s"), SERIAL_LINE_ENDING);
-    else
-    {
-      Serial.printf(F("ERROR - invalid bit depth!%s"), SERIAL_LINE_ENDING);
-      return;
-    }
-
     led_list = new volatile uint16_t * [values_length];
     led_counts = new volatile uint16_t [values_length];
 
@@ -75,122 +62,105 @@ struct LedSequence
     length = values_length;
   }
 
-  void setBitDepth(uint16_t new_bit_depth)
+  void append(uint16_t led_number)
   {
-    // Deallocate arrays with old bit depth
-    deallocate();
-
-    // Set new bit depth
-    if ((new_bit_depth == 1) || (new_bit_depth == 8))
-    {
-      bit_depth = new_bit_depth;
-      // Allocate new arrays with new bit depth (and same length as before)
-      allocate(length);
-    }
-    else if (new_bit_depth == 0)
-      Serial.printf(F("SSBD.%d %s"), bit_depth, SERIAL_LINE_ENDING);
-    else
-      Serial.printf(F("ERROR - invalid bit depth! (allowed values are 1 or 8) %s"), SERIAL_LINE_ENDING);
-  }
-
-  void append(uint16_t led_number, uint8_t value)
-  {
-    if (bit_depth == 8)
-      // Assign value (only if 8-bit)
-      values[number_of_patterns_assigned - 1][current_pattern_led_index] = value;
-
     // Assign led number
     led_list[number_of_patterns_assigned - 1][current_pattern_led_index] = led_number;
 
     // Increment number of LEDs stored in this pattern
-    current_pattern_led_index += 1;
+    current_pattern_led_index++;
   }
 
-  bool incriment(uint16_t led_count)
+  bool increment(uint16_t led_count)
   {
     if (number_of_patterns_assigned < length)
     {
-      // Incriment number of patterns assigned
+      // increment number of patterns assigned
       number_of_patterns_assigned++;
 
       // store the number of leds in this pattern
       led_counts[number_of_patterns_assigned - 1] = led_count;
 
       if (led_count > 0)
-      {
-        // Initialize the array for this pattern (only if 8-bit)
-        if (bit_depth == 8)
-          values[number_of_patterns_assigned - 1] = new uint8_t[led_count];
-
-        // Initialize the led number list for this pattern
         led_list[number_of_patterns_assigned - 1] = new uint16_t[led_count];
-      }
 
       // Reset the pattern led index
       current_pattern_led_index = 0;
 
       // Let user know we haven't reached capacity
-      return (true);
+      return true;
     }
     else
     {
       Serial.print(F("Sequence length (")); Serial.print(length); Serial.printf(F(") reached. %s"), SERIAL_LINE_ENDING);
-      return (false);
+      return false;
     }
   }
 
   void deallocate()
   {
     for (uint16_t values_index = 0; values_index < number_of_patterns_assigned; values_index++)
-    {
       if (led_counts[values_index] > 0)
-      {
-        if (bit_depth == 8)
-          delete[] values[values_index];
         delete[] led_list[values_index];
-      }
-    }
 
     if (number_of_patterns_assigned > 0)
     {
-      if (bit_depth == 8)
-        delete[] values;
       delete[] led_list;
       delete[] led_counts;
     }
 
-    number_of_patterns_assigned = 0; // Number of patterns which have been assigned
+    number_of_patterns_assigned = 0;
     current_pattern_led_index = 0;
   }
 
-  void print()
+  void print(int command_mode)
   {
-    for (uint16_t values_index = 0; values_index < number_of_patterns_assigned; values_index++)
-    {
-      print(values_index);
-    }
-    Serial.print(SERIAL_LINE_ENDING);
+    // Print header
+    if (command_mode == COMMAND_MODE_LONG)
+      Serial.printf(F("Sequence has %d patterns:%s"), length, SERIAL_LINE_ENDING);
+    else
+      Serial.printf(F("{\n  \"sequence\": [%s"), SERIAL_LINE_ENDING);
+
+    // Print values
+    for (uint16_t pattern_index = 0; pattern_index < number_of_patterns_assigned; pattern_index++)
+      print(pattern_index, command_mode);
+
+    // Print footer
+    if (command_mode == COMMAND_MODE_SHORT)
+      Serial.printf(F(" ]%s}%s"), SERIAL_LINE_ENDING, SERIAL_LINE_ENDING);
   }
 
-  void print(uint16_t values_index)
+  void print(uint16_t pattern_index, int command_mode)
   {
-    Serial.print("Pattern ");
-    Serial.print(values_index);
-    Serial.print(" (");
-    Serial.print(led_counts[values_index]);
-    Serial.printf(" leds): %s", SERIAL_LINE_ENDING);
-    for (uint16_t led_index = 0; led_index < led_counts[values_index]; led_index++)
+    if (command_mode == COMMAND_MODE_LONG)
     {
-      Serial.print(F(" LED #: "));
-      Serial.print(led_list[values_index][led_index]);
-      Serial.print(F(", value="));
-      if (bit_depth == 8)
-        Serial.print(values[values_index][led_index]);
+      Serial.print("Pattern ");
+      Serial.print(pattern_index);
+      Serial.print(" (");
+      Serial.print(led_counts[pattern_index]);
+      Serial.printf(" leds):");
+      for (uint16_t led_index = 0; led_index < led_counts[pattern_index]; led_index++)
+      {
+        Serial.print(F(" "));
+        Serial.print(led_list[pattern_index][led_index]);
+        if (led_index < led_counts[pattern_index] - 1)
+          Serial.printf(F(","));
+      }
+      Serial.print(SERIAL_LINE_ENDING);
+    }
+    else
+    {
+      Serial.print("[");
+      for (uint16_t led_index = 0; led_index < led_counts[pattern_index]; led_index++)
+      {
+        Serial.print(led_list[pattern_index][led_index]);
+        if (led_index < led_counts[pattern_index] - 1)
+          Serial.printf(F(","), SERIAL_LINE_ENDING);
+      }
+      if (pattern_index < number_of_patterns_assigned - 1)
+        Serial.printf(F("],%s"), SERIAL_LINE_ENDING);
       else
-        Serial.print(true);
-      Serial.print(F(" (bit depth="));
-      Serial.print(bit_depth);
-      Serial.printf(F(")%s"), SERIAL_LINE_ENDING);
+        Serial.printf(F("]%s"), SERIAL_LINE_ENDING);
     }
   }
 };

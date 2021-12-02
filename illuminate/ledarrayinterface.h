@@ -38,50 +38,46 @@
 
 class LedArrayInterface {
   public:
-    static int deviceSetup();
-    int deviceReset();
+    static int8_t device_setup();
+    int8_t device_reset();
 
     // Note that passing a -1 for led_number or color_channel_index sets all LEDs or all color channels respectively
-    void setLed(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)
-    void setLed(int16_t led_number, int16_t color_channel_index, uint8_t value);      // LED brightness (8-bit)
-    void setLed(int16_t led_number, int16_t color_channel_index, bool value);         // LED brightness (boolean)
-
-    // Fast LED update
-    void setLedFast(int16_t led_number, int color_channel_index, bool value);
+    void set_led(int16_t led_number, int16_t color_channel_index, uint16_t value);     // LED brightness (16-bit)
+    void set_led(int16_t led_number, int16_t color_channel_index, uint8_t value);      // LED brightness (8-bit)
+    void set_led(int16_t led_number, int16_t color_channel_index, bool value);         // LED brightness (boolean)
 
     // Get LED Value
-    uint16_t getLedValue(uint16_t led_number, int color_channel_index);
+    uint16_t get_led_value(uint16_t led_number, int color_channel_index);
 
     // Clear array
     static void clear();
 
     // Get and set trigger state
-    int sendTriggerPulse(int trigger_index, uint16_t delay_us, bool inverse_polarity);
-    int setTriggerState(int trigger_index, bool state);
-    int getInputTriggerState(int input_trigger_index);
+    int send_trigger_pulse(int trigger_index, uint16_t delay_us, bool inverse_polarity);
+    int set_trigger_state(int trigger_index, bool state);
+    int get_input_trigger_state(int input_trigger_index);
 
     // Update array
     static void update();
 
     // Debug
-    bool getDebug();
-    void setDebug(int state);
+    bool get_debug();
+    void set_debug(int state);
 
     // Set channel
-    void setChannel(int16_t channel_number, int16_t color_channel_number, uint16_t value);
-    void setChannel(int16_t channel_number, int16_t color_channel_number, uint8_t value);
-    void setChannel(int16_t channel_number, int16_t color_channel_number, bool value);
-    void setChannelFast(uint16_t channel_number, int color_channel_index, bool value);
+    void set_channel(int16_t channel_number, int16_t color_channel_number, uint16_t value);
+    void set_channel(int16_t channel_number, int16_t color_channel_number, uint8_t value);
+    void set_channel(int16_t channel_number, int16_t color_channel_number, bool value);
 
     // Set pin order
-    void setPinOrder(int16_t led_number, int16_t color_channel_index, uint8_t position);
+    void set_pin_order(int16_t led_number, int16_t color_channel_index, uint8_t position);
 
     // Maximum current limits
-    void setMaxCurrentEnforcement(bool enforce);
-    void setMaxCurrentLimit(float limit);
+    void set_max_current_enforcement(bool enforce);
+    void set_max_current_limit(float limit);
 
     // Not implemented function
-    void notImplemented(const char * command_name);
+    void not_implemented(const char * command_name);
     
     // Device and Software Descriptors
     static const char * device_name;
@@ -97,8 +93,8 @@ class LedArrayInterface {
     static const int16_t tlc_chip_count;
     static const bool supports_fast_sequence;
     static const float led_array_distance_z_default;
-    static const char * deviceCommandNamesShort[];
-    static const char * deviceCommandNamesLong[];
+    static const char * device_commandNamesShort[];
+    static const char * device_commandNamesLong[];
     static const uint8_t device_command_count;
     static const uint16_t device_command_pattern_dimensions[][2];
     static const uint16_t *device_command_pattern_list[];
@@ -119,40 +115,36 @@ class LedArrayInterface {
     static float led_position_list_na[][2];
 
     // Device-specific commands
-    uint8_t getDeviceCommandCount();
-    const char * getDeviceCommandNameShort(int device_command_index);
-    const char * getDeviceCommandNameLong(int device_command_index);
-    uint32_t getDeviceCommandLedListSize(int device_command_index);
-    uint16_t getDeviceCommandLedListElement(int device_command_index, uint16_t pattern_index, uint16_t led_index);
+    uint8_t get_device_command_count();
+    const char * get_device_command_name_short(int device_command_index);
+    const char * get_device_command_name_long(int device_command_index);
+    uint32_t get_device_command_led_list_size(int device_command_index);
+    uint16_t get_device_command_led_list_element(int device_command_index, uint16_t pattern_index, uint16_t led_index);
 
     // Serial and part numbers
-    uint16_t getSerialNumber();
-    uint16_t getPartNumber();
-    void setPartNumber(uint16_t part_number);
-    void setSerialNumber(uint16_t serial_number);
+    uint16_t get_serial_number();
+    uint16_t get_part_number();
+    void set_part_number(uint16_t part_number);
+    void set_serial_number(uint16_t serial_number);
 
     // Hardware-related functions
-    void setBaudRate(uint32_t new_baud_rate);
-    uint32_t getBaudRate();
-    void setGsclkFreq(uint32_t new_gsclk_freq);
-    uint32_t getGsclkFreq();
-
-    // Demo Mode
-    void setDemoMode(int8_t mode);
-    int8_t getDemoMode();
+    void set_sclk_baud_rate(uint32_t new_baud_rate);
+    uint32_t get_sclk_baud_rate();
+    void set_gsclk_frequency(uint32_t new_gsclk_freq);
+    uint32_t get_gsclk_frequency();
 
     // Source voltage checking
     int16_t source_sense_pin = -1;
     int16_t source_reference_value = -1;
-    float getPowerSourceVoltage();
-    bool isPowerSourcePluggedIn();
-    int16_t getDevicePowerSensingCapability();
-    bool getPowerSourceMonitoringState();
-    void setPowerSourceMonitoringState(int state);
-    void sourceChangeIsr();
+    float get_power_source_voltage();
+    bool is_power_source_plugged_in();
+    int16_t get_device_power_sensing_capability();
+    bool get_power_source_monitoring_state();
+    void set_power_source_monitoring_state(int state);
+    void source_change_interrupt();
 
-    int8_t store_parameters(float objective_na, float led_Array_distance_z, uint8_t brightness, uint8_t color_r, uint8_t color_g, uint8_t color_b);
-    int8_t recall_parameters(float* objective_na, float* led_Array_distance_z, uint8_t* brightness, uint8_t* color_r, uint8_t* color_g, uint8_t* color_b);
+    int8_t set_register(uint32_t register, int8_t value);
+    int8_t get_register(uint32_t register);
 };
 
 #endif

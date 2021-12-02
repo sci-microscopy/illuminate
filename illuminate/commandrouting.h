@@ -49,14 +49,11 @@ typedef struct command_item {
 
 class CommandRouter {
 public:
-  int init(command_item_t *commands, int buffer_size, int argv_max);
-  int init_no_malloc(command_item_t *commands, int buffer_size,
+  int init(command_item_t *commands, int buffer_size,
                      char *serial_buffer, int argv_max,
                      const char **argv_buffer);
-  int help(const char *command_name = nullptr);
-  int processSerialStream();
-  void cleanup();
-  ~CommandRouter();
+  int help();
+  int process_serial_stream();
 
   char *buffer = nullptr; // Allow for terminating null byte
   int buffer_size = 0;
@@ -67,12 +64,11 @@ private:
   const char **argv;
   int argv_max = 0;
 
+  int incoming;
+
   bool malloc_used = false;
   command_item_t *command_list;
 };
 
 extern CommandRouter cmd;
-
-int command_help_func(CommandRouter *cmd, int argc, const char **argv);
-
 #endif
