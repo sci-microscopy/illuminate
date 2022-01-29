@@ -314,7 +314,7 @@ DESCRIPTION:
 Toggle debug flag. Can call with or without options.
 -----------------------------------
 COMMAND: 
-spo / setPinOrder
+spo / set_pin_order
 SYNTAX:spo.[rChan].[gChan].[bChan] --or-- spo.[led#].[rChan].[gChan].[bChan]
 DESCRIPTION:
 Sets pin order (R/G/B) for setup purposes. Also can flip individual leds by passing fourth argument.
@@ -332,7 +332,7 @@ DESCRIPTION:
 Sets max current in amps
 -----------------------------------
 COMMAND: 
-smce / setMaxCurrentEnforcement
+smce / set_max_current_enforcement
 SYNTAX:smce.[0, 1]
 DESCRIPTION:
 Sets whether or not max current limit is enforced (0 is no, all other values are yes)
@@ -386,7 +386,7 @@ DESCRIPTION:
 Sets device serial number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING
 -----------------------------------
 COMMAND: 
-setpn / setPartNumber
+setpn / set_part_number
 SYNTAX:
 DESCRIPTION:
 Sets device part number in EEPROM (DO NOT USE UNLESS YOU KNOW WHAT YOU ARE DOING
@@ -404,13 +404,13 @@ DESCRIPTION:
 Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warning message will print.
 -----------------------------------
 COMMAND: 
-sbr / setBaudRate
+sbr / set_sclk_baud_rate
 SYNTAX:sbr.1000000
 DESCRIPTION:
 Sets SPI baud rate for TLC5955 Chips in Hz (baud)
 -----------------------------------
 COMMAND: 
-sgs / setGsclkFreq
+sgs / set_gsclk_frequency
 SYNTAX:sgs.1000000
 DESCRIPTION:
 Sets GSCLK frequency in Hz

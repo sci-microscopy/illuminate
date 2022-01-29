@@ -12,8 +12,7 @@
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the UC Berkley nor the
-      names of its contributors may be used to endorse or promote products
+      Neither the name of the UC Berkley nor thei
       derived from this software without specific prior written permission.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -2718,6 +2717,9 @@ void LedArray::setup()
     delete[] led_color;
   }
 
+  // Sleep 0.1 seconds to allow chips to power up
+  delay(100);
+
   // Initialize led array
   led_array_interface->device_setup();
 
@@ -2791,7 +2793,7 @@ void LedArray::setup()
 
   // Load stored parameters
   if (led_array_interface->get_register(STORED_AUTOLOAD_LAST_STATE) != 0)
-    recall_parameters();
+    recall_parameters(true);
 
   // Set LED value based on color and brightness
   for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
@@ -3067,7 +3069,7 @@ int8_t LedArray::store_parameters()
   return NO_ERROR;
 }
 
-int8_t LedArray::recall_parameters()
+int8_t LedArray::recall_parameters(bool quiet)
 {
   objective_na = ((float)led_array_interface->get_register(STORED_NA_ADDRESS) / (float)UINT8_MAX);
   led_array_distance_z = (float)led_array_interface->get_register(STORED_DISTANCE_ADDRESS);
@@ -3087,10 +3089,13 @@ int8_t LedArray::recall_parameters()
   command_mode = led_array_interface->get_register(STORED_COMMAND_MODE_ADDRESS);
 
   // Print confirmation
-  clear_output_buffers();
-  sprintf(output_buffer_short, "READ.OK");
-  sprintf(output_buffer_long, "Read parameters:\n   objective_na: %.2f\n   led_array_distance_z: %.2f\n   led_brightness: %d", objective_na, led_array_distance_z, led_brightness);
-  print(output_buffer_short, output_buffer_long);
+  if (!quiet)
+  {
+    clear_output_buffers();
+    sprintf(output_buffer_short, "READ.OK");
+    sprintf(output_buffer_long, "Read parameters:\n   objective_na: %.2f\n   led_array_distance_z: %.2f\n   led_brightness: %d", objective_na, led_array_distance_z, led_brightness);
+    print(output_buffer_short, output_buffer_long);
+  }
 
   return NO_ERROR;
 }
@@ -3159,6 +3164,10 @@ int8_t LedArray::initialize_hardware(uint16_t argc, char ** argv)
 
   // Re-initialize device using default values
   setup();
+
+  // Set up grayscale clock and serial clock
+  led_array_interface->set_sclk_baud_rate(10000000);
+  led_array_interface->set_gsclk_frequency(10000000);
 
   // Store parameters
   store_parameters();

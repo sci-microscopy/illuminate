@@ -165,7 +165,7 @@ class LedArray {
     void calculate_max_na();
 
     int8_t store_parameters();
-    int8_t recall_parameters();
+    int8_t recall_parameters(bool quiet);
 
     // Demo Mode
     int8_t set_demo_mode(int8_t mode);
@@ -245,7 +245,7 @@ class LedArray {
 
     // These should be made persistant
     const float led_array_distance_z_default = 50.0;
-    const float na_default = 1.0;
+    const float na_default = 0.25;
     const uint8_t led_brightness_default = 255;
     const float inner_na_default = 0.0;
     const uint8_t cosine_factor_default = 0.0;
