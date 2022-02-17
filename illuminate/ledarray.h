@@ -85,6 +85,7 @@ class LedArray {
     int set_array_distance(uint16_t argc, char ** argv);
     int set_color(int16_t argc, char ** argv);
     int set_brightness(int16_t argc, char ** argv);
+    int set_single_color(int16_t argc, char ** argv);
     void build_na_list(float boardDistance);
     int set_auto_clear(uint16_t argc, char ** argv);
     int set_max_current_enforcement(uint16_t argc, char ** argv);

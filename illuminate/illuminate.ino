@@ -116,6 +116,7 @@ int autoclear_func(CommandRouter *cmd, int argc, const char **argv){ return led_
 int na_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_na(argc, (char * *) argv); }
 int na_inner_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_inner_na(argc, (char * *) argv); }
 int color_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_color(argc, (char * *) argv); }
+int set_single_color_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_single_color(argc, (char * *) argv);};
 int brightness_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_brightness(argc, (char * *) argv); }
 int array_distance_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_array_distance(argc, (char * *) argv); }
 int cosine_func(CommandRouter *cmd, int argc, const char **argv) { return led_array.set_cosine_factor(argc, (char * *) argv); }

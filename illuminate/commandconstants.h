@@ -117,9 +117,8 @@ int trigger_input_pin_func(CommandRouter *cmd, int argc, const char **argv);
 int trigger_output_pin_func(CommandRouter *cmd, int argc, const char **argv);
 
 int cosine_func(CommandRouter *cmd, int argc, const char **argv);
-
 int hw_initialize_function(CommandRouter *cmd, int argc, const char **argv);
-
+int set_single_color_func(CommandRouter *cmd, int argc, const char **argv);
 // Syntax is: {short command, long command, description, syntax}
 command_item_t command_list[] = {
 
@@ -138,6 +137,7 @@ command_item_t command_list[] = {
   {"na", "Set na used for bf/df/dpc/cdpc patterns", "na.[na*100]", na_func},
   {"nai", "Sets the inner NA. (nai.20 sets an inner NA of 0.20)  Respected by bf, dpc, and rdpc commands. Default is 0", "nai.20", na_inner_func},
   {"sc", "Set LED array color", "sc,[rgbVal] --or-- sc.[rVal].[gVal].[bVal]", color_func},
+  {"ssc", "Set single color channel by index", "ssc.[channel].[cVal]", set_single_color_func},
   {"sb", "Set LED array brightness", "sb,[rgbVal] --or-- sb.[rVal].[gVal].[bVal]", brightness_func},
   {"sad", "Set LED array distance", "sad,[dist (mm)]", array_distance_func},
 
@@ -170,8 +170,8 @@ command_item_t command_list[] = {
   {"xseq",  "Sets sequence index to start", "xseq", restart_sequence_func},
 
   // Pre-defined sequences
-  {"rdpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rdpc,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_fpm_func},
-  {"rfpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rfpm,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_dpc_func},
+  {"rdpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rdpc,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_dpc_func},
+  {"rfpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rfpm,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_fpm_func},
 
   // Debugging, Low-level Access, etc.
   {"tr",    "Output TTL trigger pulse to camera", "tr.[trigger index]", trigger_func},
