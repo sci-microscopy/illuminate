@@ -51,9 +51,9 @@ const int LAT = 3;
 const int SPI_MOSI = 11;
 const int SPI_CLK = 13;
 const int TRIGGER_OUTPUT_PIN_0 = 23;
-const int TRIGGER_INPUT_PIN_0 = 22;
-const int TRIGGER_OUTPUT_PIN_1 = 20;
-const int TRIGGER_INPUT_PIN_1 = 19;
+const int TRIGGER_INPUT_PIN_0 = 21;
+const int TRIGGER_OUTPUT_PIN_1 = 22;
+const int TRIGGER_INPUT_PIN_1 = 20;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
 
