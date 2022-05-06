@@ -2757,9 +2757,6 @@ void LedArray::setup()
     delete[] led_color;
   }
 
-  // Sleep 0.1 seconds to allow chips to power up
-  delay(100);
-
   // Initialize led array
   led_array_interface->device_setup();
 

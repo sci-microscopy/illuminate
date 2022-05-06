@@ -45,9 +45,9 @@ const int GSCLK = 6;
 const int LAT = 3;
 const int SPI_MOSI = 11;
 const int SPI_CLK = 13;
-const int TRIGGER_OUTPUT_PIN_0 = 23;
-const int TRIGGER_INPUT_PIN_0 = 22;
-const int TRIGGER_OUTPUT_PIN_1 = 20;
+const int TRIGGER_OUTPUT_PIN_0 = 22;
+const int TRIGGER_INPUT_PIN_0 = 23;
+const int TRIGGER_OUTPUT_PIN_1 = 18;
 const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
@@ -1118,6 +1118,16 @@ int8_t LedArrayInterface::device_reset()
 
 int8_t LedArrayInterface::device_setup()
 {
+
+        // Enabled GSCLK and SCLK buffers
+        pinMode(4, OUTPUT);
+        pinMode(5, OUTPUT);
+        digitalWrite(4, HIGH);
+        digitalWrite(5, HIGH);
+
+        // Provide small delay for devices to power up
+        delay(10);
+
         // Initialize TLC5955
         tlc.init(LAT, SPI_MOSI, SPI_CLK, GSCLK);
 
@@ -1159,12 +1169,6 @@ int8_t LedArrayInterface::device_setup()
         for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
                 pinMode(trigger_input_pin_list[trigger_index], INPUT);
 
-
-        // Clock Buffer enable
-        pinMode(4, OUTPUT);
-        pinMode(5, OUTPUT);
-        digitalWrite(4, HIGH);
-        digitalWrite(5, HIGH);
 
         return NO_ERROR;
 }
