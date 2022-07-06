@@ -480,7 +480,16 @@ void LedArrayInterface::update()
 void LedArrayInterface::clear()
 {
     tlc.set_all(0);
-    tlc.update();
+}
+
+bool LedArrayInterface::get_max_current_enforcement()
+{
+        return TLC5955::enforce_max_current;
+}
+
+float LedArrayInterface::get_max_current_limit()
+{
+       return TLC5955::max_current_amps;
 }
 
 void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, uint16_t value)

@@ -136,8 +136,8 @@ command_item_t command_list[] = {
   {"ac", "Toggle clearing of array between led updates. Calling without options toggles the state.", "ac --or-- ac.[0/1]", autoclear_func},
   {"na", "Set na used for bf/df/dpc/cdpc patterns", "na.[na*100]", na_func},
   {"nai", "Sets the inner NA. (nai.20 sets an inner NA of 0.20)  Respected by bf, dpc, and rdpc commands. Default is 0", "nai.20", na_inner_func},
-  {"sc", "Set LED array color", "sc,[rgbVal] --or-- sc.[rVal].[gVal].[bVal]", color_func},
-  {"ssc", "Set single color channel by index", "ssc.[channel].[cVal]", set_single_color_func},
+  {"sc", "Set LED array color balance (RGB arrays only). Note values are normalized to current brightness (set by the `sb` command)", "sc,[`red` or `green` or `blue` or `white`] --or-- sc.[red_value].[green_value].[blue_value].", color_func},
+  {"ssc", "Set single color channel by index", "ssc.[channel index].[color]", set_single_color_func},
   {"sb", "Set LED array brightness", "sb,[rgbVal] --or-- sb.[rVal].[gVal].[bVal]", brightness_func},
   {"sad", "Set LED array distance", "sad,[dist (mm)]", array_distance_func},
 
@@ -181,13 +181,13 @@ command_item_t command_list[] = {
   {"debug", "Toggle debug flag. Can call with or without options.", "dbg.[command router debug].[LED array (generic) debug].[LED interface debug] --or-- dbg (toggles all between level 1 or 0)", debug_func},
   {"spo",   "Sets pin order (R/G/B) for setup purposes. Also can flip individual leds by passing fourth argument.", "spo.[rChan].[gChan].[bChan] --or-- spo.[led#].[rChan].[gChan].[bChan]", set_pin_order_func},
   {"delay", "Simply puts the device in a loop for the amount of time in ms", "delay.[length of time in ms]", wait_func},
-  {"smc",   "Sets max current in amps", "smc.[current limit in amps]", set_max_current_func},
-  {"smce",  "Sets whether or not max current limit is enforced (0 is no, all other values are yes)", "smce.[0, 1]", set_max_current_enforcement_func},
+  {"mc",   "Sets/Gets max current in amps", "mc.[current limit in amps]", set_max_current_func},
+  {"mce",  "Sets/Gets whether or not max current limit is enforced (0 is no, all other values are yes)", "mce.[0, 1]", set_max_current_enforcement_func},
 
   // Quering System State
   {"pvals", "Print led values for software interface", "pvals", print_led_values_func},
   {"pledpos", "Prints the positions of each LED in cartesian coordinates.", "pledpos", print_led_positions_func},
-  {"pp",    "Prints system parameters such as NA, LED Array z-distance, etc. in the format of a json file", "pp", print_parameters_func},
+  {"pprops",    "Prints system parameters such as NA, LED Array z-distance, etc. in the format of a json file", "pprops", print_parameters_func},
   {"pledposna", "Prints the positions of each LED in NA coordinates (NA_x, NA_y, NA_distance", "pledposna", print_led_positions_na},
 
   // Stored Patterns

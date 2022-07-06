@@ -74,7 +74,9 @@ class LedArrayInterface {
 
     // Maximum current limits
     void set_max_current_enforcement(bool enforce);
+    bool get_max_current_enforcement();
     void set_max_current_limit(float limit);
+    float get_max_current_limit();
 
     // Not implemented function
     void not_implemented(const char * command_name);

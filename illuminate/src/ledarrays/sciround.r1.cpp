@@ -88,7 +88,7 @@ bool LedArrayInterface::trigger_input_state[] = {false};
 
 int LedArrayInterface::debug = 0;
 
-const uint8_t TLC5955::chip_count = 6;          // Change to reflect number of TLC chips
+const uint8_t TLC5955::chip_count = 7;          // Change to reflect number of TLC chips
 float TLC5955::max_current_amps = 8.0;      // Maximum current output, amps
 bool TLC5955::enforce_max_current = true;   // Whether to enforce max current limit
 
@@ -375,6 +375,16 @@ const int16_t PROGMEM LedArrayInterface::led_positions[][5] = {
         {256, 145, 400, -4321, 0}
 };
 
+bool LedArrayInterface::get_max_current_enforcement()
+{
+        return TLC5955::enforce_max_current;
+}
+
+float LedArrayInterface::get_max_current_limit()
+{
+       return TLC5955::max_current_amps;
+}
+
 void LedArrayInterface::set_max_current_enforcement(bool enforce)
 {
     TLC5955::enforce_max_current = enforce;
@@ -485,7 +495,6 @@ void LedArrayInterface::update()
 void LedArrayInterface::clear()
 {
     tlc.set_all(0);
-    tlc.update();
 }
 
 void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, uint16_t value)
@@ -640,6 +649,8 @@ int8_t LedArrayInterface::device_setup()
 
     return NO_ERROR;
 }
+
+
 
 void LedArrayInterface::source_change_interrupt()
 {

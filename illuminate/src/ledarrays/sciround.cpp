@@ -404,6 +404,8 @@ void LedArrayInterface::set_ledFast(int16_t led_number, int color_channel_index,
         not_implemented("set_ledFast");
 }
 
+
+
 // Debug Variables
 bool LedArrayInterface::get_debug()
 {
@@ -471,13 +473,13 @@ int LedArrayInterface::send_trigger_pulse(int trigger_index, uint16_t delay_us, 
 }
 void LedArrayInterface::update()
 {
-        tlc.updateLeds();
+        tlc.update();
 }
 
 void LedArrayInterface::clear()
 {
         tlc.setAllLed(0);
-        tlc.updateLeds();
+
 }
 
 void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, uint16_t value)
@@ -643,8 +645,8 @@ void LedArrayInterface::device_setup()
     tlc.update_control();
 
     // Update the GS register (ideally LEDs should be dark up to here)
-    tlc.setAllLed(0);
-    tlc.updateLeds();
+    tlc.set_all(0);
+    tlc.update();
 
     // Output trigger Pins
     for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
@@ -657,6 +659,16 @@ void LedArrayInterface::device_setup()
     for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
             pinMode(LedArrayInterface::trigger_input_pin_list[trigger_index], INPUT);
 
+}
+
+bool LedArrayInterface::get_max_current_enforcement()
+{
+        return TLC5955::enforce_max_current;
+}
+
+float LedArrayInterface::get_max_current_limit()
+{
+       return TLC5955::max_current_amps;
 }
 
 void LedArrayInterface::source_change_interrupt()

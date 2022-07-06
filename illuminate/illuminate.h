@@ -48,6 +48,5 @@
 //#define USE_SCI_ASYM_ARRAY
 //#define USE_SCI_EPI_ARRAY
 //#define USE_SCI_BIG_WING_ARRAY
-//#define USE_SCI_IRIS
 
 #endif

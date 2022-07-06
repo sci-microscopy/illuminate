@@ -702,6 +702,16 @@ PROGMEM const int16_t LedArrayInterface::led_positions[][5] = {
         {580, 296, 3960, -3168, 2650}
 };
 
+bool LedArrayInterface::get_max_current_enforcement()
+{
+        return TLC5955::enforce_max_current;
+}
+
+float LedArrayInterface::get_max_current_limit()
+{
+       return TLC5955::max_current_amps;
+}
+
 void LedArrayInterface::set_max_current_enforcement(bool enforce)
 {
         TLC5955::enforce_max_current = enforce;
@@ -817,7 +827,6 @@ void LedArrayInterface::update()
 void LedArrayInterface::clear()
 {
         tlc.set_all(0);
-        tlc.update();
 }
 
 void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, uint16_t value)
@@ -914,6 +923,8 @@ void LedArrayInterface::set_led(int16_t led_number, int16_t color_channel_number
         }
         set_led(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX));
 }
+
+
 
 void LedArrayInterface::device_reset()
 {

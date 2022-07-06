@@ -385,6 +385,16 @@ void LedArrayInterface::update()
   }
 }
 
+bool LedArrayInterface::get_max_current_enforcement()
+{
+        return false;
+}
+
+float LedArrayInterface::get_max_current_limit()
+{
+       return 0.0;
+}
+
 void LedArrayInterface::clear()
 {
   digital_mode = false; // ensure pin mode gets configured
@@ -499,6 +509,8 @@ void LedArrayInterface::set_power_source_monitoring_state(bool new_state)
 {
         Serial.printf(F("ERROR (LedArrayInterface::set_power_source_monitoring_state): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
 }
+
+
 
 bool LedArrayInterface::is_power_source_plugged_in()
 {

@@ -529,7 +529,16 @@ void LedArrayInterface::update()
 void LedArrayInterface::clear()
 {
   FastLED.clearData();
-  update();
+}
+
+bool LedArrayInterface::get_max_current_enforcement()
+{
+        return false;
+}
+
+float LedArrayInterface::get_max_current_limit()
+{
+       return 0.0;
 }
 
 void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, uint8_t value)

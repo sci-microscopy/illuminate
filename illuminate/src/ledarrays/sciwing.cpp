@@ -51,9 +51,9 @@ const int LAT = 3;
 const int SPI_MOSI = 11;
 const int SPI_CLK = 13;
 const int TRIGGER_OUTPUT_PIN_0 = 23;
-const int TRIGGER_INPUT_PIN_0 = 21;
-const int TRIGGER_OUTPUT_PIN_1 = 22;
-const int TRIGGER_INPUT_PIN_1 = 20;
+const int TRIGGER_INPUT_PIN_0 = 22;
+const int TRIGGER_OUTPUT_PIN_1 = 20;
+const int TRIGGER_INPUT_PIN_1 = 19;
 const int TRIGGER_OUTPUT_COUNT = 2;
 const int TRIGGER_INPUT_COUNT = 2;
 
@@ -905,6 +905,16 @@ PROGMEM const int16_t LedArrayInterface::led_positions[793][5] = {
     {792, 369, -1957, 4791, 3892},
 };
 
+bool LedArrayInterface::get_max_current_enforcement()
+{
+        return TLC5955::enforce_max_current;
+}
+
+float LedArrayInterface::get_max_current_limit()
+{
+       return TLC5955::max_current_amps;
+}
+
 void LedArrayInterface::set_max_current_enforcement(bool enforce)
 {
         TLC5955::enforce_max_current = enforce;
@@ -1015,7 +1025,6 @@ void LedArrayInterface::update()
 void LedArrayInterface::clear()
 {
         tlc.set_all(0);
-        update();
 }
 
 void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, uint16_t value)
@@ -1082,6 +1091,8 @@ void LedArrayInterface::set_led(int16_t led_number, int16_t color_channel_number
             set_channel(channel_number, color_channel_number, value);
         }
 }
+
+
 
 void LedArrayInterface::set_led(int16_t led_number, int16_t color_channel_number, uint8_t value)
 {
