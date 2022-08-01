@@ -2,25 +2,26 @@
 # Illuminate - Open-source LED array controller firmware
 Illuminate was designed to standardize the interface and functionality of LED array illuminators for optical microscopy.
 
-## Install
+## Install (Cross-platform)
 1. Install [Arduino](https://www.arduino.cc/) software
 2. Install [Teensyduino](https://www.pjrc.com/teensy/td_download.html) software (If using a teensy micro-controller)
-3. Check out repostory
+3. If needed, install git. See [This Tutorial](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+4. Check out the illuminate repostory:
 ```bash
   git clone https://github.com/zfphil/illuminate.git
 ```
-4. Check out submodule (TLC5955)
+5. Check out the TLC5955 submodule (LED driver chips used for our devices)
 ```bash
   cd illuminate
   git submodule init
   git submodule update
 ```
-5. open illuminate.ino in Arduino software
-6. Ensure correct device is selected in the illuminate.h file by uncommenting the appropriate ``#define`` line
-7. elect micro-controller from Tools -> Board, select port from Tools -> Port
-8. Open Serial Monitor (Tools -> Serial Monitor), set line ending to Newline and baud rate to 115200 (default)
-9. Press upload to load code onto Teensy
-10. Type command (ex: "bf") and press enter to send
+6. open illuminate.ino in Arduino software
+7. Ensure correct device is selected in the `illuminate.h` file by uncommenting the appropriate `#define USE_*` line. Ensure only one of these lines is uncommented.
+8. Select micro-controller from Tools -> Board, select port from Tools -> Port. If a port says "Teensy", this is usually the correct port to use.
+9. Open Serial Monitor (Tools -> Serial Monitor), set line ending to Newline and baud rate to 115200 (default)
+10. Press upload to load code onto Teensy. You may need to press the white button on the top of the micro-controller to trigger the upload.
+11. Type command (ex: "bf") and press enter to send
 
 ## Commands
 Command help can be accessed by typing "?" into the Arduino terminal.
