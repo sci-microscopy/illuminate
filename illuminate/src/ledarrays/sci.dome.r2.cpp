@@ -76,7 +76,8 @@ const int LedArrayInterface::trigger_output_count = 2;
 const int LedArrayInterface::trigger_input_count = 2;
 const int LedArrayInterface::color_channel_count = 3;
 const char LedArrayInterface::color_channel_names[] = {'r', 'g', 'b'};
-const float LedArrayInterface::color_channel_center_wavelengths[] = {0.48, 0.525, 0.625};
+const float LedArrayInterface::color_channel_center_wavelengths_nm[] = {480.0, 525.0, 625.0};
+const float LedArrayInterface::color_channel_fwhm_wavelengths_nm[] = {20.0, 20.0, 20.0};
 const int LedArrayInterface::bit_depth = 16;
 const bool LedArrayInterface::supports_fast_sequence = false;
 const float LedArrayInterface::led_array_distance_z_default = 50.0;
@@ -1153,7 +1154,7 @@ int8_t LedArrayInterface::device_setup()
         int currentG = 127;
         tlc.set_brightness_current(currentR, currentB, currentG);
 
-        // Update vontrol register
+        // Update control register
         tlc.update_control();
         clear();
         tlc.update_control();

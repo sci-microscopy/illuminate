@@ -90,7 +90,8 @@ class LedArrayInterface {
     static const int trigger_input_count;
     static const int color_channel_count;
     static const char color_channel_names[];
-    static const float color_channel_center_wavelengths[];
+    static const float color_channel_center_wavelengths_nm[];
+    static const float color_channel_fwhm_wavelengths_nm[];
     static const int bit_depth;
     static const int16_t tlc_chip_count;
     static const bool supports_fast_sequence;

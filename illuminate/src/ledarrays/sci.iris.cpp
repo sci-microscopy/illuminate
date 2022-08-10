@@ -77,8 +77,9 @@ const int LedArrayInterface::trigger_output_count = 1;
 const int LedArrayInterface::trigger_input_count = 1;
 const int LedArrayInterface::color_channel_count = 1;
 const char LedArrayInterface::color_channel_names[] = {'r'};
-const float LedArrayInterface::color_channel_center_wavelengths[] = {0.74};
-const int LedArrayInterface::bit_depth = 16;
+const float LedArrayInterface::color_channel_center_wavelengths_nm[] = {740.0};
+const float LedArrayInterface::color_channel_fwhm_wavelengths_nm[] = {20.0};
+const int LedArrayInterface::bit_depth = 8;
 const bool LedArrayInterface::supports_fast_sequence = false;
 float LedArrayInterface::led_position_list_na[LedArrayInterface::led_count][2];
 

@@ -261,7 +261,7 @@ int LedArray::print_system_parameters(uint16_t argc, char * *argv)
     Serial.print('\"');
   }
   Serial.print(F("]"));
-  Serial.print(F(",\n    \"color_channel_center_wavelengths\" : {"));
+  Serial.print(F(",\n    \"color_channel_center_wavelengths_nm\" : {"));
   for (int channel_index = 0; channel_index < led_array_interface->color_channel_count; channel_index++)
   {
     if (channel_index > 0)
@@ -269,7 +269,17 @@ int LedArray::print_system_parameters(uint16_t argc, char * *argv)
     Serial.print('\"');
     Serial.print(LedArrayInterface::color_channel_names[channel_index]);
     Serial.print('\"');
-    Serial.printf(" : %.3f", LedArrayInterface::color_channel_center_wavelengths[channel_index]);
+    Serial.printf(" : %.3f", LedArrayInterface::color_channel_center_wavelengths_nm[channel_index]);
+  }
+  Serial.print(F("},\n    \"color_channel_fwhm_wavelengths_nm\" : {"));
+  for (int channel_index = 0; channel_index < led_array_interface->color_channel_count; channel_index++)
+  {
+    if (channel_index > 0)
+      Serial.print(F(", "));
+    Serial.print('\"');
+    Serial.print(LedArrayInterface::color_channel_names[channel_index]);
+    Serial.print('\"');
+    Serial.printf(" : %.3f", LedArrayInterface::color_channel_fwhm_wavelengths_nm[channel_index]);
   }
   Serial.print(F("},\n    \"trigger_input_count\" : "));
   Serial.print(led_array_interface->trigger_input_count);
@@ -507,7 +517,7 @@ int LedArray::water_drop()
   // Clear Serial buffer
   while (Serial.available())
     Serial.read();
-    
+
   while (Serial.available() == 0)
   {
     // Clear array
@@ -742,30 +752,35 @@ int LedArray::draw_half_annulus(uint16_t argc, char * *argv)
 {
   float na_start = objective_na;
   float na_end = objective_na + 0.2;
-  int8_t half_annulus_type = 0;
-
-  if (argc == 2)
+  int8_t pattern_index = -1;
+  float angle_deg = 0.0;
+  if (argc == 1)
+  {
+    pattern_index = 0;
+  }
+  else if ((argc == 2) || (argc == 4))
   {
     if ( (strcmp(argv[1], DPC_TOP1) == 0) || (strcmp(argv[1], DPC_TOP2) == 0))
-      half_annulus_type = 0;
+      pattern_index = 0;
     else if ( (strcmp(argv[1], DPC_BOTTOM1) == 0) || (strcmp(argv[1], DPC_BOTTOM2) == 0))
-      half_annulus_type = 1;
+      pattern_index = 1;
     else if ( (strcmp(argv[1], DPC_LEFT1) == 0) || (strcmp(argv[1], DPC_LEFT2) == 0))
-      half_annulus_type = 2;
+      pattern_index = 2;
     else if ( (strcmp(argv[1], DPC_RIGHT1) == 0) || (strcmp(argv[1], DPC_RIGHT2) == 0))
-      half_annulus_type = 3;
+      pattern_index = 3;
     else
-      return ERROR_INVALID_COMMAND;
+    {
+      angle_deg = (float) strtol(argv[1], NULL, 0);
+    }
   }
-  else if (argc == 1)
-    ;
-  else if (argc == 4)
+  else
+    return ERROR_ARGUMENT_COUNT;
+
+  if (argc == 4)
   {
     na_start = atof(argv[2]) / 100.0;
     na_end = atof(argv[3]) / 100.0;
   }
-  else
-    return ERROR_ARGUMENT_COUNT;
 
   if (debug_level >= 1)
   {
@@ -781,8 +796,16 @@ int LedArray::draw_half_annulus(uint16_t argc, char * *argv)
   if (auto_clear_flag)
     clear();
 
-  draw_primative_half_circle(half_annulus_type, na_start, na_end);
-  led_array_interface->update();
+  if (pattern_index >= 0)
+  {
+    draw_primative_half_circle(dpc_pattern_angles[pattern_index], na_start, na_end);
+    led_array_interface->update();
+  }
+  else
+  {
+    draw_primative_half_circle(angle_deg, na_start, na_end);
+    led_array_interface->update();
+  }
 
   return NO_ERROR;
 }
@@ -1288,7 +1311,7 @@ bool LedArray::wait_for_trigger_state(int trigger_index, bool state)
   // Clear Serial buffer
   while (Serial.available())
     Serial.read();
-    
+
   while ((digitalReadFast(led_array_interface->trigger_input_pin_list[trigger_index]) != state))
   {
     delayMicroseconds(1);
@@ -1621,31 +1644,34 @@ void LedArray::draw_primative_quadrant(int quadrant_number, float start_na, floa
 }
 
 /* Draws a single half-circle of LEDs using standard quadrant indexing (top left is 0, moving clockwise) */
-void LedArray::draw_primative_half_circle(int8_t half_circle_type, float start_na, float end_na)
+void LedArray::draw_primative_half_circle(float angle_deg, float start_na, float end_na)
 {
   if (debug_level >= 2)
   {
     Serial.print(F("Drawing Half Annulus:"));
-    Serial.print(half_circle_type);
+    Serial.print(angle_deg);
     Serial.print(SERIAL_LINE_ENDING);
   }
 
-  float x, y, d;
+  float angle_rad = angle_deg / 180.0 * 3.14;
+
+  float x, y, d, x_rotated, y_rotated;
   for ( int16_t led_index = 0; led_index < led_array_interface->led_count; led_index++)
   {
+    // Get raw coordinates
     x = LedArrayInterface::led_position_list_na[led_index][0];
     y = LedArrayInterface::led_position_list_na[led_index][1];
-    d = sqrt(x * x + y * y);
 
-    if (d > (start_na) && (d <= (end_na)))
+    // Rotate
+    x_rotated = cos(angle_rad) * x - sin(angle_rad) * y;
+    y_rotated = sin(angle_rad) * x + cos(angle_rad) * y;
+    d = sqrt(x_rotated * x_rotated + y_rotated * y_rotated);
+
+    // Filter rotated coordinates
+    if (d > (start_na) && (d <= (end_na)) && (y_rotated >= 0.001))
     {
-      if (  (half_circle_type == 0 && (y > 0))      // Top
-            || (half_circle_type == 1 && (y < 0))   // Bottom
-            || (half_circle_type == 2 && (x < 0))   // Left
-            || (half_circle_type == 3 && (x > 0)))  // Right
-
-        for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
-          set_led(led_index, color_channel_index, led_value[color_channel_index]);
+      for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
+        set_led(led_index, color_channel_index, led_value[color_channel_index]);
     }
   }
 }
@@ -1746,44 +1772,50 @@ void LedArray::scan_led_range(uint16_t delay_ms, float start_na, float end_na, b
 /* Command parser for DPC */
 int LedArray::draw_dpc(uint16_t argc, char ** argv)
 {
-  if (argc == 2)
+  int8_t pattern_index = -1;
+  float angle_deg = 0.0;
+  if (argc == 1)
   {
-    if (debug_level >= 1)
-    {
-      Serial.print(F("Drew DPC pattern with type: "));
-      Serial.print(argv[1]); Serial.print(SERIAL_LINE_ENDING);
-    }
-
-    if (auto_clear_flag)
-      led_array_interface->clear();
-
-    int8_t dpc_type = -1;
+    pattern_index = 0;
+  }
+  else if (argc == 2)
+  {
     if ( (strcmp(argv[1], DPC_TOP1) == 0) || (strcmp(argv[1], DPC_TOP2) == 0))
-      dpc_type = 0;
+      pattern_index = 0;
     else if ( (strcmp(argv[1], DPC_BOTTOM1) == 0) || (strcmp(argv[1], DPC_BOTTOM2) == 0))
-      dpc_type = 1;
+      pattern_index = 1;
     else if ( (strcmp(argv[1], DPC_LEFT1) == 0) || (strcmp(argv[1], DPC_LEFT2) == 0))
-      dpc_type = 2;
+      pattern_index = 2;
     else if ( (strcmp(argv[1], DPC_RIGHT1) == 0) || (strcmp(argv[1], DPC_RIGHT2) == 0))
-      dpc_type = 3;
+      pattern_index = 3;
     else
-      return ERROR_INVALID_ARGUMENT;
-
-    if (dpc_type >= 0)
     {
-      draw_primative_half_circle(dpc_type, inner_na, objective_na);
-      led_array_interface->update();
+      angle_deg = (float) strtol(argv[1], NULL, 0);
     }
   }
-  else if (argc == 1)
-  {
-    // Draw the first DPC pattern
-    draw_primative_half_circle(0, inner_na, objective_na);
-    led_array_interface->update();
-  }
-
   else
     return ERROR_ARGUMENT_COUNT;
+
+  if (debug_level >= 1)
+  {
+    Serial.print(F("Drew DPC pattern with type: "));
+    Serial.print(argv[1]); Serial.print(SERIAL_LINE_ENDING);
+  }
+
+  if (auto_clear_flag)
+    led_array_interface->clear();
+
+
+  if (pattern_index >= 0)
+  {
+    draw_primative_half_circle(dpc_pattern_angles[pattern_index], inner_na, objective_na);
+    led_array_interface->update();
+  }
+  else
+  {
+    draw_primative_half_circle(angle_deg, inner_na, objective_na);
+    led_array_interface->update();
+  }
 
   return NO_ERROR;
 }
@@ -2392,7 +2424,7 @@ int LedArray::run_sequence_dpc(uint16_t argc, char ** argv)
       led_array_interface->clear();
 
       // Draw half circle
-      draw_primative_half_circle(pattern_index, inner_na, objective_na);
+      draw_primative_half_circle(dpc_pattern_angles[pattern_index], inner_na, objective_na);
 
       // Update pattern
       led_array_interface->update();
@@ -2950,14 +2982,14 @@ int LedArray::run_demo()
     // Demo DPC Patterns
     for (int color_channel_index_outer = 0; color_channel_index_outer < led_array_interface->color_channel_count; color_channel_index_outer++)
     {
-      for (int dpc_index = 0; dpc_index < 4; dpc_index++)
+      for (int pattern_index = 0; pattern_index < 4; pattern_index++)
       {
         for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
           led_value[color_channel_index] = 0;
 
         led_value[color_channel_index_outer] = 127;
         led_array_interface->clear();
-        draw_primative_half_circle(dpc_index, 0, objective_na);
+        draw_primative_half_circle(dpc_pattern_angles[pattern_index], 0, objective_na);
         led_array_interface->update();
         delay(250);
 

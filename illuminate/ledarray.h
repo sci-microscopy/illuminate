@@ -68,7 +68,7 @@ class LedArray {
     // Drawing primatives
     void draw_primative_quadrant(int quadrant_number, float start_na, float end_na, bool include_center);
     void draw_primative_circle(float start_na, float end_na);
-    void draw_primative_half_circle(int8_t half_circle_type, float start_na, float end_na);
+    void draw_primative_half_circle(float angle_deg, float start_na, float end_na);
     void draw_primative_led_scan(uint16_t delay_ms, float start_na, float end_na, bool print_indicies);
 
     // Triggering
@@ -183,6 +183,9 @@ class LedArray {
 
   private:
 
+    // DPC angles
+    float dpc_pattern_angles[4] = {0.0, 180.0, 270.0, 90.0};
+
     /* DPC Commands */
     const char * DPC_RIGHT1 = "r";
     const char * DPC_RIGHT2 = "right";
@@ -194,7 +197,7 @@ class LedArray {
     const char * DPC_TOP2 = "top";
 
     const char * DPC_BOTTOM1 = "b";
-    const char * DPC_BOTTOM2 = "bottom";
+    const char * DPC_BOTTOM2 = "bottom";    
 
     // Defualt brightness
     const uint8_t LED_VALUE_DEFAULT = 10;
