@@ -68,8 +68,8 @@ const int POWER_SENSE_PIN = -1;
 #define SN_ADDRESS 200
 
 // Device and Software Descriptors
-const char * LedArrayInterface::device_name = "Sci-Wing";
-const char * LedArrayInterface::device_hardware_revision = "1.0";
+const char * LedArrayInterface::device_name = "sci.wing";
+const char * LedArrayInterface::device_hardware_revision = "r2";
 const int16_t LedArrayInterface::led_count = 793;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 2;

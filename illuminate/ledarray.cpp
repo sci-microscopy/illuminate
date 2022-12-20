@@ -1663,12 +1663,12 @@ void LedArray::draw_primative_half_circle(float angle_deg, float start_na, float
     y = LedArrayInterface::led_position_list_na[led_index][1];
 
     // Rotate
-    x_rotated = cos(angle_rad) * x - sin(angle_rad) * y;
-    y_rotated = sin(angle_rad) * x + cos(angle_rad) * y;
+    x_rotated = round((cos(angle_rad) * x - sin(angle_rad) * y) * 100.0) / 100.0;
+    y_rotated = round((sin(angle_rad) * x + cos(angle_rad) * y) * 100.0) / 100.0;
     d = sqrt(x_rotated * x_rotated + y_rotated * y_rotated);
 
     // Filter rotated coordinates
-    if (d > (start_na) && (d <= (end_na)) && (y_rotated >= 0.001))
+    if (d > (start_na) && (d <= (end_na)) && (y_rotated > 0.0))
     {
       for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
         set_led(led_index, color_channel_index, led_value[color_channel_index]);
