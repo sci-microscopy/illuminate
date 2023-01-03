@@ -39,8 +39,8 @@
 // The value these are set to does not matter - only that they are defined.
 //#define USE_QUADRANT_ARRAY
 //#define USE_QUASI_DOME_ARRAY
-//#define USE_SCI_ROUND_ARRAY
-#define USE_SCI_ROUND_ARRAY_R1
+#define USE_SCI_ROUND_ARRAY
+//#define USE_SCI_ROUND_ARRAY_R1
 //#define USE_SCI_IRIS
 //#define USE_SCI_DOME_R2
 //#define USE_QUAD_LULED_ARRAY
