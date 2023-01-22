@@ -56,9 +56,7 @@ const int POWER_SENSE_PIN = 23;
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "LuLed Quad";
 const char * LedArrayInterface::device_hardware_revision = "0.01";
-const float LedArrayInterface::max_na = 1.0;
 const int16_t LedArrayInterface::led_count = 20;
-const float LedArrayInterface::default_na = 0.5;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 1;
 const int LedArrayInterface::trigger_input_count = 1;
@@ -152,23 +150,10 @@ uint16_t LedArrayInterface::get_led_value(uint16_t led_number, int color_channel
   return 0;
 }
 
-void LedArrayInterface::set_ledFast(int16_t led_number, int color_channel_index, bool value)
-{
-  not_implemented("set_ledFast");
-}
-
 uint16_t LedArrayInterface::get_serial_number()
 {
   uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
   return (sn_read);
-}
-
-void LedArrayInterface::setSerialNumber(uint16_t serial_number)
-{
-	byte lower_8bits_sn = serial_number & 0xff;
-	byte upper_8bits_sn = (serial_number >> 8) & 0xff;
-	EEPROM.write(SN_ADDRESS, lower_8bits_sn);
-	EEPROM.write(SN_ADDRESS + 1, upper_8bits_sn);
 }
 
 uint16_t LedArrayInterface::get_part_number()
@@ -183,17 +168,6 @@ void LedArrayInterface::set_part_number(uint16_t part_number)
 	byte upper_8bits_pn = (part_number >> 8) & 0xff;
 	EEPROM.write(PN_ADDRESS, lower_8bits_pn);
 	EEPROM.write(PN_ADDRESS + 1, upper_8bits_pn);
-}
-
-int8_t LedArrayInterface::getDemoMode()
-{
-  int8_t demo_mode_read = EEPROM.read(DEMO_MODE_ADDRESS);
-  return (demo_mode_read);
-}
-
-void LedArrayInterface::setDemoMode(int8_t demo_mode)
-{
-	EEPROM.write(DEMO_MODE_ADDRESS, demo_mode);
 }
 
 // Debug Variables
@@ -377,12 +351,12 @@ void LedArrayInterface::set_led(int16_t led_number, int16_t color_channel_number
   set_led(led_number, color_channel_number, (uint8_t) (value * UINT8_MAX));
 }
 
-void LedArrayInterface::device_reset()
+int8_t LedArrayInterface::device_reset()
 {
-  device_setup();
+  return device_setup();
 }
 
-void LedArrayInterface::device_setup()
+int8_t LedArrayInterface::device_setup()
 {
 
   LEDS.addLeds<APA102, DATA_PIN, CLOCK_PIN, BGR, DATA_RATE_MHZ(1)>(ring, 20);
@@ -413,6 +387,8 @@ void LedArrayInterface::device_setup()
     for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
             pinMode(trigger_input_pin_list[trigger_index], INPUT);
 
+  return NO_ERROR;
+
 }
 
 void LedArrayInterface::source_change_interrupt()
@@ -435,7 +411,7 @@ int16_t LedArrayInterface::get_device_power_sensing_capability()
       return NO_PSU_SENSING;
 }
 
-void LedArrayInterface::set_power_source_monitoring_state(bool new_state)
+void LedArrayInterface::set_power_source_monitoring_state(int new_state)
 {
         Serial.printf(F("ERROR (LedArrayInterface::set_power_source_monitoring_state): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
 }
@@ -520,5 +496,17 @@ uint32_t LedArrayInterface::get_sclk_baud_rate()
   not_implemented("LedArrayInterface::get_sclk_baud_rate");
   return 0;
 }
+
+int8_t LedArrayInterface::set_register(uint32_t address, int8_t value)
+{
+    EEPROM.write(address, value);
+    return NO_ERROR;
+}
+
+int8_t LedArrayInterface::get_register(uint32_t address)
+{
+    return EEPROM.read(address);
+}
+
 
 #endif

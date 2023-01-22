@@ -74,10 +74,8 @@ uint32_t _warning_delay_ms = 10;
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "quadrant-array";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
-const float LedArrayInterface::max_na = 1.0;
 const int16_t LedArrayInterface::led_count = 4;
 const uint16_t LedArrayInterface::center_led = 0;
-const float LedArrayInterface::default_na = 0.4;
 const int LedArrayInterface::trigger_output_count = 2;
 const int LedArrayInterface::trigger_input_count = 2;
 const int LedArrayInterface::color_channel_count = 1;
@@ -139,14 +137,6 @@ uint16_t LedArrayInterface::get_serial_number()
 {
         uint16_t sn_read = (EEPROM.read(SN_ADDRESS + 1) << 8) | EEPROM.read(SN_ADDRESS);
         return (sn_read);
-}
-
-void LedArrayInterface::setSerialNumber(uint16_t serial_number)
-{
-	byte lower_8bits_sn = serial_number & 0xff;
-	byte upper_8bits_sn = (serial_number >> 8) & 0xff;
-	EEPROM.write(sn_address, lower_8bits_sn);
-	EEPROM.write(sn_address + 1, upper_8bits_sn);
 }
 
 uint16_t LedArrayInterface::get_part_number()
@@ -448,12 +438,12 @@ void LedArrayInterface::set_led(int16_t led_number, int16_t color_channel_index,
   set_led(led_number, color_channel_index, (uint8_t) (value * UINT8_MAX));
 }
 
-void LedArrayInterface::device_reset()
+int8_t LedArrayInterface::device_reset()
 {
-  device_setup();
+  return device_setup();
 }
 
-void LedArrayInterface::device_setup()
+int8_t LedArrayInterface::device_setup()
 {
   // Now set the GSCK to an output and a 50% PWM duty-cycle
   // For simplicity all three grayscale clocks are tied to the same pin
@@ -484,6 +474,8 @@ void LedArrayInterface::device_setup()
 
   // Clear the array
   clear();
+
+  return NO_ERROR;
 }
 
 void LedArrayInterface::source_change_interrupt()
@@ -506,12 +498,10 @@ int16_t LedArrayInterface::get_device_power_sensing_capability()
       return NO_PSU_SENSING;
 }
 
-void LedArrayInterface::set_power_source_monitoring_state(bool new_state)
+void LedArrayInterface::set_power_source_monitoring_state(int new_state)
 {
         Serial.printf(F("ERROR (LedArrayInterface::set_power_source_monitoring_state): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
 }
-
-
 
 bool LedArrayInterface::is_power_source_plugged_in()
 {
@@ -613,6 +603,17 @@ void LedArrayInterface::set_sclk_baud_rate(uint32_t new_baud_rate)
 uint32_t LedArrayInterface::get_sclk_baud_rate()
 {
   return 0;
+}
+
+int8_t LedArrayInterface::set_register(uint32_t address, int8_t value)
+{
+    EEPROM.write(address, value);
+    return NO_ERROR;
+}
+
+int8_t LedArrayInterface::get_register(uint32_t address)
+{
+    return EEPROM.read(address);
 }
 
 #endif

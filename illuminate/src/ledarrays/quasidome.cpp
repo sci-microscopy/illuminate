@@ -74,8 +74,6 @@ uint32_t _warning_delay_ms = 10;
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "Waller Lab Quasi-Dome";
 const char * LedArrayInterface::device_hardware_revision = "1.0";
-const float LedArrayInterface::max_na = 0.98;
-const float LedArrayInterface::default_na = 0.4;
 const int16_t LedArrayInterface::led_count = 581;
 const uint16_t LedArrayInterface::center_led = 0;
 const int LedArrayInterface::trigger_output_count = 2;
@@ -1165,7 +1163,7 @@ int16_t LedArrayInterface::get_device_power_sensing_capability()
       return NO_PSU_SENSING;
 }
 
-void LedArrayInterface::set_power_source_monitoring_state(bool new_state)
+void LedArrayInterface::set_power_source_monitoring_state(int new_state)
 {
         Serial.printf(F("ERROR (LedArrayInterface::set_power_source_monitoring_state): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
 }
@@ -1270,6 +1268,17 @@ void LedArrayInterface::set_sclk_baud_rate(uint32_t new_baud_rate)
 uint32_t LedArrayInterface::get_sclk_baud_rate()
 {
   return tlc.get_sclk_frequency();
+}
+
+int8_t LedArrayInterface::set_register(uint32_t address, int8_t value)
+{
+    EEPROM.write(address, value);
+    return NO_ERROR;
+}
+
+int8_t LedArrayInterface::get_register(uint32_t address)
+{
+    return EEPROM.read(address);
 }
 
 #endif
