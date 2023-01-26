@@ -89,7 +89,7 @@ bool LedArrayInterface::trigger_input_state[] = {false};
 
 int LedArrayInterface::debug = 0;
 
-const uint8_t TLC5955::chip_count = 6;          // Change to reflect number of TLC chips
+const uint8_t TLC5955::chip_count = 7;          // Change to reflect number of TLC chips
 float TLC5955::max_current_amps = 8.0;      // Maximum current output, amps
 bool TLC5955::enforce_max_current = true;   // Whether to enforce max current limit
 
@@ -490,6 +490,7 @@ int LedArrayInterface::send_trigger_pulse(int trigger_index, uint16_t delay_us, 
 }
 void LedArrayInterface::update()
 {
+    tlc.update();
     tlc.update();
 }
 
