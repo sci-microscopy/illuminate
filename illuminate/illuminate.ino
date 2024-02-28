@@ -29,7 +29,7 @@
 */
 
 #define LICENSE_TEXT                                                           \
-  "Copyright (c) 2021, Zack Phillips\n" \
+  "Copyright (c) 2024, Zachary Phillips\n" \
   "Copyright (c) 2018, Zachary Phillips (UC Berkeley)\n" \
   "All rights reserved.\n" \
   "\n"\

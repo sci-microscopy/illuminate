@@ -13,7 +13,7 @@
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
       Neither the name of the UC Berkley nor thei
-      derived from this software without specific prior written permission.
+      derived from this software without specific prior written permission.demo
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -1312,17 +1312,27 @@ bool LedArray::wait_for_trigger_state(int trigger_index, bool state)
   while (Serial.available())
     Serial.read();
 
-  while ((digitalReadFast(led_array_interface->trigger_input_pin_list[trigger_index]) != state))
+  bool done = false;
+  int counter = 0;
+  while (!done)
   {
-    delayMicroseconds(1);
-    delayed_ms += 0.001;
-    if (delayed_ms > LedArray::trigger_input_timeout * 1000.0)
+    if ((digitalReadFast(led_array_interface->trigger_input_pin_list[trigger_index]) == state))
     {
-      Serial.printf(F("WARNING (LedArray::wait_for_trigger_state): Exceeding max delay for trigger input %d (%.2f sec.) %s"), trigger_index, LedArray::trigger_input_timeout, SERIAL_LINE_ENDING);
-      return false;
+      counter++;
+      if (counter >= 10)
+        done = true;
     }
-    if (Serial.available())
-      return false;
+    else
+    {
+      counter = 0;
+      delayMicroseconds(10);
+      delayed_ms += 0.01;
+      if (delayed_ms > LedArray::trigger_input_timeout * 1000.0)
+      {
+        Serial.printf(F("WARNING (LedArray::wait_for_trigger_state): Exceeding max delay for trigger input %d (%.2f sec.) %s"), trigger_index, LedArray::trigger_input_timeout, SERIAL_LINE_ENDING);
+        return false;
+      }
+    }
   }
   return true;
 }
@@ -2421,7 +2431,7 @@ int LedArray::run_sequence_dpc(uint16_t argc, char ** argv)
       elapsedMicros elapsed_us_inner;
 
       // Set all LEDs to zero
-      led_array_interface->clear();
+      clear();
 
       // Draw half circle
       draw_primative_half_circle(dpc_pattern_angles[pattern_index], inner_na, objective_na);
@@ -2933,6 +2943,7 @@ int LedArray::run_demo()
   while (Serial.available())
     Serial.read();
 
+
   // Run until key received
   while (get_demo_mode())
   {
@@ -2943,7 +2954,7 @@ int LedArray::run_demo()
       for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
         led_value[color_channel_index] = 0;
 
-      led_value[color_channel_index_outer] = 64;
+      led_value[color_channel_index_outer] = 16;
       led_array_interface->clear();
       draw_primative_circle(0, objective_na);
       led_array_interface->update();
@@ -2964,7 +2975,7 @@ int LedArray::run_demo()
       for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
         led_value[color_channel_index] = 0;
 
-      led_value[color_channel_index_outer] = 64;
+      led_value[color_channel_index_outer] = 16;
       led_array_interface->clear();
       draw_primative_circle(objective_na, objective_na + 0.2);
       led_array_interface->update();
@@ -2987,7 +2998,7 @@ int LedArray::run_demo()
         for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
           led_value[color_channel_index] = 0;
 
-        led_value[color_channel_index_outer] = 127;
+        led_value[color_channel_index_outer] = 16;
         led_array_interface->clear();
         draw_primative_half_circle(dpc_pattern_angles[pattern_index], 0, objective_na);
         led_array_interface->update();
@@ -3009,7 +3020,7 @@ int LedArray::run_demo()
       set_led(-1, -1, (uint8_t)0);
       set_led(led_index, -1, (uint8_t)127);
       led_array_interface->update();
-      delay(1);
+      delay(10);
 
       // Break loop if key is pressed
       if (Serial.available())
@@ -3026,7 +3037,7 @@ int LedArray::run_demo()
       set_led(-1, -1, (uint8_t)0);
       set_led(led_index, -1, (uint8_t)127);
       led_array_interface->update();
-      delay(1);
+      delay(10);
 
       // Break loop if key is pressed
       if (Serial.available())
