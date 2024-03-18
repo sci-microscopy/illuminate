@@ -209,7 +209,7 @@ command_item_t command_list[] = {
   {"pwrs", "Toggle power source sensing on or off.", "pwrs", power_sensing_func},
   {"pwrv", "Print power sourve voltage.", "pwrv", power_source_voltage_func},
 
-  {"trinputtimeout", "Sets the trigger input timeout in seconds. Default is 3600", "trinputtimeout.10", trigger_input_timeout_func},
+  {"trinputtimeout", "Sets the trigger input timeout in seconds. Default is 60 (60s).", "trinputtimeout.10", trigger_input_timeout_func},
   {"troutputpulsewidth", "Sets the trigger pulse width in microseconds, default is 1000.", "troutputpulsewidth.1000", trigger_output_pulse_width_func},
   {"trinputpolarity", "Sets the trigger input polarity. 1=active high, 0=active low. Default is 1.", "trinputpolarity.1", trigger_input_polarity_func},
   {"troutputpolarity", "Sets the trigger output polarity. 1=active high, 0=active low. Default is 1.", "troutputpolarity.1", trigger_output_polarity_func},

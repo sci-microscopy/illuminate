@@ -54,8 +54,8 @@ class LedArrayInterface {
 
     // Get and set trigger state
     int send_trigger_pulse(int trigger_index, uint16_t delay_us, bool inverse_polarity);
-    int set_trigger_state(int trigger_index, bool state);
-    int get_input_trigger_state(int input_trigger_index);
+    static void trigger_pin_interrupt_0();
+    static void trigger_pin_interrupt_1();
 
     // Update array
     static void update();

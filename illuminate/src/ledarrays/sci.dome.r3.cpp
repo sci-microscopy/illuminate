@@ -31,7 +31,7 @@
 // Define which LED Array is used
 #include "../../illuminate.h"
 
-#ifdef USE_SCI_DOME_R2
+#ifdef USE_SCI_DOME_R3
 #include "../../ledarrayinterface.h"
 #include "../TLC5955/TLC5955.h"
 
@@ -1102,7 +1102,6 @@ int8_t LedArrayInterface::device_reset()
 
 int8_t LedArrayInterface::device_setup()
 {
-
         // Clock Buffer enable
         pinMode(4, OUTPUT);
         pinMode(5, OUTPUT);
@@ -1139,7 +1138,7 @@ int8_t LedArrayInterface::device_setup()
         // Update the GS register
         clear();
 
-        // Output trigger Pins
+        // Output trigger pins
         for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
         {
                 pinMode(trigger_output_pin_list[trigger_index], OUTPUT);

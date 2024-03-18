@@ -72,12 +72,10 @@ class LedArray {
     void draw_primative_led_scan(uint16_t delay_ms, float start_na, float end_na, bool print_indicies);
 
     // Triggering
-    bool get_trigger_state(int trigger_index);
-    bool wait_for_trigger_state(int trigger_index, bool state);
     int trigger_input_test(uint16_t channel);
     int trigger_setup(uint16_t argc, char ** argv);
     int send_trigger_pulse(int trigger_index, bool show_output);
-    int set_trigger_state(int trigger_index, bool state, bool show_output);
+    bool wait_for_trigger_state(int trigger_index, bool state);
 
     // Setting system parameters
     int set_na(uint16_t argc, char ** argv);
@@ -231,6 +229,7 @@ class LedArray {
     static volatile float trigger_input_timeout;
     static const int * trigger_output_pin_list;
     static const int * trigger_input_pin_list;
+    const float INPUT_TRIGGER_WAIT_PERIOD_US = 1;
 
     // Default illumination
     uint8_t * led_value; // Current led values for each channel

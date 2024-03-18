@@ -182,32 +182,6 @@ void LedArrayInterface::set_debug(int state)
         Serial.printf(F("(LedArrayInterface::set_debug): Set debug level to %d \n"), debug);
 }
 
-int LedArrayInterface::set_trigger_state(int trigger_index, bool state)
-{
-  // Get trigger pin
-  int trigger_pin = trigger_output_pin_list[trigger_index];
-  if (trigger_pin > 0)
-  {
-    if (state)
-      digitalWriteFast(trigger_pin, HIGH);
-    else
-      digitalWriteFast(trigger_pin, LOW);
-    return (1);
-  } else {
-    return (-1);
-  }
-}
-
-int LedArrayInterface::get_input_trigger_state(int input_trigger_index)
-{
-  // Get trigger pin
-  int trigger_pin = trigger_input_pin_list[input_trigger_index];
-  if (trigger_pin > 0)
-    return (trigger_input_state[trigger_pin]);
-  else
-    return (-1);
-}
-
 int LedArrayInterface::send_trigger_pulse(int trigger_index, uint16_t delay_us, bool inverse_polarity)
 {
         // Get trigger pin

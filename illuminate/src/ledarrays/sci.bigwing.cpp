@@ -1700,23 +1700,7 @@ void LedArrayInterface::set_debug(int state)
         Serial.printf(F("(LedArrayInterface::set_debug): Set debug level to %d \n"), debug);
 }
 
-int LedArrayInterface::set_trigger_state(int trigger_index, bool state)
-{
-        // Get trigger pin
-        int trigger_pin = trigger_output_pin_list[trigger_index];
-        if (trigger_pin > 0)
-        {
-                if (state)
-                        digitalWriteFast(trigger_pin, HIGH);
-                else
-                        digitalWriteFast(trigger_pin, LOW);
-                return (1);
-        } else {
-                return (-1);
-        }
-}
-
-int LedArrayInterface::get_input_trigger_state(int input_trigger_index)
+int LedArrayInterface::(int input_trigger_index)
 {
         // Get trigger pin
         int trigger_pin = trigger_input_pin_list[input_trigger_index];
@@ -1899,12 +1883,30 @@ int8_t LedArrayInterface::device_setup()
                 pinMode(trigger_output_pin_list[trigger_index], OUTPUT);
                 digitalWriteFast(trigger_output_pin_list[trigger_index], LOW);
         }
-
-        // Input trigger Pins
-        for (int trigger_index = 0; trigger_index < trigger_input_count; trigger_index++)
-                pinMode(trigger_input_pin_list[trigger_index], INPUT);
+        
+        // Input trigger pins
+        attachInterrupt(digitalPinToInterrupt(trigger_input_pin_list[0]), trigger_pin_interrupt_0, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(trigger_input_pin_list[1]), trigger_pin_interrupt_1, CHANGE);
 
         return NO_ERROR;
+}
+
+void LedArrayInterface::trigger_pin_interrupt_0()
+{
+        bool previous_state = trigger_input_state[0];
+        trigger_input_state[0] = digitalReadFast(trigger_input_pin_list[0]);
+        bool new_state = trigger_input_state[0];
+        if (debug >= 2)
+            Serial.printf("Recieved trigger pulse on pin 0. Previous state: %s New state: %s%s", previous_state ? "HIGH" : "LOW", new_state ? "HIGH" : "LOW", SERIAL_LINE_ENDING);
+}
+
+void LedArrayInterface::trigger_pin_interrupt_1()
+{
+    bool previous_state = trigger_input_state[1];
+    trigger_input_state[1] = digitalReadFast(trigger_input_pin_list[1]);
+    bool new_state = trigger_input_state[1];
+    if (debug >= 2)
+        Serial.printf("Recieved trigger pulse on pin 1. Previous state: %s New state: %s%s", previous_state ? "HIGH" : "LOW", new_state ? "HIGH" : "LOW", SERIAL_LINE_ENDING);
 }
 
 void LedArrayInterface::source_change_interrupt()

@@ -33,7 +33,7 @@
 volatile uint16_t LedArray::pattern_index = 0;
 volatile uint16_t LedArray::frame_index = 0;
 
-volatile float LedArray::trigger_input_timeout = 3600; // Seconds
+volatile float LedArray::trigger_input_timeout = 60; // Seconds
 volatile uint32_t * LedArray::trigger_output_pulse_width_list_us;
 volatile uint32_t * LedArray::trigger_output_start_delay_list_us;
 volatile int * LedArray::trigger_input_mode_list;
@@ -1214,31 +1214,6 @@ int LedArray::trigger_setup(uint16_t argc, char ** argv)
   else if (argc == 1)
   {
 
-    //    // Print trigger settings
-    //    // Input Pins
-    //    for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
-    //    {
-    //      Serial.print("Trigger input pin index ");
-    //      Serial.print(trigger_index);
-    //      Serial.print(F(" uses Pin #"));
-    //      Serial.print(LedArrayInterface::trigger_input_pin_list[trigger_index]);
-    //      Serial.print(SERIAL_LINE_ENDING);
-    //    }
-    //
-    //    // Output Pins
-    //    for (int trigger_index = 0; trigger_index < led_array_interface->trigger_output_count; trigger_index++)
-    //    {
-    //      Serial.print(F("Trigger output pin index "));
-    //      Serial.print(trigger_index);
-    //      Serial.print(F(" uses Pin #"));
-    //      Serial.print(LedArrayInterface::trigger_output_pin_list[trigger_index]);
-    //      Serial.print(F(" with pulse width "));
-    //      Serial.print(LedArray::trigger_output_pulse_width_list_us[trigger_index]);
-    //      Serial.print(F("us. Start delay is "));
-    //      Serial.print(LedArray::trigger_output_start_delay_list_us[trigger_index]);
-    //      Serial.printf(F("us.%s"), SERIAL_LINE_ENDING);
-    //    }
-
     Serial.printf(F("{%s"), SERIAL_LINE_ENDING, SERIAL_LINE_ENDING);
     Serial.printf(F("    \"input\": [%s"), SERIAL_LINE_ENDING);
     for (int trigger_index = 0; trigger_index < led_array_interface->trigger_input_count; trigger_index++)
@@ -1277,11 +1252,12 @@ int LedArray::trigger_setup(uint16_t argc, char ** argv)
 /* Send a trigger pulse */
 int LedArray::send_trigger_pulse(int trigger_index, bool show_output)
 {
-  // TODO: store polarity and use it here
   if (debug_level >= 2)
     Serial.printf(F("Called send_trigger_pulse %s"), SERIAL_LINE_ENDING);
 
-  // Send trigger pulse with pulse_width
+  if ((trigger_index < 0) || (trigger_index >= led_array_interface->trigger_output_count))
+    return ERROR_INVALID_ARGUMENT;
+
   int status = led_array_interface->send_trigger_pulse(trigger_index, LedArray::trigger_output_pulse_width_list_us[trigger_index], false);
 
   if (status < 0)
@@ -1290,23 +1266,10 @@ int LedArray::send_trigger_pulse(int trigger_index, bool show_output)
   return NO_ERROR;
 }
 
-int LedArray::set_trigger_state(int trigger_index, bool state, bool show_output)
-{
-  int status = led_array_interface->set_trigger_state(trigger_index, state);
-  if (status < 0)
-    return ERROR_TRIGGER_CONFIG;
-  return NO_ERROR;
-}
-
-bool LedArray::get_trigger_state(int trigger_index)
-{
-  return (digitalReadFast(led_array_interface->trigger_input_pin_list[trigger_index]));
-}
-
 /* Wait for a TTL trigger port to be in the given state */
 bool LedArray::wait_for_trigger_state(int trigger_index, bool state)
 {
-  float delayed_ms = 0;
+  float delayed_us = 0;
 
   // Clear Serial buffer
   while (Serial.available())
@@ -1316,22 +1279,33 @@ bool LedArray::wait_for_trigger_state(int trigger_index, bool state)
   int counter = 0;
   while (!done)
   {
-    if ((digitalReadFast(led_array_interface->trigger_input_pin_list[trigger_index]) == state))
+
+    // Break the loop if we've received a serial command
+    if (Serial.available())
     {
-      counter++;
-      if (counter >= 10)
-        done = true;
+      while (Serial.available())
+        Serial.read();
+      Serial.printf(F("WARNING (LedArray::wait_for_trigger_state): Cancelling on pin %d due to serial interrupt %s"), trigger_index, SERIAL_LINE_ENDING);
+      clear();
+      return false;
+    }
+
+    // Break the loop if there's a timeout
+    if (delayed_us > LedArray::trigger_input_timeout * 1000000.0)
+    {
+      Serial.printf(F("WARNING (LedArray::wait_for_trigger_state): Exceeding max delay for trigger input %d (%.2f sec.) %s"), trigger_index, LedArray::trigger_input_timeout, SERIAL_LINE_ENDING);
+      return false;
+    }
+    
+    // Do basic debouncing
+    if (led_array_interface->trigger_input_state[trigger_index] == state)
+    {
+      done = true;
     }
     else
     {
-      counter = 0;
-      delayMicroseconds(10);
-      delayed_ms += 0.01;
-      if (delayed_ms > LedArray::trigger_input_timeout * 1000.0)
-      {
-        Serial.printf(F("WARNING (LedArray::wait_for_trigger_state): Exceeding max delay for trigger input %d (%.2f sec.) %s"), trigger_index, LedArray::trigger_input_timeout, SERIAL_LINE_ENDING);
-        return false;
-      }
+      delayMicroseconds(INPUT_TRIGGER_WAIT_PERIOD_US);
+      delayed_us += INPUT_TRIGGER_WAIT_PERIOD_US;
     }
   }
   return true;
