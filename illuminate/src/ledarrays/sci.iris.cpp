@@ -67,6 +67,7 @@ bool _psu_is_connected = true;
 bool _power_source_sensing_is_enabled = false;
 elapsedMillis _time_elapsed_debounce;
 uint32_t _warning_delay_ms = 10;
+bool global_shutter_state = true;
 
 // Device and Software Descriptors
 const char * LedArrayInterface::device_name = "sci.iris";
@@ -447,9 +448,13 @@ int LedArrayInterface::send_trigger_pulse(int trigger_index, uint16_t delay_us, 
     else
         return -1;
 }
+
 void LedArrayInterface::update()
 {
-    tlc.update();
+    if (global_shutter_state)
+        tlc.update();
+    else
+        tlc.clear();
 }
 
 void LedArrayInterface::clear()
@@ -572,6 +577,34 @@ void LedArrayInterface::set_led(int16_t led_number, int16_t color_channel_number
     set_led(led_number, color_channel_number, (uint16_t) (value * UINT16_MAX));
 }
 
+void LedArrayInterface::set_global_shutter_state(bool state)
+{
+    if (debug >= 1)
+    {
+        Serial.print("Setting Global Shutter state to ");
+        Serial.print(state);
+        Serial.print(SERIAL_LINE_ENDING);
+    }
+
+    // Store current state
+    global_shutter_state = state;
+
+    // Call the internal update method
+    update();
+}
+
+bool LedArrayInterface::get_global_shutter_state()
+{
+    if (debug >= 1)
+    {
+        Serial.print("Getting Global Shutter state: ");
+        Serial.print(global_shutter_state);
+        Serial.print(SERIAL_LINE_ENDING);
+    }
+    
+    return global_shutter_state;
+}
+
 
 int8_t LedArrayInterface::device_reset()
 {
@@ -640,16 +673,12 @@ void LedArrayInterface::trigger_pin_interrupt_0()
 
 void LedArrayInterface::trigger_pin_interrupt_1()
 {
-    bool previous_state = trigger_input_state[1];
-    trigger_input_state[1] = digitalReadFast(trigger_input_pin_list[1]);
-    bool new_state = trigger_input_state[1];
-    if (debug >= 2)
-        Serial.printf("Recieved trigger pulse on pin 1. Previous state: %s New state: %s%s", previous_state ? "HIGH" : "LOW", new_state ? "HIGH" : "LOW", SERIAL_LINE_ENDING);
+    Serial.printf(F("ERROR (LedArrayInterface::trigger_pin_interrupt_1): This board has only one trigger pin.%s"), SERIAL_LINE_ENDING);
 }
 
 void LedArrayInterface::source_change_interrupt()
 {
-        Serial.printf(F("ERROR (LedArrayInterface::source_change_interrupt): PSU Monitoring not supported on this device."), SERIAL_LINE_ENDING);
+    Serial.printf(F("ERROR (LedArrayInterface::source_change_interrupt): PSU Monitoring not supported on this device.%s"), SERIAL_LINE_ENDING);
 }
 
 float LedArrayInterface::get_power_source_voltage()

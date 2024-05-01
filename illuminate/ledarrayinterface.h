@@ -135,6 +135,8 @@ class LedArrayInterface {
     uint32_t get_sclk_baud_rate();
     void set_gsclk_frequency(uint32_t new_gsclk_freq);
     uint32_t get_gsclk_frequency();
+    void set_global_shutter_state(bool state);
+    bool get_global_shutter_state();
 
     // Source voltage checking
     int16_t source_sense_pin = -1;
@@ -146,8 +148,8 @@ class LedArrayInterface {
     void set_power_source_monitoring_state(int state);
     void source_change_interrupt();
 
-    int8_t set_register(uint32_t register, int8_t value);
-    int8_t get_register(uint32_t register);
+    int8_t set_register(uint32_t register_, int8_t value);
+    int8_t get_register(uint32_t register_);
 };
 
 #endif

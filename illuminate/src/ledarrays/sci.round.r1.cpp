@@ -47,6 +47,9 @@
 #include "../TeensyComparator/TeensyComparator.h"
 #endif
 
+// Global shutter state
+bool global_shutter_state = true;
+
 // Power sensing pin
 const int POWER_SENSE_PIN = 23;
 
@@ -435,22 +438,6 @@ void LedArrayInterface::set_debug(int state)
         Serial.printf(F("(LedArrayInterface::set_debug): Set debug level to %d \n"), debug);
 }
 
-int LedArrayInterface::(int trigger_index, bool state)
-{
-    // Get trigger pin
-    int trigger_pin = trigger_output_pin_list[trigger_index];
-    if (trigger_pin > 0)
-    {
-        if (state)
-            digitalWriteFast(trigger_pin, HIGH);
-        else
-            digitalWriteFast(trigger_pin, LOW);
-        return 1;
-    } 
-    else
-        return -1;
-}
-
 int LedArrayInterface::send_trigger_pulse(int trigger_index, uint16_t delay_us, bool inverse_polarity)
 {
     // Get trigger pin
@@ -478,10 +465,42 @@ int LedArrayInterface::send_trigger_pulse(int trigger_index, uint16_t delay_us, 
     else
         return -1;
 }
+
+void LedArrayInterface::set_global_shutter_state(bool state)
+{
+    if (debug >= 1)
+    {
+        Serial.print("Setting Global Shutter state to ");
+        Serial.print(state);
+        Serial.print(SERIAL_LINE_ENDING);
+    }
+
+    // Store current state
+    global_shutter_state = state;
+
+    // Call the internal update method
+    update();
+}
+
+bool LedArrayInterface::get_global_shutter_state()
+{
+    if (debug >= 1)
+    {
+        Serial.print("Getting Global Shutter state: ");
+        Serial.print(global_shutter_state);
+        Serial.print(SERIAL_LINE_ENDING);
+    }
+    
+    return global_shutter_state;
+}
+
+
 void LedArrayInterface::update()
 {
-    tlc.update();
-    tlc.update();
+    if (global_shutter_state)
+        tlc.update();
+    else
+        tlc.clear();
 }
 
 void LedArrayInterface::clear()
@@ -618,6 +637,7 @@ int8_t LedArrayInterface::device_setup()
 
     // set all brightness levels to max (127)
     int currentR = 127;
+
     int currentB = 127;
     int currentG = 127;
     tlc.set_brightness_current(currentR, currentB, currentG);

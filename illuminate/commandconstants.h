@@ -119,6 +119,8 @@ int trigger_output_pin_func(CommandRouter *cmd, int argc, const char **argv);
 int cosine_func(CommandRouter *cmd, int argc, const char **argv);
 int hw_initialize_function(CommandRouter *cmd, int argc, const char **argv);
 int set_single_color_func(CommandRouter *cmd, int argc, const char **argv);
+int global_shutter_func(CommandRouter *cmd, int argc, const char **argv);
+
 // Syntax is: {short command, long command, description, syntax}
 command_item_t command_list[] = {
 
@@ -146,6 +148,7 @@ command_item_t command_list[] = {
 
   // General Display
   {"x", "Clear the LED array.", "x", clear_func},
+  {"gs", "Set the global shutter state to open (1) or closed (0), maintaining all other settings", "gs.0 --or-- gs.1", global_shutter_func},
   {"ff", "Fill the LED array with default color.", "ff", fill_func},
   {"bf", "Display brightfield pattern", "bf", brightfield_func},
   {"df", "Display darkfield pattern", "df", darkfield_func},

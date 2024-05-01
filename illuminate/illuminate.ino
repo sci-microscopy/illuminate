@@ -186,5 +186,6 @@ int trigger_output_polarity_func(CommandRouter *cmd, int argc, const char **argv
 int trigger_output_delay_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_trigger_output_delay(argc, (char * *) argv); }
 int trigger_input_pin_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.get_trigger_input_pins(argc, (char * *) argv); }
 int trigger_output_pin_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.get_trigger_output_pins(argc, (char * *) argv); }
+int global_shutter_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_global_shutter_state(argc, (char * *) argv); }
 
 int hw_initialize_function(CommandRouter *cmd, int argc, const char **argv){ return led_array.initialize_hardware(argc, (char * *) argv); }

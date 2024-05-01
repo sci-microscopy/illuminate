@@ -64,6 +64,7 @@ class LedArray {
     int clear();
     int disco();
     int water_drop();
+    int set_global_shutter_state(uint16_t argc, char ** argv);
 
     // Drawing primatives
     void draw_primative_quadrant(int quadrant_number, float start_na, float end_na, bool include_center);
@@ -215,6 +216,8 @@ class LedArray {
     int8_t default_brightness = 63;
     uint8_t cosine_factor;
     bool normalize_color = true;
+    bool global_shutter_state = true;
+    uint32_t gsclk_frequency = 2000000;
 
     // Trigger Input (feedback) Settings
     static volatile float trigger_feedback_timeout_ms;

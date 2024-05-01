@@ -943,6 +943,28 @@ int LedArray::set_pin_order(uint16_t argc, char * *argv)
   return NO_ERROR;
 }
 
+int LedArray::set_global_shutter_state(uint16_t argc, char ** argv)
+{
+  if (argc == 2)
+  {
+    led_array_interface->set_global_shutter_state(bool(atoi(argv[1])));
+  }
+  else if (argc == 1)
+  {
+    ;
+  }
+  else
+    return ERROR_ARGUMENT_COUNT;
+
+  // Print current shutter state
+  clear_output_buffers();
+  sprintf(output_buffer_short, "GS.%i", led_array_interface->get_global_shutter_state());
+  sprintf(output_buffer_long, "Current global shutter state: %s", led_array_interface->get_global_shutter_state() ? "open" : "closed");
+  print(output_buffer_short, output_buffer_long);
+
+  return NO_ERROR;
+}
+
 int LedArray::set_trigger_input_timeout(uint16_t argc, char ** argv)
 {
   if (argc == 2)
@@ -1276,7 +1298,6 @@ bool LedArray::wait_for_trigger_state(int trigger_index, bool state)
     Serial.read();
 
   bool done = false;
-  int counter = 0;
   while (!done)
   {
 

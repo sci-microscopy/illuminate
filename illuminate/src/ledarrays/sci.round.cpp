@@ -462,9 +462,42 @@ int LedArrayInterface::send_trigger_pulse(int trigger_index, uint16_t delay_us, 
     else
         return -1;
 }
+
+void LedArrayInterface::set_global_shutter_state(bool state)
+{
+    if (debug >= 1)
+    {
+        Serial.print("Setting Global Shutter state to ");
+        Serial.print(state);
+        Serial.print(SERIAL_LINE_ENDING);
+    }
+
+    // Store current state
+    global_shutter_state = state;
+
+    // Call the internal update method
+    update();
+}
+
+bool LedArrayInterface::get_global_shutter_state()
+{
+    if (debug >= 1)
+    {
+        Serial.print("Getting Global Shutter state: ");
+        Serial.print(global_shutter_state);
+        Serial.print(SERIAL_LINE_ENDING);
+    }
+    
+    return global_shutter_state;
+}
+
+
 void LedArrayInterface::update()
 {
-    tlc.update();
+    if (global_shutter_state)
+        tlc.update();
+    else
+        tlc.clear();
 }
 
 void LedArrayInterface::clear()

@@ -40,12 +40,12 @@
 // The value these are set to does not matter - only that they are defined.
 //#define USE_QUADRANT_ARRAY // currently broken; cannot test
 //#define USE_QUASI_DOME_ARRAY // currently broken; cannot test
-//#define USE_SCI_ROUND_ARRAY
+#define USE_SCI_ROUND_ARRAY
 //#define USE_SCI_ROUND_ARRAY_R1
 // #define USE_SCI_IRIS
 //#define USE_SCI_DOME_R1
 //#define USE_SCI_DOME_R2
-#define USE_SCI_DOME_R3
+//#define USE_SCI_DOME_R3
 //#define USE_QUAD_LULED_ARRAY
 //#define USE_LUMINI_RING
 //#define USE_SCI_ASYM_ARRAY 
