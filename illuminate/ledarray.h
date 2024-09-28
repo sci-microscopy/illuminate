@@ -258,6 +258,12 @@ class LedArray {
 
     // Internal variable for maximum na of this array, at this geometry.
     float max_na;
+
+    // Constants for clock frequencies
+    const uint32_t SCLK_BAUD_RATE = 7000000;
+    const uint32_t GSCLK_FREQUENCY = 6000000;
+    
+
 };
 
 #endif

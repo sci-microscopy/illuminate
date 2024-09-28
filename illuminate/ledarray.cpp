@@ -2910,9 +2910,6 @@ void LedArray::setup()
   // Set default cosine factor
   cosine_factor = cosine_factor_default;
 
-  // Set default brightness
-  led_brightness = led_brightness_default;
-
   // Load stored parameters
   if (led_array_interface->get_register(STORED_AUTOLOAD_LAST_STATE) != 0)
     recall_parameters(true);
@@ -2920,6 +2917,9 @@ void LedArray::setup()
   // Set LED value based on color and brightness
   for (int color_channel_index = 0; color_channel_index < led_array_interface->color_channel_count; color_channel_index++)
     led_value[color_channel_index] = (uint8_t) ceil((float) led_color[color_channel_index] / (float) UINT8_MAX * (float) led_brightness);
+
+  // Update LED Pattern
+    led_array_interface->update();
 
   // Run demo mode if EEPROM indicates we should
   if (get_demo_mode())
@@ -3282,6 +3282,7 @@ int8_t LedArray::initialize_hardware(uint16_t argc, char ** argv)
   {
     set_part_number(strtoul(argv[1], NULL, 0));
     set_serial_number(strtoul(argv[2], NULL, 0));
+
   }
   else
     return ERROR_ARGUMENT_COUNT;
@@ -3293,8 +3294,8 @@ int8_t LedArray::initialize_hardware(uint16_t argc, char ** argv)
   setup();
 
   // Set up grayscale clock and serial clock
-  led_array_interface->set_sclk_baud_rate(10000000);
-  led_array_interface->set_gsclk_frequency(10000000);
+  led_array_interface->set_sclk_baud_rate(SCLK_BAUD_RATE);
+  led_array_interface->set_gsclk_frequency(GSCLK_FREQUENCY);
 
   // Store parameters
   store_parameters();
@@ -3304,3 +3305,4 @@ int8_t LedArray::initialize_hardware(uint16_t argc, char ** argv)
 
   return NO_ERROR;
 }
+

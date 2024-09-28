@@ -36,6 +36,7 @@
 #include <EEPROM.h>
 #include "constants.h"
 
+
 class LedArrayInterface {
   public:
     static int8_t device_setup();
@@ -126,6 +127,7 @@ class LedArrayInterface {
 
     // Serial and part numbers
     uint16_t get_serial_number();
+    
     uint16_t get_part_number();
     void set_part_number(uint16_t part_number);
     void set_serial_number(uint16_t serial_number);

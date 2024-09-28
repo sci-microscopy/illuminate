@@ -269,7 +269,7 @@ void LedArrayInterface::update()
     if (global_shutter_state)
         tlc.update();
     else
-        tlc.clear();
+        tlc.set_all(0);
 }
 
 void LedArrayInterface::clear()
