@@ -1026,18 +1026,18 @@ bool LedArrayInterface::get_global_shutter_state()
     return global_shutter_state;
 }
 
-
 void LedArrayInterface::update()
 {
     if (global_shutter_state)
         tlc.update();
     else
-        tlc.set_all(0);
+        tlc.clear_without_modifying_pattern();
 }
 
 void LedArrayInterface::clear()
 {
         tlc.set_all(0);
+        update();
 }
 
 void LedArrayInterface::set_channel(int16_t channel_number, int16_t color_channel_number, uint16_t value)

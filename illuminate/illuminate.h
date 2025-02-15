@@ -41,7 +41,7 @@
 //#define USE_QUADRANT_ARRAY // currently broken; cannot test
 //#define USE_QUASI_DOME_ARRAY // currently broken; cannot test
 //#define USE_SCI_ROUND_ARRAY
-//#define USE_SCI_ROUND_ARRAY_R1
+// #define USE_SCI_ROUND_ARRAY_R1
 //#define USE_SCI_IRIS
 //#define USE_SCI_DOME_R1
 //#define USE_SCI_DOME_R2
