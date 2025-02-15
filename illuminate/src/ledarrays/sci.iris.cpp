@@ -454,12 +454,13 @@ void LedArrayInterface::update()
     if (global_shutter_state)
         tlc.update();
     else
-        tlc.set_all(0);
+        tlc.clear_without_modifying_pattern();
 }
 
 void LedArrayInterface::clear()
 {
-    tlc.set_all(0);
+        tlc.set_all(0);
+        update();
 }
 
 bool LedArrayInterface::get_max_current_enforcement()
