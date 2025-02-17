@@ -137,10 +137,10 @@ command_item_t command_list[] = {
   {"ac", "Toggle clearing of array between led updates. Calling without options toggles the state.", "ac --or-- ac.[0/1]", autoclear_func},
   {"na", "Set na used for bf/df/dpc/cdpc patterns", "na.[na*100]", na_func},
   {"nai", "Sets the inner NA. (nai.20 sets an inner NA of 0.20)  Respected by bf, dpc, and rdpc commands. Default is 0", "nai.20", na_inner_func},
-  {"sc", "Set LED array color balance (RGB arrays only). Note values are normalized to current brightness (set by the `sb` command)", "sc,[`red` or `green` or `blue` or `white`] --or-- sc.[red_value].[green_value].[blue_value].", color_func},
+  {"sc", "Set LED array color balance (RGB arrays only). Note values are normalized to current brightness (set by the `sb` command)", "sc.[`red` or `green` or `blue` or `white`] --or-- sc.[red_value].[green_value].[blue_value].", color_func},
   {"ssc", "Set single color channel by index", "ssc.[channel index].[color]", set_single_color_func},
-  {"sb", "Set LED array brightness", "sb,[rgbVal] --or-- sb.[rVal].[gVal].[bVal]", brightness_func},
-  {"sad", "Set LED array distance", "sad,[dist (mm)]", array_distance_func},
+  {"sb", "Set LED array brightness", "sb.[rgbVal] --or-- sb.[rVal].[gVal].[bVal]", brightness_func},
+  {"sad", "Set LED array distance", "sad.[dist (mm)]", array_distance_func},
 
   // Single (or multiple) LED Display
   {"l", "Turn on a single LED (or multiple LEDs in a list)", "l.[led #].[led #], ...", set_led_func},
@@ -152,27 +152,27 @@ command_item_t command_list[] = {
   {"bf", "Display brightfield pattern", "bf", brightfield_func},
   {"df", "Display darkfield pattern", "df", darkfield_func},
   {"dpc", "Illuminate half-circle (DPC) pattern", "dpc.[t/b/l/r] --or-- dpc.[top/bottom/left/right] --or-- dpc (will raw first pattern)", dpc_func},
-  {"cdpc", "Illuminate color DPC (cDPC) pattern", "cdpc.[rVal],[gVal].[bVal]) --or-- cdpc.[rgbVal]) --or-- cdpc", cdpc_func},
+  {"cdpc", "Illuminate color DPC (cDPC) pattern", "cdpc.[rVal].[gVal].[bVal]) --or-- cdpc.[rgbVal]) --or-- cdpc", cdpc_func},
   {"an", "Display annulus pattern set by min/max na", "an.[minNA*100].[maxNA*100]", annulus_func},
   {"ha", "Illuminate half annulus", "ha.[type].[minNA*100].[maxNA*100]", half_annulus_func},
   {"dq", "Draws single quadrant", "dq --or-- dq.[quadrant index]", quadrant_func},
   {"cdf", "Draws color darkfield pattern", "cdf.[rVal].[gVal].[bVal]) --or-- cdf.[rgbVal]) --or-- cdf", color_darkfield_func},
 
   // Single LED Scanning
-  {"scf",  "Scan all active LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scf,[delay_ms]", scan_full_func},
-  {"scb",  "Scan all brightfield LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scb,[delay_ms]", scan_brightfield_func},
-  {"scd",  "Scan all darkfield LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scb,[delay_ms]", scan_darkfield_func},
+  {"scf",  "Scan all active LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scf.[delay_ms]", scan_full_func},
+  {"scb",  "Scan all brightfield LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scb.[delay_ms]", scan_brightfield_func},
+  {"scd",  "Scan all darkfield LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scb.[delay_ms]", scan_darkfield_func},
 
   // Custom Sequence Scanning
-  {"ssl",   "Set sequence length in terms of independent patterns", "ssl,[Sequence length]", set_sequence_length_func},
+  {"ssl",   "Set sequence length in terms of independent patterns", "ssl.[Sequence length]", set_sequence_length_func},
   {"ssv",   "Set sequence value", "ssl.[# Number of LEDs], [LED number 0], [LED number 1]], [LED number 2], ...", set_sequence_value_func},
-  {"rseq",  "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq,[Delay between each pattern in ms].[number of times to repeat pattern].[trigger output 0 mode].[trigger input 0 mode].[trigger output 1 mode].[trigger input 1 mode]", run_sequence_func},
+  {"rseq",  "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq.[Delay between each pattern in ms].[number of times to repeat pattern].[trigger output 0 mode].[trigger input 0 mode].[trigger output 1 mode].[trigger input 1 mode]", run_sequence_func},
   {"pseq",  "Prints sequence values to the terminal", "pseq", print_sequence_func},
   {"sseq",  "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "sseq.[trigger output mode for index 0].[trigger output mode for index 1]", step_sequence_func},
   {"xseq",  "Sets sequence index to start", "xseq", restart_sequence_func},
 
   // Pre-defined sequences
-  {"rdpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rdpc,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_dpc_func},
+  {"rdpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rdpc.[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_dpc_func},
   
   // Debugging, Low-level Access, etc.
   {"tr",    "Output TTL trigger pulse to camera", "tr.[trigger index]", trigger_func},
