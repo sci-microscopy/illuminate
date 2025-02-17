@@ -67,10 +67,10 @@ int scan_full_func(CommandRouter *cmd, int argc, const char **argv);
 int scan_brightfield_func(CommandRouter *cmd, int argc, const char **argv);
 int scan_darkfield_func(CommandRouter *cmd, int argc, const char **argv);
 
-int set_sequence_length_func(CommandRouter *cmd, int argc, const char **argv);
-int set_sequence_value_func(CommandRouter *cmd, int argc, const char **argv);
+int set_custom_sequence_length_func(CommandRouter *cmd, int argc, const char **argv);
+int set_custom_sequence_value_func(CommandRouter *cmd, int argc, const char **argv);
 int run_sequence_func(CommandRouter *cmd, int argc, const char **argv);
-int print_sequence_func(CommandRouter *cmd, int argc, const char **argv);
+int print_custom_sequence_func(CommandRouter *cmd, int argc, const char **argv);
 int step_sequence_func(CommandRouter *cmd, int argc, const char **argv);
 int restart_sequence_func(CommandRouter *cmd, int argc, const char **argv);
 
@@ -159,20 +159,20 @@ command_item_t command_list[] = {
   {"cdf", "Draws color darkfield pattern", "cdf.[rVal].[gVal].[bVal]) --or-- cdf.[rgbVal]) --or-- cdf", color_darkfield_func},
 
   // Single LED Scanning
-  {"scf",  "Scan all active LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scf.[delay_ms]", scan_full_func},
-  {"scb",  "Scan all brightfield LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scb.[delay_ms]", scan_brightfield_func},
-  {"scd",  "Scan all darkfield LEDs. Sends trigger pulse in between images. Outputs LED list to serial terminal.", "scb.[delay_ms]", scan_darkfield_func},
+  {"scf",  "Scan all active LEDs. May emit or wait for trigger signals depending on trigger settings. If update speed is too fast, a warning message will print.", "scf.[(Optional - default=0) Delay between each pattern in ms].[(Optional - default=1) Number of times to execute sequence]", scan_full_func},
+  {"scb",  "Scan all brightfield LEDs. May emit or wait for trigger signals depending on trigger settings. If update speed is too fast, a warning message will print.", "scb.[(Optional - default=0) Delay between each pattern in ms].[(Optional - default=1) Number of times to execute sequence]", scan_brightfield_func},
+  {"scd",  "Scan all darkfield LEDs. May emit or wait for trigger signals depending on trigger settings. If update speed is too fast, a warning message will print.", "scb.[(Optional - default=0) Delay between each pattern in ms].[(Optional - default=1) Number of times to execute sequence]", scan_darkfield_func},
 
   // Custom Sequence Scanning
-  {"ssl",   "Set sequence length in terms of independent patterns", "ssl.[Sequence length]", set_sequence_length_func},
-  {"ssv",   "Set sequence value", "ssl.[# Number of LEDs], [LED number 0], [LED number 1]], [LED number 2], ...", set_sequence_value_func},
-  {"rseq",  "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "rseq.[Delay between each pattern in ms].[number of times to repeat pattern].[trigger output 0 mode].[trigger input 0 mode].[trigger output 1 mode].[trigger input 1 mode]", run_sequence_func},
-  {"pseq",  "Prints sequence values to the terminal", "pseq", print_sequence_func},
-  {"sseq",  "Runs sequence with specified delay between each update. If update speed is too fast, a :( is shown on the LED array.", "sseq.[trigger output mode for index 0].[trigger output mode for index 1]", step_sequence_func},
-  {"xseq",  "Sets sequence index to start", "xseq", restart_sequence_func},
+  {"ssl",   "Set sequence length, or the number of patterns to be cycles through (not the number of leds per pattern).", "ssl.[Sequence length]", set_custom_sequence_length_func},
+  {"ssv",   "Set sequence value", "ssl.[# Number of LEDs], [LED number 0], [LED number 1]], [LED number 2], ...", set_custom_sequence_value_func},
+  {"rseq",  "Runs sequence with specified delay between each update. May emit or wait for trigger signals depending on trigger settings. If update speed is too fast, a warning message will print.", "rseq.[(Optional - default=0) Delay between each pattern in ms].[(Optional - default=1) Number of times to execute sequence]", run_sequence_func},
+  {"pseq",  "Prints sequence values to the terminal", "pseq", print_custom_sequence_func},
+  {"sseq",  "Manually step through a sequence, incrementing the current index. May emit or wait for trigger signals depending on trigger settings.", "sseq", step_sequence_func},
+  {"xseq",  "Resets sequence index to the first value, leaving the sequence unchanged.", "xseq", restart_sequence_func},
 
   // Pre-defined sequences
-  {"rdpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rdpc.[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_dpc_func},
+  {"rdpc", "Runs a DPC sequence with specified delay between each update. May emit or wait for trigger signals depending on trigger settings. If update speed is too fast, a warning message will print.", "rdpc.[(Optional - default=0) Delay between each pattern in ms].[(Optional - default=1) Number of times to execute sequence]", run_dpc_func},
   
   // Debugging, Low-level Access, etc.
   {"tr",    "Output TTL trigger pulse to camera", "tr.[trigger index]", trigger_func},

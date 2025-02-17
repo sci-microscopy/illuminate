@@ -60,9 +60,9 @@ static const char SERIAL_DELIMITER[] = ".";
 #define TRIGGER_OUTPUT_POLARITY_DEFAULT 1
 
 // Misc constants
-#define MIN_SEQUENCE_DELAY 5  // Min deblur pattern delay in ms (set by hardware)
+#define MIN_SEQUENCE_DELAY 5      // Min deblur pattern delay in ms (set by hardware)
 #define MIN_SEQUENCE_DELAY_FAST 2 // Min deblur pattern delay for fast sequence in us (set by hardware)
-#define DELAY_MAX 2000        // Global maximum amount to wait inside loop
+#define MAX_SEQUENCE_DELAY 2000   // Global maximum amount to wait inside a sequence loop
 #define INVALID_NA -2000.0    // Rep```resents an invalid NA
 
 // Command mode constants

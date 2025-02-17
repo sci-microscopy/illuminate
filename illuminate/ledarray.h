@@ -48,10 +48,7 @@ class LedArray {
     int run_demo();    // Run a demo which tests the functions below
 
     // Pattern commands
-    int draw_led_list(uint16_t argc, char ** argv);          // Draw a list of LEDs (or just 1)
-    int scan_brightfield_leds(uint16_t argc, char ** argv);  // Scan brightfield LEDs
-    int scan_darkfield_leds(uint16_t argc, char ** argv);  // Scan brightfield LEDs
-    int scan_all_leds(uint16_t argc, char ** argv);
+    int draw_led_list(uint16_t argc, char ** argv);
     int draw_dpc(uint16_t argc, char ** argv);
     int draw_brightfield(uint16_t argc, char ** argv);;
     int draw_half_annulus(uint16_t argc, char * *argv);
@@ -90,15 +87,19 @@ class LedArray {
     int set_max_current_enforcement(uint16_t argc, char ** argv);
     int set_max_current_limit(uint16_t argc, char ** argv);
 
-    // Sequencing
-    int run_sequence(uint16_t argc, char ** argv);
+    // Custom sequences
+    int run_custom_sequence(uint16_t argc, char ** argv);
+    int step_custom_sequence(uint16_t argc, char ** argv);
+    int set_custom_sequence_value(uint16_t argc, char ** argv);
+    int print_custom_sequence(uint16_t argc, char ** argv);
+    int restart_custom_sequence(uint16_t argc, char ** argv);
+    int set_custom_sequence_length(uint16_t argc, char ** argv);
+
+    // Pre-defined sequences
     int run_sequence_dpc(uint16_t argc, char ** argv);
-    int run_sequence_fpm(uint16_t argc, char ** argv);
-    int step_sequence(uint16_t argc, char ** argv);
-    int set_sequence_value(uint16_t argc, char ** argv);
-    int print_sequence(uint16_t argc, char ** argv);
-    int restart_sequence(uint16_t argc, char ** argv);
-    int set_sequence_length(uint16_t argc, char ** argv);
+    int run_sequence_individual_leds(uint16_t argc, char ** argv);
+    int run_sequence_individual_brightfield_leds(uint16_t argc, char ** argv);
+    int run_sequence_individual_darkfield_leds(uint16_t argc, char ** argv);
 
     int print_part_number(uint16_t argc, char ** argv);
     int print_serial_number(uint16_t argc, char ** argv);
@@ -118,7 +119,7 @@ class LedArray {
     void not_implemented(const char * command_name);
     int draw_channel(uint16_t argc, char * *argv);
     int set_pin_order(uint16_t argc, char * *argv);
-    void scan_led_range(uint16_t delay_ms, float start_na, float end_na, bool print_indicies);
+    int scan_led_range(uint16_t delay_ms, float start_na, float end_na, bool print_indicies, uint16_t sequence_run_count);
 
     int print_mac_address();
     int set_sclk_baud_rate(uint16_t argc, char ** argv);
@@ -244,7 +245,6 @@ class LedArray {
 
     // timer variable
     static volatile uint16_t pattern_index;
-    static volatile uint16_t frame_index;
 
     // Command mode
     bool command_mode = COMMAND_MODE_LONG;
