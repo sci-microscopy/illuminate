@@ -8,7 +8,7 @@
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
       Redistributions of source code must retain the above copyright
-      notice, this list of conditioset_sequence_value_funcns and the following disclaimer.
+      notice, this list of conditioset_custom_sequence_value_funcns and the following disclaimer.
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
@@ -134,17 +134,16 @@ int half_annulus_func(CommandRouter *cmd, int argc, const char **argv){ return l
 int quadrant_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.draw_quadrant(argc, (char * *) argv); }
 int color_darkfield_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.draw_color_darkfield(argc, (char * *) argv); }
 
-int scan_full_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.scan_all_leds(argc, (char * *) argv); }
-int scan_brightfield_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.scan_brightfield_leds(argc, (char * *) argv); }
-int scan_darkfield_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.scan_darkfield_leds(argc, (char * *) argv); }
+int scan_full_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.run_sequence_individual_leds(argc, (char * *) argv); }
+int scan_brightfield_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.run_sequence_individual_brightfield_leds(argc, (char * *) argv); }
+int scan_darkfield_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.run_sequence_individual_darkfield_leds(argc, (char * *) argv); }
 
-int set_sequence_length_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_sequence_length(argc, (char * *) argv); }
-int set_sequence_value_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_sequence_value(argc, (char * *) argv); }
-int run_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.run_sequence(argc, (char * *) argv); }
-int print_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.print_sequence(argc, (char * *) argv); }
-int step_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.step_sequence(argc, (char * *) argv); }
-int restart_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.restart_sequence(argc, (char * *) argv); }
-
+int set_custom_sequence_length_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_custom_sequence_length(argc, (char * *) argv); }
+int set_custom_sequence_value_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_custom_sequence_value(argc, (char * *) argv); }
+int run_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.run_custom_sequence(argc, (char * *) argv); }
+int print_custom_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.print_custom_sequence(argc, (char * *) argv); }
+int step_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.step_custom_sequence(argc, (char * *) argv); }
+int restart_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.restart_custom_sequence(argc, (char * *) argv); }
 
 int trigger_func(CommandRouter *cmd, int argc, const char **argv) { if (argc == 1) return led_array.send_trigger_pulse(0, true); else if (argc == 2) return led_array.send_trigger_pulse(atoi(argv[1]), true); else return ERROR_ARGUMENT_COUNT;}
 int trigger_setup_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.trigger_setup(argc, (char * *) argv); }
@@ -167,7 +166,6 @@ int water_func(CommandRouter *cmd, int argc, const char **argv){ return led_arra
 int get_pn_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.print_part_number(argc, (char * *) argv); }
 int get_sn_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.print_serial_number(argc, (char * *) argv); }
 
-int run_fpm_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.run_sequence_fpm(argc, (char * *) argv); }
 int run_dpc_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.run_sequence_dpc(argc, (char * *) argv); }
 
 int set_baud_rate_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_sclk_baud_rate(argc, (char * *) argv); }
