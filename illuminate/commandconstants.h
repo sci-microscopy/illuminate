@@ -96,7 +96,6 @@ int water_func(CommandRouter *cmd, int argc, const char **argv);
 int get_sn_func(CommandRouter *cmd, int argc, const char **argv);
 int get_pn_func(CommandRouter *cmd, int argc, const char **argv);
 
-int run_fpm_func(CommandRouter *cmd, int argc, const char **argv);
 int run_dpc_func(CommandRouter *cmd, int argc, const char **argv);
 
 int set_baud_rate_func(CommandRouter *cmd, int argc, const char **argv);
@@ -174,8 +173,7 @@ command_item_t command_list[] = {
 
   // Pre-defined sequences
   {"rdpc", "Runs a DPC sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rdpc,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_dpc_func},
-  {"rfpm", "Runs a FPM sequence with specified delay between each update. If update speed is too fast, a warning message will print.", "rfpm,[Delay between each pattern in ms (can be zero)].[Number of acquisitions].[Maximum NA * 100 (e.g. 0.25NA would be 25].[trigger output mode for trigger output 0].[trigger input mode for trigger input 0].[trigger output mode for trigger output 1].[trigger input mode for trigger input 1]", run_fpm_func},
-
+  
   // Debugging, Low-level Access, etc.
   {"tr",    "Output TTL trigger pulse to camera", "tr.[trigger index]", trigger_func},
   {"trs",   "Set up hardware (TTL) triggering", "trs.[trigger index].[trigger pin index].['trigger delay between H and L pulses]", trigger_setup_func},

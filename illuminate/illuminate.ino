@@ -145,7 +145,6 @@ int print_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return
 int step_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.step_sequence(argc, (char * *) argv); }
 int restart_sequence_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.restart_sequence(argc, (char * *) argv); }
 
-
 int trigger_func(CommandRouter *cmd, int argc, const char **argv) { if (argc == 1) return led_array.send_trigger_pulse(0, true); else if (argc == 2) return led_array.send_trigger_pulse(atoi(argv[1]), true); else return ERROR_ARGUMENT_COUNT;}
 int trigger_setup_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.trigger_setup(argc, (char * *) argv); }
 int trigger_test_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.trigger_input_test(strtoul((char *) argv[0], NULL, 0)); }
@@ -167,7 +166,6 @@ int water_func(CommandRouter *cmd, int argc, const char **argv){ return led_arra
 int get_pn_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.print_part_number(argc, (char * *) argv); }
 int get_sn_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.print_serial_number(argc, (char * *) argv); }
 
-int run_fpm_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.run_sequence_fpm(argc, (char * *) argv); }
 int run_dpc_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.run_sequence_dpc(argc, (char * *) argv); }
 
 int set_baud_rate_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_sclk_baud_rate(argc, (char * *) argv); }
