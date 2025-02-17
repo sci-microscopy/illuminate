@@ -108,6 +108,7 @@ New devices are created by adding a new .cpp file to the root directory of the p
 Pull requests will be reviewed as received, and are encouraged!
 
 ## API Reference
+```
 -----------------------------------
 Command List:
 -----------------------------------
