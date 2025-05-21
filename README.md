@@ -27,7 +27,7 @@ Illuminate was designed to standardize the interface and functionality of LED ar
 All commands are sent over a serial (COM) port using a default baud rate of `115200`, and otherwise default settings. There are several ways to control these LED Arrays:
 - The Serial Monitor within the [Arduino IDE](https://www.arduino.cc/en/software)
 - The [Micro-Manager](https://micro-manager.org/Micro-Manager_Nightly_Builds) IlluminateLedArray Driver (nightly builds since 2019)
-- MATLAB and python via modules within the [The Illuminate Controller Repository](http://www.github.com/zfphil/illuminate_controller)
+- MATLAB and python via modules within the [The Illuminate Controller Repository](http://www.github.com/sci-microscopy/illuminate_controller)
 - Any standard serial library within other languages (C++, java, etc.)
 
 ## Commands
