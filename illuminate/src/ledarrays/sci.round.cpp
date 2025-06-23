@@ -648,16 +648,12 @@ int8_t LedArrayInterface::device_setup()
     // Update the GS register (ideally LEDs should be dark up to here)
     clear();
 
-    // Output trigger Pins
-    for (int trigger_index = 0; trigger_index < trigger_output_count; trigger_index++)
-    {
-        pinMode(LedArrayInterface::trigger_output_pin_list[trigger_index], OUTPUT);
-        digitalWriteFast(LedArrayInterface::trigger_output_pin_list[trigger_index], LOW);
-    }
+    // Output trigger Pin
+    pinMode(LedArrayInterface::trigger_output_pin_list[0], OUTPUT);
+    digitalWriteFast(LedArrayInterface::trigger_output_pin_list[0], LOW);
 
     // Input trigger pins
     attachInterrupt(digitalPinToInterrupt(trigger_input_pin_list[0]), trigger_pin_interrupt_0, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(trigger_input_pin_list[1]), trigger_pin_interrupt_1, CHANGE);
 
     return NO_ERROR;
 }
@@ -669,15 +665,6 @@ void LedArrayInterface::trigger_pin_interrupt_0()
         bool new_state = trigger_input_state[0];
         if (debug >= 2)
             Serial.printf("Recieved trigger pulse on pin 0. Previous state: %s New state: %s%s", previous_state ? "HIGH" : "LOW", new_state ? "HIGH" : "LOW", SERIAL_LINE_ENDING);
-}
-
-void LedArrayInterface::trigger_pin_interrupt_1()
-{
-    bool previous_state = trigger_input_state[1];
-    trigger_input_state[1] = digitalReadFast(trigger_input_pin_list[1]);
-    bool new_state = trigger_input_state[1];
-    if (debug >= 2)
-        Serial.printf("Recieved trigger pulse on pin 1. Previous state: %s New state: %s%s", previous_state ? "HIGH" : "LOW", new_state ? "HIGH" : "LOW", SERIAL_LINE_ENDING);
 }
 
 void LedArrayInterface::source_change_interrupt()
