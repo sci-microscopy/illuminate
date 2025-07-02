@@ -348,9 +348,9 @@ DESCRIPTION:
 COMMAND: 
   trs
 SYNTAX:
-  trs.[trigger index].[trigger pin index].['trigger delay between H and L pulses]
+  trs.[trigger index].[trigger input mode].[trigger output mode].[trigger pulse width].['trigger delay between H and L pulses]
 DESCRIPTION:
-  Set up hardware (TTL) triggering
+  Set up hardware (TTL) triggering for a single channel
 -----------------------------------
 COMMAND: 
   trt
@@ -505,6 +505,27 @@ SYNTAX:
   pwrv
 DESCRIPTION:
   Print power sourve voltage.
+-----------------------------------
+COMMAND: 
+  trinputmode
+SYNTAX:
+  trinputmode.0.1
+DESCRIPTION:
+  Sets the trigger input mode for the given trigger index. This can be -2 for one trigger at the start of a sequence, -1 for one trigger at the start of each repeat in the sequence, 0 for off, or a positive integer N to emit every N patterns (e.g. 1 would emit every pattern). Default is 0.
+-----------------------------------
+COMMAND: 
+  troutputmode
+SYNTAX:
+  troutputmode.0.1
+DESCRIPTION:
+  Sets the trigger input mode for the given trigger index. This can be -2 for one trigger at the start of a sequence, -1 for one trigger at the start of each repeat in the sequence, 0 for off, or a positive integer N to emit every N patterns (e.g. 1 would emit every pattern). Default is 0.
+-----------------------------------
+COMMAND: 
+  trinputtimeout
+SYNTAX:
+  trinputtimeout.10
+DESCRIPTION:
+  Sets the trigger input timeout in seconds. Default is 60 (60s).
 -----------------------------------
 COMMAND: 
   trinputtimeout

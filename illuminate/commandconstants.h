@@ -107,6 +107,8 @@ int set_machine_mode_func(CommandRouter *cmd, int argc, const char **argv);
 int power_sensing_func(CommandRouter *cmd, int argc, const char **argv);
 int power_source_voltage_func(CommandRouter *cmd, int argc, const char **argv);
 
+int trigger_input_mode_func(CommandRouter *cmd, int argc, const char **argv);
+int trigger_output_mode_func(CommandRouter *cmd, int argc, const char **argv);
 int trigger_input_timeout_func(CommandRouter *cmd, int argc, const char **argv);
 int trigger_output_pulse_width_func(CommandRouter *cmd, int argc, const char **argv);
 int trigger_input_polarity_func(CommandRouter *cmd, int argc, const char **argv);
@@ -176,7 +178,7 @@ command_item_t command_list[] = {
   
   // Debugging, Low-level Access, etc.
   {"tr",    "Output TTL trigger pulse to camera", "tr.[trigger index]", trigger_func},
-  {"trs",   "Set up hardware (TTL) triggering", "trs.[trigger index].[trigger pin index].['trigger delay between H and L pulses]", trigger_setup_func},
+  {"trs",   "Set up hardware (TTL) triggering for a single channel", "trs.[trigger index].[trigger input mode].[trigger output mode].[trigger pulse width].['trigger delay between H and L pulses]", trigger_setup_func},
   {"trt",   "Waits for trigger pulses on the defined channel", "trt.[trigger input index]", trigger_test_func},
   {"ch",    "Draw LED by hardware channel (use for debugging)", "dc.[led#]", draw_channel_func},
   {"debug", "Toggle debug flag. Can call with or without options.", "dbg.[command router debug].[LED array (generic) debug].[LED interface debug] --or-- dbg (toggles all between level 1 or 0)", debug_func},
@@ -210,6 +212,9 @@ command_item_t command_list[] = {
   {"pwrs", "Toggle power source sensing on or off.", "pwrs", power_sensing_func},
   {"pwrv", "Print power sourve voltage.", "pwrv", power_source_voltage_func},
 
+  {"trinputmode", "Sets the trigger input mode for the given trigger index. This can be -2 for one trigger at the start of a sequence, -1 for one trigger at the start of each repeat in the sequence, 0 for off, or a positive integer N to emit every N patterns (e.g. 1 would emit every pattern). Default is 0.", "trinputmode.0.1", trigger_input_mode_func},
+  {"troutputmode", "Sets the trigger input mode for the given trigger index. This can be -2 for one trigger at the start of a sequence, -1 for one trigger at the start of each repeat in the sequence, 0 for off, or a positive integer N to emit every N patterns (e.g. 1 would emit every pattern). Default is 0.", "troutputmode.0.1", trigger_output_mode_func},
+  {"trinputtimeout", "Sets the trigger input timeout in seconds. Default is 60 (60s).", "trinputtimeout.10", trigger_input_timeout_func},
   {"trinputtimeout", "Sets the trigger input timeout in seconds. Default is 60 (60s).", "trinputtimeout.10", trigger_input_timeout_func},
   {"troutputpulsewidth", "Sets the trigger pulse width in microseconds, default is 1000.", "troutputpulsewidth.1000", trigger_output_pulse_width_func},
   {"trinputpolarity", "Sets the trigger input polarity. 1=active high, 0=active low. Default is 1.", "trinputpolarity.1", trigger_input_polarity_func},

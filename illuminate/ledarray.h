@@ -154,6 +154,8 @@ class LedArray {
     int print_power_supply_voltage(uint16_t argc, char ** argv);
 
     // Trigger Configuration
+    int set_trigger_input_mode(uint16_t argc, char ** argv);
+    int set_trigger_output_mode(uint16_t argc, char ** argv);
     int set_trigger_input_timeout(uint16_t argc, char ** argv);
     int set_trigger_output_pulse_width(uint16_t argc, char ** argv);
     int set_trigger_output_delay(uint16_t argc, char ** argv);

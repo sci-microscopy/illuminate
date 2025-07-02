@@ -177,6 +177,8 @@ int set_machine_mode_func(CommandRouter *cmd, int argc, const char **argv){ retu
 int power_sensing_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_power_supply_sensing(argc, (char * *) argv); }
 int power_source_voltage_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.print_power_supply_voltage(argc, (char * *) argv); }
 
+int trigger_input_mode_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_trigger_input_mode(argc, (char * *) argv); }
+int trigger_output_mode_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_trigger_output_mode(argc, (char * *) argv); }
 int trigger_input_timeout_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_trigger_input_timeout(argc, (char * *) argv); }
 int trigger_output_pulse_width_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_trigger_output_pulse_width(argc, (char * *) argv); }
 int trigger_input_polarity_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_trigger_input_polarity(argc, (char * *) argv); }
