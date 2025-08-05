@@ -12,7 +12,7 @@
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the UC Berkley nor the
+      Neither the name of the UC Berkeley nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
@@ -71,7 +71,7 @@ const int POWER_SENSE_PIN = -1;
 #define SN_ADDRESS 200
 
 // Device and Software Descriptors
-const char * LedArrayInterface::device_name = "sci.wing";
+const char * LedArrayInterface::device_name = "sci.dome.r3";
 const char * LedArrayInterface::device_hardware_revision = "r2";
 const int16_t LedArrayInterface::led_count = 793;
 const uint16_t LedArrayInterface::center_led = 0;

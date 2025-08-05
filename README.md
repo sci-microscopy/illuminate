@@ -504,7 +504,7 @@ COMMAND:
 SYNTAX:
   pwrv
 DESCRIPTION:
-  Print power sourve voltage.
+  Print power source voltage.
 -----------------------------------
 COMMAND: 
   trinputmode
@@ -567,14 +567,14 @@ COMMAND:
 SYNTAX:
   trinputpin
 DESCRIPTION:
-  Returns the Teensy pin of the trigger inputsignal. Used only for debugging.
+  Returns the Teensy pin of the trigger input signal. Used only for debugging.
 -----------------------------------
 COMMAND: 
   troutputpin
 SYNTAX:
   troutputpin
 DESCRIPTION:
-  Returns the Teensy pin of the trigger outputsignal. Used only for debugging.
+  Returns the Teensy pin of the trigger output signal. Used only for debugging.
 -----------------------------------
 COMMAND: 
   cos

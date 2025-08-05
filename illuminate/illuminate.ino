@@ -8,11 +8,11 @@
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
       Redistributions of source code must retain the above copyright
-      notice, this list of conditioset_custom_sequence_value_funcns and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the UC Berkley nor the
+      Neither the name of the UC Berkeley nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
@@ -42,7 +42,7 @@
   "    Redistributions in binary form must reproduce the above copyright\n" \
   "    notice, this list of conditions and the following disclaimer in the\n" \
   "    documentation and/or other materials provided with the distribution.\n" \
-  "    Neither the name of the UC Berkley nor the\n" \
+        "    Neither the name of the UC Berkeley nor the\n" \
   "    names of its contributors may be used to endorse or promote products\n" \
   "    derived from this software without specific prior written permission.\n" \
   "\n"\

@@ -12,7 +12,7 @@
       Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-      Neither the name of the UC Berkley nor the
+      Neither the name of the UC Berkeley nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
@@ -90,7 +90,7 @@ int print_parameters_func(CommandRouter *cmd, int argc, const char **argv);
 int print_led_positions_na(CommandRouter *cmd, int argc, const char **argv);
 
 int disco_func(CommandRouter *cmd, int argc, const char **argv);
-int demo_mode_func(CommandRouter *cmd, int argc, const char **argv);
+int demo_func(CommandRouter *cmd, int argc, const char **argv);
 int water_func(CommandRouter *cmd, int argc, const char **argv);
 
 int get_sn_func(CommandRouter *cmd, int argc, const char **argv);
@@ -163,7 +163,7 @@ command_item_t command_list[] = {
   // Single LED Scanning
   {"scf",  "Scan all active LEDs. May emit or wait for trigger signals depending on trigger settings. If update speed is too fast, a warning message will print.", "scf.[(Optional - default=0) Delay between each pattern in ms].[(Optional - default=1) Number of times to execute sequence]", scan_full_func},
   {"scb",  "Scan all brightfield LEDs. May emit or wait for trigger signals depending on trigger settings. If update speed is too fast, a warning message will print.", "scb.[(Optional - default=0) Delay between each pattern in ms].[(Optional - default=1) Number of times to execute sequence]", scan_brightfield_func},
-  {"scd",  "Scan all darkfield LEDs. May emit or wait for trigger signals depending on trigger settings. If update speed is too fast, a warning message will print.", "scb.[(Optional - default=0) Delay between each pattern in ms].[(Optional - default=1) Number of times to execute sequence]", scan_darkfield_func},
+  {"scd",  "Scan all darkfield LEDs. May emit or wait for trigger signals depending on trigger settings. If update speed is too fast, a warning message will print.", "scd.[(Optional - default=0) Delay between each pattern in ms].[(Optional - default=1) Number of times to execute sequence]", scan_darkfield_func},
 
   // Custom Sequence Scanning
   {"ssl",   "Set sequence length, or the number of patterns to be cycles through (not the number of leds per pattern).", "ssl.[Sequence length]", set_custom_sequence_length_func},
@@ -210,18 +210,17 @@ command_item_t command_list[] = {
   {"machine", "Sets command mode to machine-readable", "machine", set_machine_mode_func},
 
   {"pwrs", "Toggle power source sensing on or off.", "pwrs", power_sensing_func},
-  {"pwrv", "Print power sourve voltage.", "pwrv", power_source_voltage_func},
+  {"pwrv", "Print power source voltage.", "pwrv", power_source_voltage_func},
 
   {"trinputmode", "Sets the trigger input mode for the given trigger index. This can be -2 for one trigger at the start of a sequence, -1 for one trigger at the start of each repeat in the sequence, 0 for off, or a positive integer N to emit every N patterns (e.g. 1 would emit every pattern). Default is 0.", "trinputmode.0.1", trigger_input_mode_func},
   {"troutputmode", "Sets the trigger input mode for the given trigger index. This can be -2 for one trigger at the start of a sequence, -1 for one trigger at the start of each repeat in the sequence, 0 for off, or a positive integer N to emit every N patterns (e.g. 1 would emit every pattern). Default is 0.", "troutputmode.0.1", trigger_output_mode_func},
-  {"trinputtimeout", "Sets the trigger input timeout in seconds. Default is 60 (60s).", "trinputtimeout.10", trigger_input_timeout_func},
   {"trinputtimeout", "Sets the trigger input timeout in seconds. Default is 60 (60s).", "trinputtimeout.10", trigger_input_timeout_func},
   {"troutputpulsewidth", "Sets the trigger pulse width in microseconds, default is 1000.", "troutputpulsewidth.1000", trigger_output_pulse_width_func},
   {"trinputpolarity", "Sets the trigger input polarity. 1=active high, 0=active low. Default is 1.", "trinputpolarity.1", trigger_input_polarity_func},
   {"troutputpolarity", "Sets the trigger output polarity. 1=active high, 0=active low. Default is 1.", "troutputpolarity.1", trigger_output_polarity_func},
   {"troutputdelay", "Sets the trigger delay in microseconds. Default is zero.", "troutputdelay.0", trigger_output_delay_func},
-  {"trinputpin", "Returns the Teensy pin of the trigger inputsignal. Used only for debugging.", "trinputpin", trigger_input_pin_func},
-  {"troutputpin", "Returns the Teensy pin of the trigger outputsignal. Used only for debugging.", "troutputpin", trigger_output_pin_func},
+  {"trinputpin", "Returns the Teensy pin of the trigger input signal. Used only for debugging.", "trinputpin", trigger_input_pin_func},
+  {"troutputpin", "Returns the Teensy pin of the trigger output signal. Used only for debugging.", "troutputpin", trigger_output_pin_func},
 
   {"cos", "Returns or sets the cosine factor, used to scale LED intensity (so outer LEDs are brighter). Input is cos.[integer cosine factor]", "cos.2", cosine_func},
 
