@@ -123,24 +123,50 @@ int CommandRouter::route(int argc, const char **argv) {
   return ERROR_INVALID_COMMAND;
 }
 
-int CommandRouter::help() {
-  Serial.print(F("-----------------------------------\n"));
-  Serial.print(F("Command List:\n"));
-  Serial.print(F("-----------------------------------\n"));
-  for (int i = 0; command_list[i].name != nullptr; i++)
+int CommandRouter::help(int argc, char **argv) {
+
+  if (argc == 1)
   {
-    Serial.print(F("COMMAND: \n  "));
-    Serial.print(command_list[i].name);
-    Serial.print("\n");
-    Serial.print(F("SYNTAX:\n  "));
-    Serial.print(command_list[i].syntax);
-    Serial.print("\n");
-    Serial.print(F("DESCRIPTION:\n  "));
-    Serial.print(command_list[i].description);
-    Serial.print("\n");
     Serial.print(F("-----------------------------------\n"));
+    Serial.print(F("Command List:\n"));
+    Serial.print(F("-----------------------------------\n"));
+    for (int i = 0; command_list[i].name != nullptr; i++)
+    {
+      Serial.print(F("COMMAND: \n  "));
+      Serial.print(command_list[i].name);
+      Serial.print("\n");
+      Serial.print(F("SYNTAX:\n  "));
+      Serial.print(command_list[i].syntax);
+      Serial.print("\n");
+      Serial.print(F("DESCRIPTION:\n  "));
+      Serial.print(command_list[i].description);
+      Serial.print("\n");
+      Serial.print(F("-----------------------------------\n"));
+    }
+    return NO_ERROR;
   }
-  return NO_ERROR;
+  else if (argc == 2)
+  {
+    for (int i = 0; command_list[i].name != nullptr; i++)
+    {
+      if (strcmp(argv[1], command_list[i].name) == 0)
+      {
+        Serial.print(F("COMMAND: \n  "));
+        Serial.print(command_list[i].name);
+        Serial.print("\n");
+        Serial.print(F("SYNTAX:\n  "));
+        Serial.print(command_list[i].syntax);
+        Serial.print("\n");
+        Serial.print(F("DESCRIPTION:\n  "));
+        Serial.print(command_list[i].description);
+        Serial.print("\n");
+        Serial.print(F("-----------------------------------\n"));
+      }
+    }
+    return NO_ERROR;
+  }
+
+  return ERROR_INVALID_ARGUMENT;
 }
 
 

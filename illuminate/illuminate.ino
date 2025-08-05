@@ -107,7 +107,7 @@ int reset_func(CommandRouter *cmd, int argc, const char **argv){ return led_arra
 int version_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.print_version(argc, (char * *) argv);}
 int license_func(CommandRouter *cmd, int argc, const char **argv) { Serial.print(LICENSE_TEXT); return NO_ERROR; }
 int demo_func(CommandRouter *cmd, int argc, const char **argv) { return led_array.set_demo_mode(argc, (char * *) argv); }
-int help_func(CommandRouter *cmd, int argc, const char **argv) { return cmd->help();}
+int help_func(CommandRouter *cmd, int argc, const char **argv) { return cmd->help(argc, (char * *) argv);}
 int store_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.store_parameters();}
 int recall_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.recall_parameters(false);}
 int autoload_func(CommandRouter *cmd, int argc, const char **argv){ return led_array.set_autoload_on_reboot(argc, (char * *) argv);}

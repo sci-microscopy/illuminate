@@ -52,7 +52,7 @@ public:
   int init(command_item_t *commands, int buffer_size,
                      char *serial_buffer, int argv_max,
                      const char **argv_buffer);
-  int help();
+  int help(int argc, char **argv);
   int process_serial_stream();
 
   char *buffer = nullptr; // Allow for terminating null byte

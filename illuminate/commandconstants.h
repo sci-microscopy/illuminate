@@ -178,7 +178,7 @@ command_item_t command_list[] = {
   
   // Debugging, Low-level Access, etc.
   {"tr",    "Output TTL trigger pulse to camera", "tr.[trigger index]", trigger_func},
-  {"trs",   "Set up hardware (TTL) triggering for a single channel", "trs.[trigger index].[trigger input mode].[trigger output mode].[trigger pulse width].['trigger delay between H and L pulses]", trigger_setup_func},
+  {"trs",   "Set up hardware (TTL) triggering for a single channel", "trs.[trigger index].[trigger input mode].[trigger output mode].[trigger pulse width, microseconds].['trigger delay between H and L pulses, microseconds]", trigger_setup_func},
   {"trt",   "Waits for trigger pulses on the defined channel", "trt.[trigger input index]", trigger_test_func},
   {"ch",    "Draw LED by hardware channel (use for debugging)", "dc.[led#]", draw_channel_func},
   {"debug", "Toggle debug flag. Can call with or without options.", "dbg.[command router debug].[LED array (generic) debug].[LED interface debug] --or-- dbg (toggles all between level 1 or 0)", debug_func},

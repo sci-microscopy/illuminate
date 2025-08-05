@@ -1062,19 +1062,15 @@ int LedArray::set_trigger_input_mode(uint16_t argc, char ** argv)
 
 int LedArray::set_trigger_output_mode(uint16_t argc, char ** argv)
 {
-  if ((argc == 2) && (led_array_interface->trigger_output_count == 1))
-  {
-    LedArray::trigger_output_mode_list[0] = (int)atoi(argv[1]);
-  }
-  else if (argc == 3)
+  if (argc == 3)
   {
     uint8_t trigger_index = atoi(argv[1]);
     LedArray::trigger_output_mode_list[trigger_index] = (int)atoi(argv[2]);
   }
-  else if (argc > 2)
+  else if (argc != 1)
     return ERROR_ARGUMENT_COUNT;
 
-  // Print current mode
+  // Print current modes
   if (led_array_interface->trigger_output_count == 1)
   {
     clear_output_buffers();
@@ -1085,8 +1081,8 @@ int LedArray::set_trigger_output_mode(uint16_t argc, char ** argv)
   else if (led_array_interface->trigger_output_count == 2)
   {
     clear_output_buffers();
-    sprintf(output_buffer_short, "TROUTPUTPOLARITY.%d.%d", LedArray::trigger_input_mode_list[0], LedArray::trigger_output_mode_list[1]);
-    sprintf(output_buffer_long, "Current trigger output mode is (%d, %d).", LedArray::trigger_input_mode_list[0], LedArray::trigger_output_mode_list[1]);
+    sprintf(output_buffer_short, "TROUTPUTPOLARITY.%d.%d", LedArray::trigger_output_mode_list[0], LedArray::trigger_output_mode_list[1]);
+    sprintf(output_buffer_long, "Current trigger output mode is (%d, %d).", LedArray::trigger_output_mode_list[0], LedArray::trigger_output_mode_list[1]);
     print(output_buffer_short, output_buffer_long);
   }
   else
