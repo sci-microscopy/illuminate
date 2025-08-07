@@ -47,6 +47,9 @@
 #include "../TeensyComparator/TeensyComparator.h"
 #endif
 
+// Global shutter state
+bool global_shutter_state = true;
+
 // Power sensing pin
 const int POWER_SENSE_PIN = 23;
 
