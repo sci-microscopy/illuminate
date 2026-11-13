@@ -6,22 +6,17 @@ Illuminate was designed to standardize the interface and functionality of LED ar
 1. Install [Arduino](https://www.arduino.cc/) software
 2. Install [Teensyduino](https://www.pjrc.com/teensy/td_download.html) software (If using a teensy micro-controller)
 3. If needed, install git. See [This Tutorial](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-4. Check out the illuminate repostory:
+4. Clone the repository, including the TLC5955 submodule (driver for the LED driver chips used in our devices):
 ```bash
-  git clone https://github.com/zfphil/illuminate.git
+  git clone --recursive https://github.com/sci-microscopy/illuminate.git
 ```
-5. Check out the TLC5955 submodule (LED driver chips used for our devices)
-```bash
-  cd illuminate
-  git submodule init
-  git submodule update
-```
-6. open illuminate.ino in Arduino software
-7. Ensure correct device is selected in the `illuminate.h` file by uncommenting the appropriate `#define USE_*` line. Ensure only one of these lines is uncommented.
-8. Select micro-controller from Tools -> Board, select port from Tools -> Port. If a port says "Teensy", this is usually the correct port to use.
-9. Open Serial Monitor (Tools -> Serial Monitor), set line ending to Newline and baud rate to 115200 (default)
-10. Press upload to load code onto Teensy. You may need to press the white button on the top of the micro-controller to trigger the upload.
-11. Type command (ex: "bf") and press enter to send
+   If you already cloned without `--recursive`, run `git submodule update --init` from the repository root.
+5. Open `illuminate/illuminate.ino` in the Arduino software
+6. Ensure correct device is selected in the `illuminate.h` file by uncommenting the appropriate `#define USE_*` line. Ensure only one of these lines is uncommented.
+7. Select micro-controller from Tools -> Board, select port from Tools -> Port. If a port says "Teensy", this is usually the correct port to use.
+8. Open Serial Monitor (Tools -> Serial Monitor), set line ending to Newline and baud rate to 115200 (default)
+9. Press upload to load code onto Teensy. You may need to press the white button on the top of the micro-controller to trigger the upload.
+10. Type command (ex: "bf") and press enter to send
 
 ## Interfaces
 All commands are sent over a serial (COM) port using a default baud rate of `115200`, and otherwise default settings. There are several ways to control these LED Arrays:
@@ -63,13 +58,12 @@ This project is designed for led arrays which are controlled by a Teensy 3.2, Te
 
 #### Currently supported devices
 - Quasi-Dome Illuminator (Waller Lab, UC Berkeley)
-- Direct LED connection array (Waller Lab, UC Berkeley)
 - sci.round ([SCI Microscopy](https://sci-microscopy.com))
 - sci.dome ([SCI Microscopy](https://sci-microscopy.com))
 - Various custom devices by [SCI Microscopy](https://sci-microscopy.com)
 
 #### Adding New Devices
-New devices are created by adding a new .cpp file to the root directory of the project and providing functions for the LedArrayInterface class. Static variables within this class must also be defined in the cpp file (including LED positions, trigger ports, etc.).
+New devices are created by adding a new .cpp file to `illuminate/src/ledarrays/` (or `illuminate/src/ledarrays_custom/` for private arrays, which is git-ignored), guarding it with a new `#ifdef USE_*` define that is also listed in `illuminate/illuminate.h`, and providing functions for the LedArrayInterface class. Static variables within this class must also be defined in the cpp file (including LED positions, trigger ports, etc.).
 
 ## Contributions
 Pull requests will be reviewed as received, and are encouraged!
